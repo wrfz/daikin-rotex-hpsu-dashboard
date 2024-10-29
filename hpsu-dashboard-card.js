@@ -48,7 +48,7 @@ class HPSUDashboardCard extends HTMLElement {
         const url = this.config.image + "?" + new Date().getTime();
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Failed to call url: '${url}' Status: ${response.status}.`);
         }
         const svgContent = await response.text();
         
