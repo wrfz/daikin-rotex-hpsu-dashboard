@@ -152,9 +152,9 @@ class HPSUDashboardCard extends HTMLElement {
 
         if (!flowArrows || !flowReturnArrows || !heatingArrows) return;
 
-        const flowRate = parseFloat(this._hass.states[config.entities['flow_rate']].state);
-        const mischerState = parseFloat(this._hass.states[config.entities['dhw_mixer_position']].state);
-        const bpvState = parseFloat(this._hass.states[config.entities['bypass_valve']].state);
+        const flowRate = parseFloat(this._hass.states[this.config.entities['flow_rate']].state);
+        const mischerState = parseFloat(this._hass.states[this.config.entities['dhw_mixer_position']].state);
+        const bpvState = parseFloat(this._hass.states[this.config.entities['bypass_valve']].state);
 
         flowArrows.style.opacity = flowRate > 0 ? (mischerState / 100.0) : 0;
         flowReturnArrows.style.opacity = flowRate > 0 ? (bpvState / 100.0) : 0;
