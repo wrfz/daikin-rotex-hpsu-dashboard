@@ -148,9 +148,9 @@ class HPSUDashboardCard extends HTMLElement {
 
         if (!flowArrows || !flowReturnArrows || !heatingArrows) return;
 
-        const flow_rate_id = this.config.entities['flow_rate'];
-        const mixer_id = this.config.entities['dhw_mixer_position'];
-        const bypass_id = this.config.entities['bypass_valve'];
+        const flow_rate_id = this.config.entities['durchfluss'];
+        const mixer_id = this.config.entities['mischer'];
+        const bypass_id = this.config.entities['bypass'];
 
         const flowRate = flow_rate_id ? parseFloat(this._hass.states[flow_rate_id].state) : 0;
         const mischerState = mixer_id ? parseFloat(this._hass.states[mixer_id].state) : 0;
@@ -302,5 +302,5 @@ class HPSUDashboardCard extends HTMLElement {
         this.dispatchEvent(event);
     }
   }
-  
+
   customElements.define("hpsu-dashboard-card", HPSUDashboardCard);
