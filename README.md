@@ -16,3 +16,39 @@ Dieses Projekt stellt eine Home Assistant-Dashboard-Komponente bereit, die es er
 2) Klicke rechts oben auf die drei Punkte und wähle **Benutzerdefinierte Repositorys**.
 3) Gib das Repository ein: https://github.com/wrfz/daikin-rotex-hpsu-dashboard und wähle die Kategorie **Dashboard** aus.
 4) Klicke auf Hinzufügen und installiere die Karte anschließend über die Benutzeroberfläche.
+
+# Konfiguration
+
+Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mit der folgenden Konfiguration:
+
+    title: Home
+    views:
+      - title: Schema
+        path: hpsu_schema
+        type: panel
+        cards:
+          - type: custom:hpsu-dashboard-card
+            entities:
+              t_aussen_1: sensor.rotex_aussentemperatur
+              t_aussen_2: sensor.rotex_t_aussen
+              expansions_ventil: sensor.rotex_expansionsventil
+              kondensator: sensor.rotex_temperatur_fl_ssigkeitsleitung
+              umwaelzpumpe: sensor.rotex_umwaelzpumpe
+              umwaelzpumpe_an_aus: binary_sensor.rotex_status_kesselpumpe
+              durchfluss: sensor.rotex_durchfluss
+              ruecklauf_1: sensor.rotex_ruecklauftemperatur_heizung
+              ruecklauf_2: sensor.rotex_r_cklauftemperatur
+              verdampfer: sensor.rotex_lamellenw_rmetauscher_temperatur
+              vorlauf_1: sensor.rotex_heizkreis_vorlauf_tv
+              vorlauf_2: sensor.rotex_vorlauftemeratur_tv
+              vorlauf_soll: sensor.rotex_vorlauf_soll
+              wasserdruck: sensor.rotex_wasserdruck
+              vorlauf_bh_1: sensor.rotex_vorlauftemeratur_tvbh
+              vorlauf_bh_2: sensor.rotex_vorlauftemperatur_heizung_tvbh
+              kompressor_an_aus: binary_sensor.rotex_status_kompressor
+              luefter: sensor.rotex_ventilatordrehzahl
+              verdichter: sensor.rotex_kompressor_drehzahl
+              speicher: sensor.rotex_warmwassertemperatur
+              speicher_soll: select.rotex_t_ww_soll1
+              mischer: sensor.rotex_dhw_mischer_position
+              bypass: sensor.rotex_bpv
