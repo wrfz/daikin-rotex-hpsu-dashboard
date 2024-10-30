@@ -43,8 +43,8 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
               vorlauf_2: sensor.rotex_vorlauftemeratur_tv
               vorlauf_soll: sensor.rotex_vorlauf_soll
               wasserdruck: sensor.rotex_wasserdruck
-              vorlauf_bh_1: sensor.rotex_vorlauftemeratur_tvbh
-              vorlauf_bh_2: sensor.rotex_vorlauftemperatur_heizung_tvbh
+              vorlauf_bh_1: sensor.rotex_vorlauftemperatur_heizung_tvbh
+              vorlauf_bh_2: sensor.rotex_vorlauftemeratur_tvbh
               kompressor_an_aus: binary_sensor.rotex_status_kompressor
               luefter: sensor.rotex_ventilatordrehzahl
               verdichter: sensor.rotex_kompressor_drehzahl
