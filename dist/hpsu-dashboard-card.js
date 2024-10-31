@@ -36,8 +36,19 @@ class HPSUDashboardCard extends HTMLElement {
     }
 
     async render() {
-        const url = this.config.dev ? "/local/daikin-rotex-hpsu-dashboard/hpsu.svg?" + new Date().getTime()
-                        : "/hacsfiles/daikin-rotex-hpsu-dashboard/hpsu.svg"
+
+        const scriptUrl = import.meta.url;
+        const urlParams = new URLSearchParams(scriptUrl.split('?')[1]);
+        const hacsTag = urlParams.get('hacstag');
+
+        console.log("hacsTag: " + hacsTag);
+        console.log("isNumeric: " + this.isNumeric(hacsTag));
+
+        const url = this.isNumeric(hacsTag) ? "/hacsfiles/daikin-rotex-hpsu-dashboard/hpsu.svg?" + hacsTag:
+                        "/local/daikin-rotex-hpsu-dashboard/hpsu.svg?" + new Date().getTime();
+
+        console.log(url);
+
         let response = await fetch(url);
         if (!response.ok) {
             throw new Error(`Failed to call url: '${url}' Status: ${response.status}.`);
@@ -268,6 +279,10 @@ class HPSUDashboardCard extends HTMLElement {
             composed: true
         });
         this.dispatchEvent(event);
+    }
+
+    isNumeric(value) {
+        return /^-?\d+$/.test(value);
     }
   }
 
