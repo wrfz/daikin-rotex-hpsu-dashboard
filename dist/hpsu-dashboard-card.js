@@ -36,15 +36,11 @@ class HPSUDashboardCard extends HTMLElement {
     }
 
     async render() {
-        const url1 = "/hacsfiles/daikin-rotex-hpsu-dashboard/hpsu.svg"
-        const url2 = "/local/daikin-rotex-hpsu-dashboard/hpsu.svg?" + new Date().getTime();
-        let response = await fetch(url1);
+        const url = this.config.dev ? "/local/daikin-rotex-hpsu-dashboard/hpsu.svg?" + new Date().getTime()
+                        : "/hacsfiles/daikin-rotex-hpsu-dashboard/hpsu.svg"
+        let response = await fetch(url);
         if (!response.ok) {
-            const response1 = response;
-            response = await fetch(url2);
-            if (!response.ok) {
-                throw new Error(`Failed to call url: '${url1}' Status: ${response1.status}.`);
-            }
+            throw new Error(`Failed to call url: '${url}' Status: ${response.status}.`);
         }
         const svgContent = await response.text();
         
@@ -58,40 +54,28 @@ class HPSUDashboardCard extends HTMLElement {
 
         const svgElement = svgDoc.documentElement;
 
-        if (!svgElement.hasAttribute('viewBox')) {
-            console.warn("Das SVG hat kein viewBox-Attribut gesetzt. Bitte setze es manuell.");
-            svgElement.setAttribute("viewBox", "0 0 2897 1855");
-        }
-
         svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
         svgElement.style.display = "block";
 
         this.shadowRoot.innerHTML = "";
-
         this.createStateLabels(svgDoc);
 
         this.shadowRoot.appendChild(svgElement);
-
         this.createCSS();
-
         this.updateOpacity();
     }
 
     createCSS() {
         const style = document.createElement('style');
         style.textContent = `
-        hui-panel-view {
-            display: block;
-            background: linear-gradient(90deg, #220000, #000022);
-            width:auto;
-        }
         svg {
             display: block;
+            width: calc(100vw - var(--mdc-drawer-width));
+            height: auto;
         }
         @media (min-width: 768px) {
             svg {
-                width: 100%;
-                height: auto;
+                max-height: calc(100vh - var(--header-height));
             }
         }
 
@@ -100,7 +84,7 @@ class HPSUDashboardCard extends HTMLElement {
             svg {
                 width: auto; /* Breite proportional */
                 height: calc(100vh -  var(--header-height));
-                transform: scale(1);
+                background: linear-gradient(90deg, #220000, #000022) !important;
             }
         }
         `;
@@ -110,34 +94,22 @@ class HPSUDashboardCard extends HTMLElement {
     connectedCallback() {
         const ha = document.querySelector("home-assistant");
         if (ha) {
-            const style = document.createElement("style"); // Removes additional empty scroll area on smmobile phones
-            style.textContent = `
+            const haStyle = document.createElement("style"); // Removes additional empty scroll area on smmobile phones
+            haStyle.textContent = `
                 :host {
                     display: block;
                     overflow:auto;
                 }
             `;
-            ha.shadowRoot.appendChild(style);
+            ha.shadowRoot.appendChild(haStyle);
 
-            const ha_main = ha.shadowRoot.querySelector("home-assistant-main");
-            if (ha_main) {
-                const lovelace_panel = ha_main.shadowRoot.querySelector("ha-panel-lovelace");
-                if (lovelace_panel) {
-                    const hui_root = lovelace_panel.shadowRoot.querySelector("hui-root");
-                    if (hui_root) {
-                        const hui_panel_view = hui_root.shadowRoot.querySelector("hui-panel-view");
-                        if (hui_panel_view) {
-                            const style = document.createElement("style");
-                            style.textContent = `
-                                :host {
-                                    background: linear-gradient(90deg, #220000, #000022) !important;
-                                }
-                            `;
-                            hui_panel_view.shadowRoot.appendChild(style);
-                        }
-                    }
+            const hpvStyle = document.createElement("style");
+            hpvStyle.textContent = `
+                :host {
+                    background: linear-gradient(90deg, #220000, #000022) !important;
                 }
-           }
+            `;
+            this.shadowRoot.host.parentNode.getRootNode().appendChild(hpvStyle);
         }
     }
 
@@ -186,8 +158,6 @@ class HPSUDashboardCard extends HTMLElement {
                     const fontSize = state.fontSize || "60px";
 
                     state.entityId = this.config.entities[state.confEntityId];
-
-                    //console.log("create: " + state.entityId);
 
                     if (state.entityId) {
                         const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -242,7 +212,6 @@ class HPSUDashboardCard extends HTMLElement {
                             const fontSize = parseFloat(state.label.getAttribute("font-size")) || 46;
 
                             if (newState) {
-                                //console.log(state.entityId + ": " + newState);
                                 const entityState = newState.state || "--";
                                 const unit = newState.attributes.unit_of_measurement || "";
 
@@ -254,7 +223,6 @@ class HPSUDashboardCard extends HTMLElement {
                                     state.label.setAttribute("fill", "silver");
                                 }
                             } else {
-                                //console.log(state.entityId + "= " + newState);
                                 state.label.textContent = "INVALID";
                                 state.label.setAttribute("fill", "orange");
                                 state.label.setAttribute("font-size", "30px");
