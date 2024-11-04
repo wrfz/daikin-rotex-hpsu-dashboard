@@ -8,7 +8,7 @@ class HPSUDashboardCard extends HTMLElement {
             { confEntityId: "t_aussen_1", rectId: "T-Aussen-1-Value", offset: 6 },
             { confEntityId: "t_aussen_2", rectId: "T-Aussen-2-Value", offset: 6 },
             { confEntityId: "expansions_ventil", rectId: "EEV-Value", offset: 6 },
-            { confEntityId: "kondensator", rectId: "Kondensator-Value", offset: 6 },
+            { confEntityId: "kondensat", rectId: "Kondensat-Value", offset: 6 },
             { confEntityId: "umwaelzpumpe", rectId: "Umwaelzpumpe-Value", offset: 6 },
             { confEntityId: "umwaelzpumpe_an_aus", rectId: "circulation_pump_on_off_rect", fontSize: "30px", offset: 2 },
             { confEntityId: "durchfluss", rectId: "Durchfluss-Value", offset: 6 },
@@ -33,6 +33,11 @@ class HPSUDashboardCard extends HTMLElement {
         this.config = config;
         this.attachShadow({ mode: "open" });
         this.render();
+    }
+
+    static getConfigElement() {
+        const editor = document.createElement('hpsu-dashboard-card-editor');
+        return editor;
     }
 
     async render() {
@@ -105,22 +110,24 @@ class HPSUDashboardCard extends HTMLElement {
     connectedCallback() {
         const ha = document.querySelector("home-assistant");
         if (ha) {
-            const haStyle = document.createElement("style"); // Removes additional empty scroll area on smmobile phones
-            haStyle.textContent = `
+            const homeAssistantStyle = document.createElement("style"); // Removes additional empty scroll area on smmobile phones
+            homeAssistantStyle.textContent = `
                 :host {
                     display: block;
                     overflow:auto;
                 }
             `;
-            ha.shadowRoot.appendChild(haStyle);
+            ha.shadowRoot.appendChild(homeAssistantStyle);
 
-            const hpvStyle = document.createElement("style");
-            hpvStyle.textContent = `
+            const huiPanelViewStyle = document.createElement("style");
+            huiPanelViewStyle.textContent = `
                 :host {
                     background: linear-gradient(90deg, #220000, #000022) !important;
                 }
             `;
-            this.shadowRoot.host.parentNode.getRootNode().appendChild(hpvStyle);
+            const huiCard = this.shadowRoot.host.parentNode;
+            const huiPanelViewShadowRoot = huiCard.getRootNode();
+            huiPanelViewShadowRoot.appendChild(huiPanelViewStyle);
         }
     }
 

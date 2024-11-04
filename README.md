@@ -32,7 +32,7 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
               t_aussen_1: sensor.rotex_aussentemperatur
               t_aussen_2: sensor.rotex_t_aussen
               expansions_ventil: sensor.rotex_expansionsventil
-              kondensator: sensor.rotex_temperatur_fl_ssigkeitsleitung
+              kondensat: sensor.rotex_temperatur_fl_ssigkeitsleitung
               umwaelzpumpe: sensor.rotex_umwaelzpumpe
               umwaelzpumpe_an_aus: binary_sensor.rotex_status_kesselpumpe
               durchfluss: sensor.rotex_durchfluss

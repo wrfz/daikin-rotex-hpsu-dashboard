@@ -22,14 +22,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="0.45254834"
-     inkscape:cx="1301.5184"
-     inkscape:cy="699.3728"
+     inkscape:cx="258.53592"
+     inkscape:cy="222.07572"
      inkscape:window-width="1920"
      inkscape:window-height="1129"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="Kondensat"
      showgrid="false" /><defs
      id="defs12"><linearGradient
        x1="362"
@@ -1092,7 +1092,7 @@
          font-size="46px"
          transform="translate(1319.63,135)"
          id="text66">Umwälzpumpe</text></g><g
-       id="Kondensator"
+       id="Kondensat"
        transform="matrix(0.95,0,0,0.95,-52.2875,-28.5625)"><rect
          x="995.5"
          y="412.5"
@@ -1102,7 +1102,7 @@
          stroke-width="4.58333"
          stroke-miterlimit="8"
          fill="#1c1c1c"
-         id="Kondensator-Value"
+         id="Kondensat-Value"
          transform="translate(-108,-252)" /><rect
          x="995.5"
          y="332.5"
@@ -1118,8 +1118,9 @@
          font-family="Calibri, Calibri_MSFontService, sans-serif"
          font-weight="400"
          font-size="46px"
-         transform="translate(915.99,135)"
-         id="text44">Kondensator</text></g><g
+         id="text44"
+         x="928.6217"
+         y="135">Kondensat</text></g><g
        id="EEV"
        transform="matrix(0.95,0,0,0.95,-52.2875,-28.5625)"><rect
          x="731.5"
