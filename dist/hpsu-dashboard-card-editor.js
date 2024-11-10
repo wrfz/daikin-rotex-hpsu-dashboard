@@ -25,7 +25,7 @@ class HpsuDashboardCardEditor extends LitElement {
         this.entities_configuration = await this.loadModule();
         this.entities_configuration = this.entities_configuration.map(
             (entity) => {
-                entity.entityId = config.entities[entity.confEntityId] || "default";
+                entity.entityId = config.entities[entity.id];
                 return entity;
             }
         );
@@ -42,20 +42,20 @@ class HpsuDashboardCardEditor extends LitElement {
             ${this.entities_configuration.map(
                 (entity) => {
                     return html`
-                    <div>
                     ${(entity.category) ? html`<h2>${entity.category}</h2>` : ""}
                     <ha-entity-picker
                         allow-custom-entity
+                        data-id=${entity.id}
+                        label=${entity.label}
                         .value=${entity.entityId}
+                        .curValue=${entity.entityId}
                         .hass=${this.hass}
                         .includeDomains=${entity.type}
                         .includeUnitOfMeasurement=${entity.unit}
-                        .label=${entity.label}
                         .disabled=false
                         .createDomains=false
                         @value-changed=${this._entityChanged}
-                    ></ha-entity-picker>
-                    </div>`;
+                    ></ha-entity-picker>`;
                 }
             )}
         `;
@@ -64,17 +64,9 @@ class HpsuDashboardCardEditor extends LitElement {
     _entityChanged(event) {
         event.stopPropagation();
 
-        //const curValue = (event.currentTarget as any).curValue;
-        const curValue = event.currentTarget.curValue;
-        const newValue = event.detail.value;
-
-        const entity_conf = this.entities_configuration.find((entity) => entity.label == event.target.label);
-        if (entity_conf) {
-            this.config.entities[entity_conf.confEntityId] = newValue;
-            this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
-        } else {
-            console.error(`Entity configuration with label <${event.target.label}> not found!`);
-        }
+        const entityId = event.target.getAttribute("data-id");
+        this.config.entities[entityId] = event.detail.value;
+        this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
     }
 
     static get styles() {

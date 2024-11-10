@@ -1,38 +1,24 @@
 class HPSUDashboardCard extends HTMLElement {
-    setConfig(config) {
+    inititialized = false;
+
+    async setConfig(config) {
+        //console.log(">> setConfig");
         if (!config.entities) {
             throw new Error("Required entities field is missing");
         }
 
-        this.entities_configuration = [
-            { confEntityId: "t_aussen_1", rectId: "T-Aussen-1-Value", offset: 6 },
-            { confEntityId: "t_aussen_2", rectId: "T-Aussen-2-Value", offset: 6 },
-            { confEntityId: "expansions_ventil", rectId: "EEV-Value", offset: 6 },
-            { confEntityId: "kondensat", rectId: "Kondensat-Value", offset: 6 },
-            { confEntityId: "umwaelzpumpe", rectId: "Umwaelzpumpe-Value", offset: 6 },
-            { confEntityId: "umwaelzpumpe_an_aus", rectId: "circulation_pump_on_off_rect", fontSize: "30px", offset: 2 },
-            { confEntityId: "durchfluss", rectId: "Durchfluss-Value", offset: 6 },
-            { confEntityId: "ruecklauf_1", rectId: "Ruecklauf-1-Value", offset: 6 },
-            { confEntityId: "ruecklauf_2", rectId: "Ruecklauf-2-Value", offset: 6 },
-            { confEntityId: "verdampfer", rectId: "Verdampfer-Value", offset: 6 },
-            { confEntityId: "vorlauf_1", rectId: "Vorlauf-1-Value", offset: 6 },
-            { confEntityId: "vorlauf_2", rectId: "Vorlauf-2-Value", offset: 6 },
-            { confEntityId: "vorlauf_soll", rectId: "Vorlauf-Soll-Value", offset: 6 },
-            { confEntityId: "wasserdruck", rectId: "Druck-Value", offset: 6 },
-            { confEntityId: "vorlauf_bh_1", rectId: "Vorlauf-BH-1-Value", offset: 6 },
-            { confEntityId: "vorlauf_bh_2", rectId: "Vorlauf-BH-2-Value", offset: 6 },
-            { confEntityId: "kompressor_an_aus", rectId: "compressor_on_off_rect", fontSize: "40px", offset: 2 },
-            { confEntityId: "luefter", rectId: "Luefter-Value", offset: 6 },
-            { confEntityId: "verdichter", rectId: "Verdichter-Value", offset: 6 },
-            { confEntityId: "speicher", rectId: "Speicher-Value", offset: 6 },
-            { confEntityId: "speicher_soll", rectId: "Speicher-Soll-Value", offset: 6 },
-            { confEntityId: "mischer", rectId: "DHW-Mixer-Value", fontSize: "40px", offset: 6 },
-            { confEntityId: "bypass", rectId: "Bypass-Value", fontSize: "40px", offset: 6 }
-        ];
+        this.entities_configuration = await this.loadModule();
+        this.entities_configuration = this.entities_configuration.map(
+            (entity) => {
+                entity.entityId = config.entities[entity.id];
+                return entity;
+            }
+        );
 
         this.config = config;
         this.attachShadow({ mode: "open" });
         this.render();
+        //console.log("<< setConfig");
     }
 
     static getConfigElement() {
@@ -41,6 +27,7 @@ class HPSUDashboardCard extends HTMLElement {
     }
 
     async render() {
+        //console.log(">> render");
 
         const scriptUrl = import.meta.url;
         const urlParams = new URLSearchParams(scriptUrl.split('?')[1]);
@@ -78,10 +65,17 @@ class HPSUDashboardCard extends HTMLElement {
 
         this.shadowRoot.appendChild(svgElement);
         this.createCSS();
+
+        this.inititialized = true;
+
+        this.updateLabels();
         this.updateOpacity();
+
+        //console.log("<< render");
     }
 
     createCSS() {
+        //console.log(">> createCSS");
         const style = document.createElement('style');
         style.textContent = `
         svg {
@@ -105,9 +99,7 @@ class HPSUDashboardCard extends HTMLElement {
         }
         `;
         this.shadowRoot.appendChild(style);
-    }
 
-    connectedCallback() {
         const ha = document.querySelector("home-assistant");
         if (ha) {
             const homeAssistantStyle = document.createElement("style"); // Removes additional empty scroll area on smmobile phones
@@ -129,133 +121,155 @@ class HPSUDashboardCard extends HTMLElement {
             const huiPanelViewShadowRoot = huiCard.getRootNode();
             huiPanelViewShadowRoot.appendChild(huiPanelViewStyle);
         }
+        //console.log("<< createCSS");
     }
 
-    updateOpacity() {
-        const flowArrows = this.shadowRoot.querySelector(`#DHW-Flow-Arrows`);
-        const flowReturnArrows = this.shadowRoot.querySelector(`#DHW-Flow-Return-Arrows`);
-        const heatingArrows = this.shadowRoot.querySelector(`#Heating-Flow-Arrows`);
-
-        if (!flowArrows || !flowReturnArrows || !heatingArrows) return;
-
-        const flow_rate_id = this.config.entities['durchfluss'];
-        const mixer_id = this.config.entities['mischer'];
-        const bypass_id = this.config.entities['bypass'];
-
-        const flowRate = flow_rate_id ? parseFloat(this._hass.states[flow_rate_id].state) : 0;
-        const mischerState = mixer_id ? parseFloat(this._hass.states[mixer_id].state) : 0;
-        const bpvState = bypass_id ? parseFloat(this._hass.states[bypass_id].state) : 0;
-
-        flowArrows.style.opacity = flowRate > 0 ? (mischerState / 100.0) : 0;
-        flowReturnArrows.style.opacity = flowRate > 0 ? (bpvState / 100.0) : 0;
-        heatingArrows.style.opacity = flowRate > 0 ? ((100 - bpvState) / 100.0) : 0;
-
-        for (let index = 1; index <= 8; ++index) {
-            const arrow = this.shadowRoot.querySelector(`#Flow-Arrow-${index}`);
-            arrow.style.opacity = (flowRate > 0) * 1;
-        }
+    connectedCallback() {
     }
-  
+
     set hass(hass) {
-      this._hass = hass;
-      this.updateLabels();
-      this.updateOpacity();
+        //console.log(">> hass");
+
+        this._hass = hass;
+
+        this.updateLabels();
+        this.updateOpacity();
+
+        //console.log("<< hass");
     }
   
     get hass() {
-      return this._hass;
+        return this._hass;
     }
 
     createStateLabels(svgDoc) {
+        //console.log(">> createStateLabels");
         this.entities_configuration.forEach(state => {
             const valueBox = svgDoc.getElementById(state.rectId);
             if (valueBox) {
                 const group = valueBox.parentNode;
-                if (group && valueBox) {
+                if (group) {
                     const transform = valueBox.getAttribute('transform');
-                    const fontSize = state.fontSize || "60px";
 
-                    state.entityId = this.config.entities[state.confEntityId];
+                    state.entityId = this.config.entities[state.id];
 
+                    const labelElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
                     if (state.entityId) {
-                        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                        label.id = state.entityId.replace(".", "_");
-                        label.setAttribute("text-anchor", "middle");
-                        label.setAttribute("dominant-baseline", "middle");
-                        label.setAttribute("cursor", "pointer");
-                        label.setAttribute("fill", "blue");
-                        label.setAttribute("font-size", fontSize);
-                        label.setAttribute("stroke-width", "1");
-                        if (transform) {
-                            label.setAttribute("transform", transform);
-                        }
-
-                        state.label = label;
-                        state.valueBox = valueBox;
-
-                        if (this._hass.states[state.entityId] !== undefined) {
-                            label.textContent = this._hass.states[state.entityId].state;
-
-                            label.addEventListener("click", () => {
-                                this.handleStateClick(state.entityId);
-                            });
-                        } else {
-                            console.warn(`Entity with ID ${state.entityId} not found`);
-                        }
-                        group.appendChild(label);
+                        labelElement.id = state.entityId.replace(".", "_");
                     }
+
+                    labelElement.setAttribute("cursor", "pointer");
+                    labelElement.setAttribute("dominant-baseline", "middle");
+                    labelElement.setAttribute("stroke-width", "1");
+                    labelElement.addEventListener("click", () => {
+                        this.handleStateClick(state.entityId);
+                    });
+
+                    if (transform) {
+                        labelElement.setAttribute("transform", transform);
+                    }
+
+                    state.labelElement = labelElement;
+                    state.valueBox = valueBox;
+                    group.appendChild(labelElement);
                 } else {
-                    console.warn(`Rect with ID ${state.rectId} not found.`);
+                    console.warn(`Rect with ID ${state.rectId} parent not found.`);
                 }
             } else {
                 console.warn(`Rect with ID ${state.rectId} not found.`);
             }
         });
-
-        this.updateLabels();
     }
 
     updateLabels() {
-        if (this.entities_configuration) {
-            this.entities_configuration.forEach(state => {
-                if (state.entityId) {
-                    const newState = this._hass.states[state.entityId];
+        //console.log(">> updateLabels: " + this.config + ":" + this.inititialized);
+        if (this.config && this.inititialized) {
+            if (this.entities_configuration) {
+                this.entities_configuration.forEach(state => {
+                    const newState = state.entityId ? this._hass.states[state.entityId] : null;
                     if (state.valueBox) {
-                        if (state.label) {
+                        if (state.labelElement) {
                             const xPos = parseFloat(state.valueBox.getAttribute('x'));
                             const yPos = parseFloat(state.valueBox.getAttribute('y'));
                             const width = parseFloat(state.valueBox.getAttribute('width'));
                             const height = parseFloat(state.valueBox.getAttribute('height'));
 
-                            const fontSize = parseFloat(state.label.getAttribute("font-size")) || 46;
+                            const fontSize = state.fontSize || 56;
 
-                            if (newState) {
-                                const entityState = newState.state || "--";
+                            if (!newState) {
+                                state.labelElement.textContent = "N/D";
+                                state.labelElement.setAttribute("fill", "orange");
+                                state.labelElement.setAttribute("font-size", "30px");
+                            } else if (newState.state == "unknown" || newState.state == "unavailable") {
+                                state.labelElement.textContent = "N/A";
+                                state.labelElement.setAttribute("fill", "orange");
+                                state.labelElement.setAttribute("font-size", "30px");
+                            } else {
+                                let entityState = newState.state || "--";
                                 const unit = newState.attributes.unit_of_measurement || "";
+                                state.labelElement.setAttribute("font-size", fontSize);
 
                                 if (this.isBooleanSensor(state.entityId)) {
-                                    state.label.textContent = entityState === "on" ? "An" : "Aus";
-                                    state.label.setAttribute("fill", entityState === "on" ? "yellow" : "white");
+                                    state.labelElement.textContent = entityState === "on" ? "An" : "Aus";
+                                    state.labelElement.setAttribute("fill", entityState === "on" ? "yellow" : "white");
                                 } else {
-                                    state.label.textContent = `${this.formatNumber(entityState)} ${unit}`;
-                                    state.label.setAttribute("fill", "silver");
+                                    entityState = this.formatNumber(entityState);
+                                    if (entityState == "Warmwasserbereitung") {
+                                        entityState = "Warmwasser";
+                                    }
+                                    if (state.suffix) {
+                                        entityState = state.suffix + entityState;
+                                    }
+
+                                    state.labelElement.textContent = `${entityState} ${unit}`;
+                                    state.labelElement.setAttribute("fill", "silver");
                                 }
-                            } else {
-                                state.label.textContent = "INVALID";
-                                state.label.setAttribute("fill", "orange");
-                                state.label.setAttribute("font-size", "30px");
                             }
 
-                            state.label.setAttribute("x", xPos + width / 2);
-                            state.label.setAttribute("y", yPos + height / 2 + state.offset);
+                            if (state.align == "left") {
+                                state.labelElement.setAttribute("x", xPos);
+                                state.labelElement.setAttribute("text-anchor", "start");
+                            } else {
+                                state.labelElement.setAttribute("x", xPos + width / 2);
+                                state.labelElement.setAttribute("text-anchor", "middle");
+                            }
+                            state.labelElement.setAttribute("y", yPos + height / 2 + state.offset);
                         } else {
                             console.warn("Label not found: " + state.entityId);
                         }
                     } else {
                         console.warn("ValueBox not found: " + state.entityId);
                     }
-                }
-            });
+                });
+            }
+        }
+        //console.log("<< updateLabels");
+    }
+
+    updateOpacity() {
+        if (this.config && this.inititialized) {
+            const flowArrows = this.shadowRoot.querySelector(`#DHW-Flow-Arrows`);
+            const flowReturnArrows = this.shadowRoot.querySelector(`#DHW-Flow-Return-Arrows`);
+            const heatingArrows = this.shadowRoot.querySelector(`#Heating-Flow-Arrows`);
+
+            if (!flowArrows || !flowReturnArrows || !heatingArrows) return;
+
+            const flow_rate_id = this.config.entities['durchfluss'];
+            const mixer_id = this.config.entities['mischer'];
+            const bypass_id = this.config.entities['bypass'];
+
+            const flowRate = flow_rate_id ? parseFloat(this._hass.states[flow_rate_id].state) : 0;
+            const mischerState = mixer_id ? parseFloat(this._hass.states[mixer_id].state) : 0;
+            const bpvState = bypass_id ? parseFloat(this._hass.states[bypass_id].state) : 0;
+
+            flowArrows.style.opacity = flowRate > 0 ? (mischerState / 100.0) : 0;
+            flowReturnArrows.style.opacity = flowRate > 0 ? (bpvState / 100.0) : 0;
+            heatingArrows.style.opacity = flowRate > 0 ? ((100 - bpvState) / 100.0) : 0;
+
+            for (let index = 1; index <= 8; ++index) {
+                const arrow = this.shadowRoot.querySelector(`#Flow-Arrow-${index}`);
+                arrow.style.opacity = (flowRate > 0) * 1;
+            }
         }
     }
 
@@ -290,6 +304,15 @@ class HPSUDashboardCard extends HTMLElement {
 
     isNumeric(value) {
         return /^-?\d+$/.test(value);
+    }
+
+    async loadModule() {
+        try {
+            const module = await import('/local/daikin-rotex-hpsu-dashboard/modules.js');
+            return module.entities_configuration;
+        } catch (error) {
+            console.error("Modul konnte nicht geladen werden:", error);
+        }
     }
   }
 
