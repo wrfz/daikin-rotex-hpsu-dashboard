@@ -86,9 +86,29 @@ class HpsuDashboardCardEditor extends LitElement {
         `;
     }
 
+    isNumeric(value) {
+        return /^-?\d+$/.test(value);
+    }
+
+    makeURL(filename) {
+        const scriptUrl = import.meta.url;
+        const urlParams = new URLSearchParams(scriptUrl.split('?')[1]);
+        const hacsTag = urlParams.get('hacstag');
+
+        console.log("hacsTag: " + hacsTag);
+        console.log("isNumeric: " + this.isNumeric(hacsTag));
+
+        const url =  this.isNumeric(hacsTag) ? `/hacsfiles/daikin-rotex-hpsu-dashboard/${filename}?${hacsTag}`:
+                        `/local/daikin-rotex-hpsu-dashboard/${filename}?${new Date().getTime()}`;
+        console.log(url);
+        return url;
+    }
+
     async loadModule() {
+        console.log(">> loadModule");
         try {
-            const module = await import('/local/daikin-rotex-hpsu-dashboard/modules.js');
+            const url = this.makeURL("modules.js");
+            const module = await import(url);
             return module.entities_configuration;
         } catch (error) {
             console.error("Modul konnte nicht geladen werden:", error);

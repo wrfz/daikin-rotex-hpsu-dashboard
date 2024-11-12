@@ -29,15 +29,7 @@ class HPSUDashboardCard extends HTMLElement {
     async render() {
         //console.log(">> render");
 
-        const scriptUrl = import.meta.url;
-        const urlParams = new URLSearchParams(scriptUrl.split('?')[1]);
-        const hacsTag = urlParams.get('hacstag');
-
-        console.log("hacsTag: " + hacsTag);
-        console.log("isNumeric: " + this.isNumeric(hacsTag));
-
-        const url = this.isNumeric(hacsTag) ? "/hacsfiles/daikin-rotex-hpsu-dashboard/hpsu.svg?" + hacsTag:
-                        "/local/daikin-rotex-hpsu-dashboard/hpsu.svg?" + new Date().getTime();
+        const url = this.makeURL("hpsu.svg");
 
         console.log(url);
 
@@ -247,6 +239,7 @@ class HPSUDashboardCard extends HTMLElement {
     }
 
     updateOpacity() {
+        console.log(">> updateOpacity");
         if (this.config && this.inititialized) {
             const flowArrows = this.shadowRoot.querySelector(`#DHW-Flow-Arrows`);
             const flowReturnArrows = this.shadowRoot.querySelector(`#DHW-Flow-Return-Arrows`);
@@ -254,9 +247,16 @@ class HPSUDashboardCard extends HTMLElement {
 
             if (!flowArrows || !flowReturnArrows || !heatingArrows) return;
 
+            //console.log(this.config);
+
             const flow_rate_id = this.config.entities['durchfluss'];
             const mixer_id = this.config.entities['mischer'];
             const bypass_id = this.config.entities['bypass'];
+
+            //console.log("flow_rate_id: " + flow_rate_id);
+            //console.log("mixer_id: " + mixer_id);
+            //console.log("bypass_id: " + bypass_id);
+            //console.log(this._hass.states);
 
             const flowRate = flow_rate_id ? parseFloat(this._hass.states[flow_rate_id].state) : 0;
             const mischerState = mixer_id ? parseFloat(this._hass.states[mixer_id].state) : 0;
@@ -306,14 +306,30 @@ class HPSUDashboardCard extends HTMLElement {
         return /^-?\d+$/.test(value);
     }
 
+    makeURL(filename) {
+        const scriptUrl = import.meta.url;
+        const urlParams = new URLSearchParams(scriptUrl.split('?')[1]);
+        const hacsTag = urlParams.get('hacstag');
+
+        console.log("hacsTag: " + hacsTag);
+        console.log("isNumeric: " + this.isNumeric(hacsTag));
+
+        const url =  this.isNumeric(hacsTag) ? `/hacsfiles/daikin-rotex-hpsu-dashboard/${filename}?${hacsTag}`:
+                        `/local/daikin-rotex-hpsu-dashboard/${filename}?${new Date().getTime()}`;
+        console.log(url);
+        return url;
+    }
+
     async loadModule() {
+        console.log(">> loadModule");
         try {
-            const module = await import('/local/daikin-rotex-hpsu-dashboard/modules.js');
+            const url = this.makeURL("modules.js");
+            const module = await import(url);
             return module.entities_configuration;
         } catch (error) {
             console.error("Modul konnte nicht geladen werden:", error);
         }
     }
-  }
+}
 
-  customElements.define("hpsu-dashboard-card", HPSUDashboardCard);
+customElements.define("hpsu-dashboard-card", HPSUDashboardCard);
