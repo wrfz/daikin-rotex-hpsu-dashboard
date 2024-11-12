@@ -247,20 +247,13 @@ class HPSUDashboardCard extends HTMLElement {
 
             if (!flowArrows || !flowReturnArrows || !heatingArrows) return;
 
-            //console.log(this.config);
-
             const flow_rate_id = this.config.entities['durchfluss'];
             const mixer_id = this.config.entities['mischer'];
             const bypass_id = this.config.entities['bypass'];
 
-            //console.log("flow_rate_id: " + flow_rate_id);
-            //console.log("mixer_id: " + mixer_id);
-            //console.log("bypass_id: " + bypass_id);
-            //console.log(this._hass.states);
-
-            const flowRate = flow_rate_id ? parseFloat(this._hass.states[flow_rate_id].state) : 0;
-            const mischerState = mixer_id ? parseFloat(this._hass.states[mixer_id].state) : 0;
-            const bpvState = bypass_id ? parseFloat(this._hass.states[bypass_id].state) : 0;
+            const flowRate = flow_rate_id && this._hass.states[flow_rate_id] ? parseFloat(this._hass.states[flow_rate_id].state) : 0;
+            const mischerState = mixer_id && this._hass.states[mixer_id] ? parseFloat(this._hass.states[mixer_id].state) : 0;
+            const bpvState = bypass_id && this._hass.states[bypass_id] ? parseFloat(this._hass.states[bypass_id].state) : 0;
 
             flowArrows.style.opacity = flowRate > 0 ? (mischerState / 100.0) : 0;
             flowReturnArrows.style.opacity = flowRate > 0 ? (bpvState / 100.0) : 0;
