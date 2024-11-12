@@ -68,7 +68,7 @@ class HPSUDashboardCard extends HTMLElement {
 
         const url = this.makeURL("hpsu.svg");
 
-        console.log(url);
+        //console.log(url);
 
         let response = await fetch(url);
         if (!response.ok) {
@@ -276,7 +276,7 @@ class HPSUDashboardCard extends HTMLElement {
     }
 
     updateOpacity() {
-        console.log(">> updateOpacity");
+        //console.log(">> updateOpacity");
         if (this.config && this.inititialized) {
             const flowArrows = this.shadowRoot.querySelector(`#DHW-Flow-Arrows`);
             const flowReturnArrows = this.shadowRoot.querySelector(`#DHW-Flow-Return-Arrows`);
@@ -341,12 +341,12 @@ class HPSUDashboardCard extends HTMLElement {
         const urlParams = new URLSearchParams(scriptUrl.split('?')[1]);
         const hacsTag = urlParams.get('hacstag');
 
-        console.log("hacsTag: " + hacsTag);
-        console.log("isNumeric: " + this.isNumeric(hacsTag));
+        //console.log("hacsTag: " + hacsTag);
+        //console.log("isNumeric: " + this.isNumeric(hacsTag));
 
         const url =  this.isNumeric(hacsTag) ? `/hacsfiles/daikin-rotex-hpsu-dashboard/${filename}?${hacsTag}`:
                         `/local/daikin-rotex-hpsu-dashboard/${filename}?${new Date().getTime()}`;
-        console.log(url);
+        //console.log(url);
         return url;
     }
 }
@@ -419,7 +419,16 @@ class HpsuDashboardCardEditor extends LitElement {
         event.stopPropagation();
 
         const entityId = event.target.getAttribute("data-id");
-        this.config.entities[entityId] = event.detail.value;
+
+        // make a copy => avoid entity is read-only error
+        const updatedEntities = { ...this.config.entities };
+        updatedEntities[entityId] = event.detail.value;
+
+        this.config = {
+            ...this.config,
+            entities: updatedEntities
+        };
+
         this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
     }
 
