@@ -2,5 +2,9 @@
     "name": "Daikin/Rotext - HPSU Dashboard",
     "render_readme": true,
     "filename": "hpsu-dashboard-card.js",
+    "extra_module": [
+        "hpsu-dashboard-card-editor.js",
+        "modules.js"
+    ],
     "content_in_root": false
 }
