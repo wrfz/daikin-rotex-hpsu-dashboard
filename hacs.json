@@ -6,5 +6,10 @@
         "hpsu-dashboard-card-editor.js",
         "modules.js"
     ],
+    "resources": [
+        "/hacsfiles/daikin-rotex-hpsu-dashboard/hpsu-dashboard-card.js",
+        "/hacsfiles/daikin-rotex-hpsu-dashboard/hpsu-dashboard-card-editor.js",
+        "/hacsfiles/daikin-rotex-hpsu-dashboard/modules.js"
+    ],
     "content_in_root": false
 }
