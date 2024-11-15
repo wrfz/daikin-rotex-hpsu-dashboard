@@ -27,9 +27,10 @@ const entities_configuration = [
     { id: "speicher_soll",       label: "Speicher Soll",                    type: "select",        rectId: "speicher_soll_value",   offset: 6, unit: "°C" },
     { id: "mischer",             label: "Mischer",                          type: "sensor",        rectId: "dhw_mixer_value",       offset: 6, unit: "%", fontSize: "40px" },
     { id: "bypass",              label: "Bypass",                           type: "sensor",        rectId: "bypass_value",          offset: 6, unit: "%", fontSize: "40px" },
-    { id: "betriebsmodus",       label: "Betriebsmodus",                    type: "select",        rectId: "info_1",                offset: 6, fontSize: "40px", align: "left", "suffix": "Modus: " },
-    { id: "betriebsart",         label: "Betriebsart",                      type: "text_sensor",   rectId: "info_2",                offset: 6, fontSize: "40px", align: "left", "suffix": "Betriebsart: " },
-    { id: "thermische_leistung", label: "Thermische Leistung",              type: "sensor",        rectId: "info_3",                offset: 6, fontSize: "40px", align: "left", "suffix": "Therm. Leistung: " }
+    { id: "betriebsmodus",       label: "Betriebsmodus",                    type: "select",        rectId: "betriebsmodus_value",   offset: 6, fontSize: "40px", align: "left", "suffix": "Modus: " },
+    { id: "betriebsart",         label: "Betriebsart",                      type: "text_sensor",   rectId: "betriebsart_value",     offset: 6, fontSize: "40px", align: "left", "suffix": "Betriebsart: " },
+    { id: "thermische_leistung", label: "Thermische Leistung",              type: "sensor",        rectId: "therm_leistung_value",  offset: 6, fontSize: "40px", align: "left", "suffix": "Therm. Leistung: " },
+    { id: "fehlercode",          label: "Fehlercode",                       type: "text_sensor",   rectId: "fehlercode_value",      offset: 6, fontSize: "40px", align: "left", "suffix": "Fehlercode: " }
 ];
 
 //////////////////////////////////////////////////////////////////
@@ -252,7 +253,11 @@ class HPSUDashboardCard extends HTMLElement {
                                     }
 
                                     state.labelElement.textContent = `${entityState} ${unit}`;
-                                    state.labelElement.setAttribute("fill", "silver");
+                                    if (state.id == "fehlercode" && entityState != "Fehlercode: Kein Fehler") {
+                                        state.labelElement.setAttribute("fill", "red");
+                                    } else {
+                                        state.labelElement.setAttribute("fill", "silver");
+                                    }
                                 }
                             }
 

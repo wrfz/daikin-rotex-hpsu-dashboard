@@ -55,4 +55,6 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
               betriebsmodus: select.hpsu_can_betriebsmodus
               thermische_leistung: sensor.hpsu_can_thermische_leistung
               betriebsart: sensor.hpsu_can_betriebsart
+              heissgas: sensor.hpsu_uart_temperatur_nach_k_ltemittelverdichter
+              fehlercode: sensor.hpsu_can_fehlercode
 
