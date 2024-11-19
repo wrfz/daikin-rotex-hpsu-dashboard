@@ -27,10 +27,11 @@ const entities_configuration = [
     { id: "speicher_soll",       label: "Speicher Soll",                    type: "select",        rectId: "speicher_soll_value",   offset: 6, unit: "°C" },
     { id: "mischer",             label: "Mischer",                          type: "sensor",        rectId: "dhw_mixer_value",       offset: 6, unit: "%", fontSize: "40px" },
     { id: "bypass",              label: "Bypass",                           type: "sensor",        rectId: "bypass_value",          offset: 6, unit: "%", fontSize: "40px" },
+    { id: "fehlercode",          label: "Fehlercode",                       type: "text_sensor",   rectId: "fehlercode_value",      offset: 6, fontSize: "40px", align: "left", "suffix": "Fehlercode: " },
     { id: "betriebsmodus",       label: "Betriebsmodus",                    type: "select",        rectId: "betriebsmodus_value",   offset: 6, fontSize: "40px", align: "left", "suffix": "Modus: " },
     { id: "betriebsart",         label: "Betriebsart",                      type: "text_sensor",   rectId: "betriebsart_value",     offset: 6, fontSize: "40px", align: "left", "suffix": "Betriebsart: " },
     { id: "thermische_leistung", label: "Thermische Leistung",              type: "sensor",        rectId: "therm_leistung_value",  offset: 6, fontSize: "40px", align: "left", "suffix": "Therm. Leistung: " },
-    { id: "fehlercode",          label: "Fehlercode",                       type: "text_sensor",   rectId: "fehlercode_value",      offset: 6, fontSize: "40px", align: "left", "suffix": "Fehlercode: " }
+    { id: "cop",                 label: "COP",                              type: "sensor",        rectId: "cop_value",             offset: 6, fontSize: "40px", align: "left", "suffix": "COP: ", required: false }
 ];
 
 //////////////////////////////////////////////////////////////////
@@ -231,6 +232,7 @@ class HPSUDashboardCard extends HTMLElement {
                                 state.labelElement.textContent = "N/D";
                                 state.labelElement.setAttribute("fill", "orange");
                                 state.labelElement.setAttribute("font-size", "30px");
+                                state.labelElement.setAttribute("display", state.required === false ? "none" : "block");
                             } else if (newState.state == "unknown" || newState.state == "unavailable") {
                                 state.labelElement.textContent = "N/A";
                                 state.labelElement.setAttribute("fill", "orange");
