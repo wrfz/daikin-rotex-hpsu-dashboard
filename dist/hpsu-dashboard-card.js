@@ -13,7 +13,7 @@ const entities_configuration = [
     { id: "ruecklauf_1",         label: "Rücklauf CAN",                     type: "sensor",        rectId: "ruecklauf_can_value",   offset: 6, unit: "°C" },
     { id: "ruecklauf_2",         label: "Rücklauf UART",                    type: "sensor",        rectId: "ruecklauf_uart_value",  offset: 6, unit: "°C" },
     { id: "verdampfer",          label: "Verdampfer",                       type: "sensor",        rectId: "verdampfer_value",      offset: 6, category: "Reihe 2", unit: "°C" },
-    { id: "at2",                 label: "AT2",                              type: "sensor",        rectId: "at2_value",             offset: 6, category: "Reihe 2", unit: "°C" },
+    { id: "ta2",                 label: "TA2",                              type: "sensor",        rectId: "ta2_value",             offset: 6, unit: "°C" },
     { id: "heissgas",            label: "Heißgas",                          type: "sensor",        rectId: "heissgas_value",        offset: 6},
     { id: "vorlauf_1",           label: "Vorlauf CAN",                      type: "sensor",        rectId: "vorlauf_can_value",     offset: 6, unit: "°C" },
     { id: "vorlauf_2",           label: "Vorlauf UART",                     type: "sensor",        rectId: "vorlauf_uart_value",    offset: 6, unit: "°C" },
