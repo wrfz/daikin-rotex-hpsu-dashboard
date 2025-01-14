@@ -3,8 +3,8 @@ import { LitElement, html, css } from "https://unpkg.com/lit-element@2.0.1/lit-e
 
 
 const entities_configuration = [
-    { id: "aussen_temperatur",   label: "Außentemperatur",                  type: "sensor",        rectId: "aussentemp_val",        offset: 6, category: "Reihe 1", unit: "°C" },
-    { id: "t_aussen",            label: "T-Außen",                          type: "sensor",        rectId: "taussen_val",           offset: 6, unit: "°C" },
+    { id: "ta",                  label: "TA - Außentemperatur",             type: "sensor",        rectId: "ta_val",                offset: 6, category: "Reihe 1", unit: "°C" },
+    { id: "ta2",                 label: "TA2 - Im Außengerät",              type: "sensor",        rectId: "ta2_val",               offset: 6, unit: "°C" },
     { id: "expansions_ventil",   label: "Elektonisches Expansionsventil",   type: "sensor",        rectId: "eev_val",               offset: 6, unit: "%" },
     { id: "kondensat",           label: "Kondensat",                        type: "sensor",        rectId: "kondensat_value",       offset: 6, unit: "°C" },
     { id: "umwaelzpumpe",        label: "Umwälzpumpe",                      type: "sensor",        rectId: "umwaelzpumpe_value",    offset: 6, unit: "%" },
