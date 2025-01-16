@@ -28,11 +28,12 @@ const entities_configuration = [
     { id: "speicher_soll",       label: "Speicher Soll",                    type: "select",        rectId: "speicher_soll_value",   offset: 6, unit: "°C" },
     { id: "mischer",             label: "Mischer",                          type: "sensor",        rectId: "dhw_mixer_value",       offset: 6, unit: "%", fontSize: "40px" },
     { id: "bypass",              label: "Bypass",                           type: "sensor",        rectId: "bypass_value",          offset: 6, unit: "%", fontSize: "40px" },
-    { id: "fehlercode",          label: "Fehlercode",                       type: "text_sensor",   rectId: "fehlercode_value",      offset: 6, fontSize: "40px", align: "left", "suffix": "Fehlercode: " },
+    { id: "fehlercode",          label: "Fehlercode",                       type: "text_sensor",   rectId: "fehlercode_value",      offset: 6, fontSize: "40px", align: "left", "suffix": "Fehlercode: ", category: "Info" },
     { id: "betriebsmodus",       label: "Betriebsmodus",                    type: "select",        rectId: "betriebsmodus_value",   offset: 6, fontSize: "40px", align: "left", "suffix": "Modus: " },
     { id: "betriebsart",         label: "Betriebsart",                      type: "text_sensor",   rectId: "betriebsart_value",     offset: 6, fontSize: "40px", align: "left", "suffix": "Betriebsart: " },
     { id: "thermische_leistung", label: "Thermische Leistung",              type: "sensor",        rectId: "therm_leistung_value",  offset: 6, fontSize: "40px", align: "left", "suffix": "Therm. Leistung: " },
-    { id: "cop",                 label: "COP",                              type: "sensor",        rectId: "cop_value",             offset: 6, fontSize: "40px", align: "left", "suffix": "COP: ", required: false }
+    { id: "cop",                 label: "COP",                              type: "sensor",        rectId: "cop_value",             offset: 6, fontSize: "40px", align: "left", "suffix": "COP: ", required: false },
+    { id: "t_room_is_value",     label: "Raum-Ist",                         type: "sensor",        rectId: "t_room_is_value",       offset: 6, fontSize: "40px", align: "left", "suffix": "Raum-Ist: ", required: false }
 ];
 
 //////////////////////////////////////////////////////////////////
