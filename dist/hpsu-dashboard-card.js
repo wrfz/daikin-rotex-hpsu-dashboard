@@ -33,7 +33,7 @@ const entities_configuration = [
     { id: "betriebsart",         label: "Betriebsart",                      type: "text_sensor",   rectId: "betriebsart_value",     offset: 6, fontSize: "40px", align: "left", "suffix": "Betriebsart: " },
     { id: "thermische_leistung", label: "Thermische Leistung",              type: "sensor",        rectId: "therm_leistung_value",  offset: 6, fontSize: "40px", align: "left", "suffix": "Therm. Leistung: " },
     { id: "cop",                 label: "COP",                              type: "sensor",        rectId: "cop_value",             offset: 6, fontSize: "40px", align: "left", "suffix": "COP: ", required: false },
-    { id: "t_room_is_value",     label: "Raum-Ist",                         type: "sensor",        rectId: "t_room_is_value",       offset: 6, fontSize: "40px", align: "left", "suffix": "Raum-Ist: ", required: false }
+    { id: "t_room_is",           label: "Raum-Ist",                         type: "sensor",        rectId: "t_room_is_value",       offset: 6, fontSize: "40px", align: "left", "suffix": "Raum-Ist: ", required: false }
 ];
 
 //////////////////////////////////////////////////////////////////
@@ -45,22 +45,44 @@ class HPSUDashboardCard extends HTMLElement {
 
     async setConfig(config) {
         //console.log(">> setConfig");
-        if (!config.entities) {
-            throw new Error("Required entities field is missing");
-        }
 
-        this.entities_configuration = entities_configuration;
-        this.entities_configuration = this.entities_configuration.map(
-            (entity) => {
-                entity.entityId = config.entities[entity.id];
-                return entity;
+        try {
+            if (!config.entities) {
+                throw new Error("Required entities field is missing");
             }
-        );
 
-        this.config = config;
-        this.attachShadow({ mode: "open" });
-        this.render();
-        //console.log("<< setConfig");
+            this.entities_configuration = entities_configuration.map(
+                (entity) => {
+                    entity.entityId = config.entities[entity.id];
+                    return entity;
+                }
+            );
+
+            Object.entries(config).forEach(([key, value]) => {
+                if (key !== "type" && key !== "entities") {
+                    throw new Error(`Unknown configuration entry: '${key}'`);
+                }
+            });
+
+            Object.entries(config.entities).forEach(([key, value]) => {
+                const isExists = entities_configuration.some(entity_conf => entity_conf.id === key);
+                if (!isExists) {
+                    throw new Error(`Unknown entity: '${key}'`);
+                }
+            });
+
+            this.config = config;
+            this.attachShadow({ mode: "open" });
+            this.render();
+            //console.log("<< setConfig");
+        } catch (error) {
+            this.innerHTML = `
+            <ha-alert alert-type="error">
+                <strong>Fehler:</strong> ${error.message}
+            </ha-alert>`;
+            console.error("Config-Fehler:", error);
+            throw error;
+        }
     }
 
     static getConfigElement() {
@@ -355,7 +377,7 @@ class HPSUDashboardCard extends HTMLElement {
         //console.log("isNumeric: " + this.isNumeric(hacsTag));
 
         const url =  this.isNumeric(hacsTag) ? `/hacsfiles/daikin-rotex-hpsu-dashboard/${filename}?${hacsTag}`:
-                        `/local/daikin-rotex-hpsu-dashboard/${filename}?${new Date().getTime()}`;
+                        `/local/daikin-rotex-hpsu-dashboard/dist/${filename}?${new Date().getTime()}`;
         //console.log(url);
         return url;
     }

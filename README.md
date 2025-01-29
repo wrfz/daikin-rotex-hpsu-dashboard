@@ -29,8 +29,6 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
         cards:
           - type: custom:hpsu-dashboard-card
             entities:
-              aussen_temperatur: sensor.hpsu_can_aussentemperatur
-              t_aussen: sensor.hpsu_can_t_aussen
               expansions_ventil: sensor.hpsu_uart_expansionsventil
               kondensat: sensor.hpsu_uart_temperatur_fl_ssigkeitsleitung
               umwaelzpumpe: sensor.hpsu_can_umwaelzpumpe
@@ -38,7 +36,7 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
               durchfluss: sensor.hpsu_can_durchfluss
               ruecklauf_1: sensor.hpsu_can_ruecklauftemperatur_heizung
               ruecklauf_2: sensor.hpsu_uart_r_cklauftemperatur
-              verdampfer: sensor.hpsu_uart_lamellenw_rmetauscher_temperatur
+              verdampfer: sensor.hpsu_uart_temperatur_lamellenw_rmetauscher
               vorlauf_1: sensor.hpsu_can_heizkreis_vorlauf_tv
               vorlauf_2: sensor.hpsu_uart_vorlauftemeratur_tv
               vorlauf_soll: sensor.hpsu_can_vorlauf_soll
@@ -53,8 +51,11 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
               mischer: sensor.hpsu_can_dhw_mischer_position
               bypass: sensor.hpsu_can_bpv
               betriebsmodus: select.hpsu_can_betriebsmodus
-              thermische_leistung: sensor.hpsu_can_thermische_leistung
               betriebsart: sensor.hpsu_can_betriebsart
               heissgas: sensor.hpsu_uart_temperatur_nach_k_ltemittelverdichter
               fehlercode: sensor.hpsu_can_fehlercode
-
+              thermische_leistung: sensor.hpsu_can_thermische_leistung
+              cop: sensor.hpsu_cop_clipped
+              ta2: sensor.hpsu_can_ta2
+              ta: sensor.hpsu_can_aussentemperatur
+              t_room_is_value: sensor.hpsu_can_aussentemperatur
