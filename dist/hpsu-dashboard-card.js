@@ -4,7 +4,7 @@ import { LitElement, html, css } from "https://unpkg.com/lit-element@2.0.1/lit-e
 
 const entities_configuration = [
     { id: "ta",                  label: "TA - Außentemperatur",             type: "sensor",        rectId: "ta_val",                offset: 6, category: "Reihe 1", unit: "°C" },
-    { id: "ta2",                 label: "TA2 - Im Außengerät",              type: "sensor",        rectId: "ta2_val",               offset: 6, unit: "°C" },
+    { id: "ta2",                 label: "TA2 - Im Außengerät",              type: "sensor",        rectId: "ta2_val",               offset: 6, unit: "°C", optional: true, parent: "TA2" },
     { id: "expansions_ventil",   label: "Elektonisches Expansionsventil",   type: "sensor",        rectId: "eev_val",               offset: 6, unit: "%" },
     { id: "kondensat",           label: "Kondensat",                        type: "sensor",        rectId: "kondensat_value",       offset: 6, unit: "°C" },
     { id: "umwaelzpumpe",        label: "Umwälzpumpe",                      type: "sensor",        rectId: "umwaelzpumpe_value",    offset: 6, unit: "%" },
@@ -32,8 +32,8 @@ const entities_configuration = [
     { id: "betriebsmodus",       label: "Betriebsmodus",                    type: "select",        rectId: "betriebsmodus_value",   offset: 6, fontSize: "40px", align: "left", "suffix": "Modus: " },
     { id: "betriebsart",         label: "Betriebsart",                      type: "text_sensor",   rectId: "betriebsart_value",     offset: 6, fontSize: "40px", align: "left", "suffix": "Betriebsart: " },
     { id: "thermische_leistung", label: "Thermische Leistung",              type: "sensor",        rectId: "therm_leistung_value",  offset: 6, fontSize: "40px", align: "left", "suffix": "Therm. Leistung: " },
-    { id: "cop",                 label: "COP",                              type: "sensor",        rectId: "cop_value",             offset: 6, fontSize: "40px", align: "left", "suffix": "COP: ", required: false },
-    { id: "t_room_is",           label: "Raum-Ist",                         type: "sensor",        rectId: "t_room_is_value",       offset: 6, fontSize: "40px", align: "left", "suffix": "Raum-Ist: ", required: false }
+    { id: "cop",                 label: "COP",                              type: "sensor",        rectId: "cop_value",             offset: 6, fontSize: "40px", align: "left", "suffix": "COP: ", optional: true },
+    { id: "t_room_is",           label: "Raum-Ist",                         type: "sensor",        rectId: "t_room_is_value",       offset: 6, fontSize: "40px", align: "left", "suffix": "Raum-Ist: ", optional: true }
 ];
 
 //////////////////////////////////////////////////////////////////
@@ -191,10 +191,8 @@ class HPSUDashboardCard extends HTMLElement {
     isPanelView() {
         let node = this;
         while (node) {
-            console.log(node);
             if (node.tagName?.toLowerCase() === "hui-panel-view") return true;
-            //if (node.classList?.contains("section")) return true;
-            node = node.getRootNode()?.host; // Gehe durch Shadow Roots nach oben
+            node = node.getRootNode()?.host;
         }
         return false;
     }
@@ -246,6 +244,7 @@ class HPSUDashboardCard extends HTMLElement {
 
                     state.labelElement = labelElement;
                     state.valueBox = valueBox;
+                    state.parentBox = state.parent ? svgDoc.getElementById(state.parent) : null;
                     group.appendChild(labelElement);
                 } else {
                     console.warn(`Rect with ID ${state.rectId} parent not found.`);
@@ -271,11 +270,15 @@ class HPSUDashboardCard extends HTMLElement {
 
                             const fontSize = state.fontSize || 56;
 
+                            if (state.parentBox) {
+                                state.parentBox.setAttribute("display", newState ? "block" : "none");
+                            }
+
                             if (!newState) {
                                 state.labelElement.textContent = "N/D";
                                 state.labelElement.setAttribute("fill", "orange");
                                 state.labelElement.setAttribute("font-size", "30px");
-                                state.labelElement.setAttribute("display", state.required === false ? "none" : "block");
+                                state.labelElement.setAttribute("display", state.optional === true ? "none" : "block");
                             } else if (newState.state == "unknown" || newState.state == "unavailable") {
                                 state.labelElement.textContent = "N/A";
                                 state.labelElement.setAttribute("fill", "orange");
