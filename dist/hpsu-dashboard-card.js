@@ -133,27 +133,37 @@ class HPSUDashboardCard extends HTMLElement {
     createCSS() {
         //console.log(">> createCSS");
         const style = document.createElement('style');
-        style.textContent = `
-        svg {
-            display: block;
-            width: calc(100vw - var(--mdc-drawer-width));
-            height: auto;
-        }
-        @media (min-width: 768px) {
+        if (this.isPanelView()) {
+            style.textContent = `
             svg {
-                max-height: calc(100vh - var(--header-height));
+                display: block;
+                width: calc(100vw - var(--mdc-drawer-width));
+                height: auto;
             }
-        }
+            @media (min-width: 768px) {
+                svg {
+                    max-height: calc(100vh - var(--header-height));
+                }
+            }
 
-        /* Mobile Stile (Breite < 768px) */
-        @media (max-width: 767px) {
-            svg {
-                width: auto; /* Breite proportional */
-                height: calc(100vh -  var(--header-height));
-                background: linear-gradient(90deg, #220000, #000022) !important;
+            /* Mobile Stile (Breite < 768px) */
+            @media (max-width: 767px) {
+                svg {
+                    width: auto; /* Breite proportional */
+                    height: calc(100vh -  var(--header-height));
+                    background: linear-gradient(90deg, #220000, #000022) !important;
+                }
             }
+            `;
+        } else {
+            style.textContent = `
+            svg {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+            `;
         }
-        `;
         this.shadowRoot.appendChild(style);
 
         const ha = document.querySelector("home-assistant");
@@ -177,7 +187,19 @@ class HPSUDashboardCard extends HTMLElement {
             const huiPanelViewShadowRoot = huiCard.getRootNode();
             huiPanelViewShadowRoot.appendChild(huiPanelViewStyle);
         }
+
         //console.log("<< createCSS");
+    }
+
+    isPanelView() {
+        let node = this;
+        while (node) {
+            console.log(node);
+            if (node.tagName?.toLowerCase() === "hui-panel-view") return true;
+            //if (node.classList?.contains("section")) return true;
+            node = node.getRootNode()?.host; // Gehe durch Shadow Roots nach oben
+        }
+        return false;
     }
 
     connectedCallback() {
