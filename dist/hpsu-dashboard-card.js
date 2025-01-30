@@ -46,14 +46,12 @@ class HPSUDashboardCard extends HTMLElement {
     async setConfig(config) {
         //console.log(">> setConfig");
 
-        try {
-            if (!config.entities) {
-                throw new Error("Required entities field is missing");
-            }
+        this.config = config;
 
+        try {
             this.entities_configuration = entities_configuration.map(
                 (entity) => {
-                    entity.entityId = config.entities[entity.id];
+                    entity.entityId = config.entities?.[entity.id] ?? null;
                     return entity;
                 }
             );
@@ -64,14 +62,13 @@ class HPSUDashboardCard extends HTMLElement {
                 }
             });
 
-            Object.entries(config.entities).forEach(([key, value]) => {
+            Object.entries(config.entities ?? {}).forEach(([key, value]) => {
                 const isExists = entities_configuration.some(entity_conf => entity_conf.id === key);
                 if (!isExists) {
                     throw new Error(`Unknown entity: '${key}'`);
                 }
             });
 
-            this.config = config;
             this.attachShadow({ mode: "open" });
             this.render();
             //console.log("<< setConfig");
@@ -229,7 +226,7 @@ class HPSUDashboardCard extends HTMLElement {
                 if (group) {
                     const transform = valueBox.getAttribute('transform');
 
-                    state.entityId = this.config.entities[state.id];
+                    state.entityId = this.config.entities?.[state.id] ?? null;
 
                     const labelElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
                     if (state.entityId) {
@@ -338,9 +335,9 @@ class HPSUDashboardCard extends HTMLElement {
 
             if (!flowArrows || !flowReturnArrows || !heatingArrows) return;
 
-            const flow_rate_id = this.config.entities['durchfluss'];
-            const mixer_id = this.config.entities['mischer'];
-            const bypass_id = this.config.entities['bypass'];
+            const flow_rate_id = this.config.entities?.['durchfluss'] ?? null;
+            const mixer_id = this.config.entities?.['mischer'] ?? null;
+            const bypass_id = this.config.entities?.['bypass'] ?? null;
 
             const flowRate = flow_rate_id && this._hass.states[flow_rate_id] ? parseFloat(this._hass.states[flow_rate_id].state) : 0;
             const mischerState = mixer_id && this._hass.states[mixer_id] ? parseFloat(this._hass.states[mixer_id].state) : 0;
@@ -433,7 +430,7 @@ class HpsuDashboardCardEditor extends LitElement {
         this.entities_configuration = entities_configuration;
         this.entities_configuration = this.entities_configuration.map(
             (entity) => {
-                entity.entityId = config.entities[entity.id];
+                entity.entityId = config.entities?.[entity.id] ?? null;
                 return entity;
             }
         );
