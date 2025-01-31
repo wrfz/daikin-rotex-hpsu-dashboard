@@ -56,12 +56,6 @@ class HPSUDashboardCard extends HTMLElement {
                 }
             );
 
-            Object.entries(config).forEach(([key, value]) => {
-                if (key !== "type" && key !== "entities") {
-                    throw new Error(`Unknown configuration entry: '${key}'`);
-                }
-            });
-
             Object.entries(config.entities ?? {}).forEach(([key, value]) => {
                 const isExists = entities_configuration.some(entity_conf => entity_conf.id === key);
                 if (!isExists) {
@@ -148,7 +142,6 @@ class HPSUDashboardCard extends HTMLElement {
                 svg {
                     width: auto; /* Breite proportional */
                     height: calc(100vh -  var(--header-height));
-                    background: linear-gradient(90deg, #220000, #000022) !important;
                 }
             }
             `;
@@ -174,15 +167,19 @@ class HPSUDashboardCard extends HTMLElement {
             `;
             ha.shadowRoot.appendChild(homeAssistantStyle);
 
-            const huiPanelViewStyle = document.createElement("style");
-            huiPanelViewStyle.textContent = `
-                :host {
-                    background: linear-gradient(90deg, #220000, #000022) !important;
-                }
-            `;
             const huiCard = this.shadowRoot.host.parentNode;
             const huiPanelViewShadowRoot = huiCard.getRootNode();
-            huiPanelViewShadowRoot.appendChild(huiPanelViewStyle);
+
+            if (this.config.style) {
+                const huiPanelViewStyle = document.createElement("style");
+                huiPanelViewStyle.textContent = `
+                :host {
+                    display:block;
+                    ${this.config.style};
+                }
+                `;
+                huiPanelViewShadowRoot.appendChild(huiPanelViewStyle);
+            }
         }
 
         //console.log("<< createCSS");
