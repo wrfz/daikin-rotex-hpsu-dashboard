@@ -181,7 +181,7 @@ const entities_configuration = [
         }
     },
     {
-        id: "heissgas",
+        id: "hot_gas",
         type: "sensor",
         label_rect: "hot_gas_label",
         rectId: "hot_gas_value",
@@ -194,6 +194,25 @@ const entities_configuration = [
             en: {
                 label: "Hot gas",
                 desc: "Hot gas"
+            }
+        }
+    },
+    {
+        id: "hot_gas_condenser",
+        type: "sensor",
+        label_rect: "hot_gas_condenser_label",
+        rectId: "hot_gas_condenser_value",
+        offset: 6,
+        optional: true,
+        parent: "hot_gas_condenser",
+        texts: {
+            de: {
+                label: "Heißgas",
+                desc: "Heißgas am Kondensator"
+            },
+            en: {
+                label: "Hot gas",
+                desc: "Hot gas at the condenser"
             }
         }
     },
@@ -554,13 +573,6 @@ class HPSUDashboardCard extends HTMLElement {
                 entity_configuration.entityId = config.entities?.[entity_configuration.id] ?? null;
             });
             this.entities_configuration = entities_configuration;
-
-            /*Object.entries(config.entities ?? {}).forEach(([key, value]) => {
-                const isExists = entities_configuration.some(entity_conf => entity_conf.id === key);
-                if (!isExists) {
-                    throw new Error(`Unknown entity: '${key}'`);
-                }
-            });*/
 
             this.attachShadow({ mode: "open" });
             this.render();
