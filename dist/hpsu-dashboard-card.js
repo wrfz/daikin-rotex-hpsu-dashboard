@@ -5,7 +5,6 @@ import { LitElement, html, css } from "https://unpkg.com/lit-element@2.0.1/lit-e
 const entities_configuration = [
     {
         id: "ta",
-        label: "TA",
         label_rect: "ta_label",
         type: "sensor",
         rectId: "ta_val",
@@ -25,7 +24,6 @@ const entities_configuration = [
     },
     {
         id: "ta2",
-        label: "TA2",
         label_rect: "ta2_label",
         type: "sensor",
         rectId: "ta2_val",
@@ -45,8 +43,7 @@ const entities_configuration = [
         }
     },
     {
-        id: "expansions_ventil",
-        label: "EEV",
+        id: "expansion_valve",
         label_rect: "eev_label",
         type: "sensor",
         rectId: "eev_val",
@@ -65,7 +62,6 @@ const entities_configuration = [
     },
     {
         id: "kondensat",
-        label: "Kondensat",
         label_rect: "kondensat_label",
         type: "sensor",
         rectId: "kondensat_value",
@@ -84,7 +80,6 @@ const entities_configuration = [
 	},
     {
         id: "umwaelzpumpe",
-        label: "Umwälzpumpe",
         label_rect: "uwp_label",
         type: "sensor",
         rectId: "uwp_value",
@@ -537,6 +532,10 @@ const entities_configuration = [
     }
 ];
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 //////////////////////////////////////////////////////////////////
 /////////////////////// HPSUDashboardCard ////////////////////////
 //////////////////////////////////////////////////////////////////
@@ -547,7 +546,7 @@ class HPSUDashboardCard extends HTMLElement {
     async setConfig(config) {
         //console.log(">> setConfig");
 
-        this.config = config;
+        this.config = HPSUDashboardCard.validateConfig(config);
         this.language = this.config.language ? this.config.language : "en";
 
         try {
@@ -556,12 +555,12 @@ class HPSUDashboardCard extends HTMLElement {
             });
             this.entities_configuration = entities_configuration;
 
-            Object.entries(config.entities ?? {}).forEach(([key, value]) => {
+            /*Object.entries(config.entities ?? {}).forEach(([key, value]) => {
                 const isExists = entities_configuration.some(entity_conf => entity_conf.id === key);
                 if (!isExists) {
                     throw new Error(`Unknown entity: '${key}'`);
                 }
-            });
+            });*/
 
             this.attachShadow({ mode: "open" });
             this.render();
@@ -576,6 +575,19 @@ class HPSUDashboardCard extends HTMLElement {
         }
     }
 
+    static validateConfig(config) {
+        const validEntities = Object.fromEntries(
+            Object.entries(config.entities ?? {}).filter(([key]) =>
+                entities_configuration.some(entity_conf => entity_conf.id === key)
+            )
+        );
+
+        return {
+            ...config,
+            entities: validEntities
+        };
+    }
+
     static getConfigElement() {
         const editor = document.createElement('hpsu-dashboard-card-editor');
         return editor;
@@ -584,8 +596,11 @@ class HPSUDashboardCard extends HTMLElement {
     async render() {
         //console.log(">> render");
 
-        const url = this.makeURL("hpsu.svg");
+        while (this.parentNode == null) {
+            await sleep(50);
+        }
 
+        const url = this.makeURL("hpsu.svg");
         //console.log(url);
 
         let response = await fetch(url);
@@ -609,7 +624,6 @@ class HPSUDashboardCard extends HTMLElement {
 
         this.shadowRoot.innerHTML = "";
         this.createStateLabels(svgDoc);
-
         this.shadowRoot.appendChild(svgElement);
         this.createCSS();
 
@@ -952,7 +966,7 @@ class HpsuDashboardCardEditor extends LitElement {
         });
         this.entities_configuration = entities_configuration;
 
-        this.config = config;
+        this.config = HPSUDashboardCard.validateConfig(config);
         this.language = this.config.language ? this.config.language : "en";
 
         // Füge den Editor dem DOM hinzu
