@@ -802,7 +802,7 @@ class HPSUDashboardCard extends HTMLElement {
                             const fontSize = entity_conf.fontSize || 56;
 
                             if (entity_conf.parentBox) {
-                                entity_conf.parentBox.setAttribute("display", newState ? "block" : "none");
+                                entity_conf.parentBox.style.display = newState ? "block" : "none";
                             }
 
                             if (!newState) {
@@ -873,13 +873,14 @@ class HPSUDashboardCard extends HTMLElement {
     }
 
     updateOpacity() {
-        //console.log(">> updateOpacity");
+        //console.log(">> updateOpacity: " + this.config + ", " + this.inititialized);
         if (this.config && this.inititialized) {
-            const flowArrows = this.shadowRoot.querySelector(`#DHW-Flow-Arrows`);
-            const flowReturnArrows = this.shadowRoot.querySelector(`#DHW-Flow-Return-Arrows`);
-            const heatingArrows = this.shadowRoot.querySelector(`#Heating-Flow-Arrows`);
+            const dhwOpenArrows = this.shadowRoot.querySelector(`#dhw-open-arrows`);
+            const dhwClosedArrows = this.shadowRoot.querySelector(`#dhw-closed-arrows`);
+            const bpvOpenArrows = this.shadowRoot.querySelector(`#bpv-open-arrows`);
+            const bpvClosedArrows = this.shadowRoot.querySelector(`#bpv-closed-arrows`);
 
-            if (!flowArrows || !flowReturnArrows || !heatingArrows) return;
+            if (!dhwOpenArrows || !dhwClosedArrows || !bpvOpenArrows || !bpvClosedArrows) return;
 
             const flow_rate_id = this.config.entities?.['durchfluss'] ?? null;
             const mixer_id = this.config.entities?.['mischer'] ?? null;
@@ -889,9 +890,10 @@ class HPSUDashboardCard extends HTMLElement {
             const mischerState = mixer_id && this._hass.states[mixer_id] ? parseFloat(this._hass.states[mixer_id].state) : 0;
             const bpvState = bypass_id && this._hass.states[bypass_id] ? parseFloat(this._hass.states[bypass_id].state) : 0;
 
-            flowArrows.style.opacity = flowRate > 0 ? (mischerState / 100.0) : 0;
-            flowReturnArrows.style.opacity = flowRate > 0 ? (bpvState / 100.0) : 0;
-            heatingArrows.style.opacity = flowRate > 0 ? ((100 - bpvState) / 100.0) : 0;
+            dhwOpenArrows.style.opacity = flowRate > 0 ? (mischerState / 100.0) : 0;
+            dhwClosedArrows.style.opacity = flowRate > 0 ? ((100.0 - mischerState) / 100.0) : 0;
+            bpvOpenArrows.style.opacity = flowRate > 0 ? (bpvState / 100.0) : 0;
+            bpvClosedArrows.style.opacity = flowRate > 0 ? ((100.0 - bpvState) / 100.0) : 0;
 
             for (let index = 1; index <= 8; ++index) {
                 const arrow = this.shadowRoot.querySelector(`#Flow-Arrow-${index}`);
