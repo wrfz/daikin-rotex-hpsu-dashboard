@@ -551,6 +551,7 @@ const entities_configuration = [
     }
 ];
 
+const languages = ["de", "en"];
 const text_map = {
     "de" : {
         "on": "An",
@@ -577,7 +578,6 @@ class HPSUDashboardCard extends HTMLElement {
         //console.log(">> setConfig");
 
         this.config = HPSUDashboardCard.validateConfig(config);
-        this.language = this.config.language ? this.config.language : "en";
 
         try {
             entities_configuration.forEach(entity_configuration => {
@@ -732,9 +732,12 @@ class HPSUDashboardCard extends HTMLElement {
     }
 
     set hass(hass) {
-        //console.log(">> hass");
+        //console.log(">> hass: " + hass.language);
+
+        const lang = hass.language.split("-")[0];
 
         this._hass = hass;
+        this.language = languages.includes(lang) ? lang : "de";
 
         this.updateLabels();
         this.updateOpacity();
@@ -995,27 +998,23 @@ class HpsuDashboardCardEditor extends LitElement {
         this.entities_configuration = entities_configuration;
 
         this.config = HPSUDashboardCard.validateConfig(config);
-        this.language = this.config.language ? this.config.language : "en";
 
         // Füge den Editor dem DOM hinzu
         //this.shadowRoot.appendChild(editorElement);
     }
 
+    set hass(hass) {
+        //console.log(">> edit.hass");
+
+        const lang = hass.language.split("-")[0];
+        this._hass = hass;
+        this.language = languages.includes(lang) ? lang : "de";
+    }
+
     render() {
         if (!this.config) return html``;
 
-        const languages = {de: "Deutsch", en: "English"};
-
         return html`
-            <div>
-                <ha-select label="Sprache" @change=${this._onLanguageChange} @closed=${this._stopPropagation} .value=${this.language}>
-                ${Object.entries(languages).map(([langCode, langLabel]) => html`
-                    <mwc-list-item value=${langCode}>
-                        ${langLabel}
-                    </mwc-list-item>
-                `)}
-            </ha-select>
-            </div>
             ${this.entities_configuration.map(
                 (entity) => {
                     return html`
@@ -1057,17 +1056,6 @@ class HpsuDashboardCardEditor extends LitElement {
 
     _stopPropagation(event) {
         event.stopPropagation();
-    }
-
-    _onLanguageChange(event) {
-        this.language = event.target.value;
-
-        this.config = {
-            ...this.config,
-            language: this.language
-        };
-
-        this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
     }
 
     static get styles() {
