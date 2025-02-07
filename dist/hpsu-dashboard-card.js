@@ -551,6 +551,17 @@ const entities_configuration = [
     }
 ];
 
+const text_map = {
+    "de" : {
+        "on": "An",
+        "off": "Aus"
+    },
+    "en" : {
+        "on": "On",
+        "off": "Off"
+    }
+};
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -820,7 +831,10 @@ class HPSUDashboardCard extends HTMLElement {
                                 entity_conf.labelElement.setAttribute("font-size", fontSize);
 
                                 if (this.isBooleanSensor(entity_conf.entityId)) {
-                                    entity_conf.labelElement.textContent = entityState === "on" ? "An" : "Aus";
+                                    const lang_map = text_map[this.language];
+                                    entity_conf.labelElement.textContent = entityState === "on" ? lang_map.on : (
+                                        entityState === "off" ? lang_map.off : "<invalid>"
+                                    );
                                     entity_conf.labelElement.setAttribute("fill", entityState === "on" ? "yellow" : "white");
                                 } else {
                                     entityState = this.formatNumber(entityState);
