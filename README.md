@@ -29,7 +29,10 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
         cards:
           - type: custom:hpsu-dashboard-card
             entities:
-              expansions_ventil: sensor.hpsu_uart_expansionsventil
+              ta: sensor.hpsu_can_aussentemperatur
+              ta2: sensor.hpsu_can_ta2
+              expansion_valve: sensor.hpsu_uart_expansionsventil
+              pressure_equalization: binary_sensor.hpsu_uart_druckausgleich
               kondensat: sensor.hpsu_uart_temperatur_fl_ssigkeitsleitung
               umwaelzpumpe: sensor.hpsu_can_umwaelzpumpe
               umwaelzpumpe_an_aus: binary_sensor.hpsu_can_status_kesselpumpe
@@ -37,6 +40,8 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
               ruecklauf_1: sensor.hpsu_can_ruecklauftemperatur_heizung
               ruecklauf_2: sensor.hpsu_uart_r_cklauftemperatur
               verdampfer: sensor.hpsu_uart_temperatur_lamellenw_rmetauscher
+              hot_gas: sensor.hpsu_uart_temperatur_nach_k_ltemittelverdichter
+              hot_gas_condenser: sensor.thermometer_hei_gas_am_kondensator
               vorlauf_1: sensor.hpsu_can_heizkreis_vorlauf_tv
               vorlauf_2: sensor.hpsu_uart_vorlauftemeratur_tv
               vorlauf_soll: sensor.hpsu_can_vorlauf_soll
@@ -52,10 +57,6 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
               bypass: sensor.hpsu_can_bpv
               betriebsmodus: select.hpsu_can_betriebsmodus
               betriebsart: sensor.hpsu_can_betriebsart
-              heissgas: sensor.hpsu_uart_temperatur_nach_k_ltemittelverdichter
               fehlercode: sensor.hpsu_can_fehlercode
               thermische_leistung: sensor.hpsu_can_thermische_leistung
               cop: sensor.hpsu_cop_clipped
-              ta2: sensor.hpsu_can_ta2
-              ta: sensor.hpsu_can_aussentemperatur
-              t_room_is_value: sensor.hpsu_can_aussentemperatur
