@@ -561,6 +561,25 @@ const entities_configuration = [
             }
         }
     }
+    {
+        id: "electric_power",
+        type: "sensor",
+        rectId: "electric_power_is_value",
+        offset: 6,
+        fontSize: "40px",
+        align: "left",
+        optional: true,
+        texts: {
+            de: {
+                suffix: "Electric Power: ",
+                desc: "Electric Power"
+            },
+            en: {
+                suffix: "Electric Power: ",
+                desc: "Electric Power"
+            }
+        }
+    }
 ];
 
 const languages = ["de", "en"];
