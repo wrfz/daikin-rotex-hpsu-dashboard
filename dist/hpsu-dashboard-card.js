@@ -61,6 +61,18 @@ const entities_configuration = [
         }
     },
     {
+        id: "pressure_equalization",
+        type: "binary_sensor",
+        texts: {
+            de: {
+                desc: "Druckausgleich"
+            },
+            en: {
+                desc: "Pressure equalization"
+            }
+        }
+    },
+    {
         id: "kondensat",
         label_rect: "kondensat_label",
         type: "sensor",
@@ -619,14 +631,14 @@ class HPSUDashboardCard extends HTMLElement {
     async render() {
         //console.log(">> render");
 
-        while (this.parentNode == null) {
+        while (!this.isConnected) {
             await sleep(50);
         }
 
         const url = this.makeURL("hpsu.svg");
         //console.log(url);
 
-        let response = await fetch(url);
+        const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`Failed to call url: '${url}' Status: ${response.status}.`);
         }
@@ -635,19 +647,38 @@ class HPSUDashboardCard extends HTMLElement {
         const parser = new DOMParser();
         const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
 
-        if (svgDoc.getElementsByTagName('parsererror').length > 0) {
-            console.error("Fehler beim Parsen des SVG-Dokuments.");
+        if (svgDoc.querySelector("parsererror")) {
+            console.error("Error parsing the SVG document.");
             return;
         }
 
         const svgElement = svgDoc.documentElement;
+        if (!svgElement || svgElement.tagName.toLowerCase() !== "svg") {
+            throw new Error("The SVG was not parsed correctly.");
+        }
 
         svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
         svgElement.style.display = "block";
 
         this.shadowRoot.innerHTML = "";
         this.createStateLabels(svgDoc);
+
+        const setClickHandler = (elementId, entityId) => {
+            const element = svgDoc.getElementById(elementId);
+            if (element) {
+                element.addEventListener("click", () => {
+                    this.handleStateClick(entityId);
+                });
+                element.setAttribute("cursor", "pointer");
+            }
+        };
+
+        const pressureEqualizationId = this.findEntityById(entities_configuration, "pressure_equalization");
+        setClickHandler("eev_arrow_left", pressureEqualizationId);
+        setClickHandler("eev_arrow_right", pressureEqualizationId);
+
         this.shadowRoot.appendChild(svgElement);
+
         this.createCSS();
 
         this.inititialized = true;
@@ -695,11 +726,11 @@ class HPSUDashboardCard extends HTMLElement {
 
         const ha = document.querySelector("home-assistant");
         if (ha) {
-            const homeAssistantStyle = document.createElement("style"); // Removes additional empty scroll area on smmobile phones
+            const homeAssistantStyle = document.createElement("style"); // Removes additional empty scroll area on mobile phones
             homeAssistantStyle.textContent = `
                 :host {
                     display: block;
-                    overflow:auto;
+                    overflow: auto;
                 }
             `;
             ha.shadowRoot.appendChild(homeAssistantStyle);
@@ -779,8 +810,6 @@ class HPSUDashboardCard extends HTMLElement {
                 } else {
                     console.warn(`Rect with ID ${entity_conf.rectId} parent not found.`);
                 }
-            } else {
-                console.warn(`Rect with ID ${entity_conf.rectId} not found.`);
             }
         });
     }
@@ -806,7 +835,12 @@ class HPSUDashboardCard extends HTMLElement {
     }
 
     updateLabels() {
+        if (!this.inititialized) {
+            return;
+        }
+
         //console.log(">> updateLabels: " + this.config + ":" + this.inititialized);
+
         if (this.config && this.inititialized) {
             if (this.entities_configuration) {
                 this.entities_configuration.forEach(entity_conf => {
@@ -838,7 +872,7 @@ class HPSUDashboardCard extends HTMLElement {
                                     entity_conf.labelElement.textContent = entityState === "on" ? lang_map.on : (
                                         entityState === "off" ? lang_map.off : "<invalid>"
                                     );
-                                    entity_conf.labelElement.setAttribute("fill", entityState === "on" ? "yellow" : "white");
+                                    entity_conf.labelElement.setAttribute("fill", entityState === "on" ? "yellow" : "silver");
                                 } else {
                                     entityState = this.formatNumber(entityState);
                                     if (entityState == "Warmwasserbereitung") {
@@ -864,10 +898,16 @@ class HPSUDashboardCard extends HTMLElement {
                         } else {
                             console.warn("Label not found: " + entity_conf.entityId);
                         }
-                    } else {
-                        console.warn("ValueBox not found: " + entity_conf.entityId);
+                    }
+
+                    if (entity_conf.id == "pressure_equalization") {
+                        const color = newState && newState.state == "on" ? '#00ff0080' : '#7f7f7f';
+
+                        this.shadowRoot.getElementById("eev_arrow_left").setAttribute('fill', color);
+                        this.shadowRoot.getElementById("eev_arrow_right").setAttribute('fill', color);
                     }
                 });
+
             }
         }
         //console.log("<< updateLabels");
@@ -965,6 +1005,11 @@ class HPSUDashboardCard extends HTMLElement {
         //console.log(url);
         return url;
     }
+
+    findEntityById(entities, id) {
+        const entity = entities.find(entity => entity.id === id);
+        return entity ? entity.entityId : null; // Gibt die rectId zurück oder null, wenn nicht gefunden
+    }
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1009,6 +1054,10 @@ class HpsuDashboardCardEditor extends LitElement {
         const lang = hass.language.split("-")[0];
         this._hass = hass;
         this.language = languages.includes(lang) ? lang : "de";
+    }
+
+    get hass() {
+        return this._hass;
     }
 
     render() {
