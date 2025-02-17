@@ -19,6 +19,10 @@ const entities_configuration = [
             en: {
                 label: "TA",
                 desc: "TA - Outside Temperature"
+            },
+            it: {
+                label: "TA",
+                desc: "TA - Temperatura esterna"
             }
         }
     },
@@ -39,6 +43,10 @@ const entities_configuration = [
             en: {
                 label: "TA2",
                 desc: "TA2 - In the outdoor unit"
+            },
+            it: {
+                label: "TA2",
+                desc: "TA2 - Nell'unità esterna"
             }
         }
     },
@@ -57,6 +65,10 @@ const entities_configuration = [
             en: {
                 label: "EEV",
                 desc: "Electronic Expansion Valve"
+            },
+            it: {
+                label: "EEV",
+                desc: "Valvola di espansione elettronica"
             }
         }
     },
@@ -69,6 +81,9 @@ const entities_configuration = [
             },
             en: {
                 desc: "Pressure equalization"
+            },
+            it: {
+                desc: "Equalizzazione della pressione"
             }
         }
     },
@@ -87,6 +102,10 @@ const entities_configuration = [
             en: {
                 label: "Condensate",
                 desc: "Condensate"
+            },
+            it: {
+                label: "Condensato",
+                desc: "Condensato"
             }
         }
 	},
@@ -105,6 +124,10 @@ const entities_configuration = [
             en: {
                 label: "Circulation pump",
                 desc: "Circulation pump"
+            },
+            it: {
+                label: "Pom. circ.",
+                desc: "Pompa di circolazione"
             }
         }
     },
@@ -120,6 +143,9 @@ const entities_configuration = [
             },
             en: {
                 desc: "Circulation pump status"
+            },
+            it: {
+                desc: "Stato della pompa di circolazione"
             }
         }
     },
@@ -137,6 +163,10 @@ const entities_configuration = [
             en: {
                 label: "Flow rate",
                 desc: "Flow rate"
+            },
+            it: {
+                label: "Portata",
+                desc: "Portata"
             }
         }
     },
@@ -150,11 +180,15 @@ const entities_configuration = [
         texts: {
             de: {
                 label: "Rücklauf",
-                desc: "Rücklauf CAN"
+                desc: "Rücklauf - CAN"
             },
             en: {
                 label: "Return flow",
-                desc: "Return flow"
+                desc: "Return flow - CAN"
+            },
+            it: {
+                label: "Ritorno",
+                desc: "Ritorno - CAN"
             }
         }
     },
@@ -166,10 +200,13 @@ const entities_configuration = [
         unit: "°C",
         texts: {
             de: {
-                desc: "Rücklauf UART"
+                desc: "Rücklauf - UART"
             },
             en: {
-                desc: "Return flow UART"
+                desc: "Return flow - UART"
+            },
+            it: {
+                desc: "Ritorno - UART"
             }
         }
     },
@@ -189,6 +226,10 @@ const entities_configuration = [
             en: {
                 label: "Evaporator",
                 desc: "Evaporator"
+            },
+            it: {
+                label: "Evaporatore",
+                desc: "Evaporatore"
             }
         }
     },
@@ -206,6 +247,10 @@ const entities_configuration = [
             en: {
                 label: "Hot gas",
                 desc: "Hot gas"
+            },
+            it: {
+                label: "Gas caldo",
+                desc: "Gas caldo"
             }
         }
     },
@@ -225,6 +270,10 @@ const entities_configuration = [
             en: {
                 label: "Hot gas",
                 desc: "Hot gas at the condenser"
+            },
+            it: {
+                label: "Gas caldo",
+                desc: "Gas caldo al condensatore"
             }
         }
     },
@@ -243,6 +292,10 @@ const entities_configuration = [
             en: {
                 label: "Spread",
                 desc: "Temperature spread"
+            },
+            it: {
+                label: "ΔT",
+                desc: "Differenza di temperatura"
             }
         }
     },
@@ -256,11 +309,15 @@ const entities_configuration = [
         texts: {
             de: {
                 label: "Vorlauf",
-                desc: "Vorlauf CAN"
+                desc: "Vorlauf - CAN"
             },
             en: {
                 label: "Flow",
-                desc: "Flow CAN"
+                desc: "Flow - CAN"
+            },
+            it: {
+                label: "Mandata",
+                desc: "Mandata - CAN"
             }
         }
     },
@@ -272,10 +329,13 @@ const entities_configuration = [
         unit: "°C",
         texts: {
             de: {
-                desc: "Vorlauf UART"
+                desc: "Vorlauf - UART"
             },
             en: {
-                desc: "Flow UART"
+                desc: "Flow - UART"
+            },
+            it: {
+                desc: "Mandata - UART"
             }
         }
     },
@@ -294,6 +354,10 @@ const entities_configuration = [
             en: {
                 label: "Setpoint",
                 desc: "Flow setpoint"
+            },
+            it: {
+                label: "Mand. imp.",
+                desc: "Mandata impostata"
             }
         }
     },
@@ -311,6 +375,10 @@ const entities_configuration = [
             en: {
                 label: "Pressure",
                 desc: "Water Pressure"
+            },
+            it: {
+                label: "Pressione",
+                desc: "Pressione dell'acqua"
             }
         }
     },
@@ -324,11 +392,15 @@ const entities_configuration = [
         texts: {
             de: {
                 label: "Vorlauf BH",
-                desc: "VorlaufBH CAN"
+                desc: "VorlaufBH - CAN"
             },
             en: {
                 label: "Flow BH",
-                desc: "Flow BH CAN"
+                desc: "Flow BH - CAN"
+            },
+            it: {
+                label: "Mandata BH",
+                desc: "Mandata al riscaldatore di backup - CAN"
             }
         }
     },
@@ -340,10 +412,13 @@ const entities_configuration = [
         unit: "°C",
         texts: {
             de: {
-                desc: "VorlaufBH UART"
+                desc: "VorlaufBH - UART"
             },
             en: {
-                desc: "Flow BH UART"
+                desc: "Flow BH - UART"
+            },
+            it: {
+                desc: "Flow BH - UART"
             }
         }
     },
@@ -359,6 +434,9 @@ const entities_configuration = [
             },
             en: {
                 desc: "Compressor status"
+            },
+            it: {
+                desc: "Stato del compressore"
             }
         }
     },
@@ -378,6 +456,10 @@ const entities_configuration = [
             en: {
                 label: "Fan",
                 desc: "Fan speed"
+            },
+            it: {
+                label: "Ventilatore",
+                desc: "Velocità del ventilatore"
             }
         }
     },
@@ -396,6 +478,10 @@ const entities_configuration = [
             en: {
                 label: "Compressor",
                 desc: "Compressor speed"
+            },
+            it: {
+                label: "Compressore",
+                desc: "Velocità del compressore"
             }
         }
     },
@@ -414,6 +500,10 @@ const entities_configuration = [
             en: {
                 label: "Storage",
                 desc: "Current storage value"
+            },
+            it: {
+                label: "Accumulatore",
+                desc: "Accumulatore attuale"
             }
         }
     },
@@ -432,6 +522,10 @@ const entities_configuration = [
             en: {
                 label: "Setpoint",
                 desc: "Storage setpoint"
+            },
+            it: {
+                label: "Impostato",
+                desc: "Accumulatore impostato"
             }
         }
     },
@@ -448,6 +542,9 @@ const entities_configuration = [
             },
             en: {
                 desc: "Mixer"
+            },
+            it: {
+                desc: "Miscelatore"
             }
         }
     },
@@ -463,6 +560,9 @@ const entities_configuration = [
                 desc: "Bypass"
             },
             en: {
+                desc: "Bypass"
+            },
+            it: {
                 desc: "Bypass"
             }
         }
@@ -483,6 +583,10 @@ const entities_configuration = [
             en: {
                 suffix: "Error code: ",
                 desc: "Error code"
+            },
+            it: {
+                suffix: "Codice d'errore: ",
+                desc: "Codice d'errore"
             }
         }
     },
@@ -501,6 +605,10 @@ const entities_configuration = [
             en: {
                 suffix: "Mode: ",
                 desc: "Operating mode"
+            },
+            it: {
+                suffix: "Modalità: ",
+                desc: "Modalità di funzionamento"
             }
         }
     },
@@ -519,6 +627,10 @@ const entities_configuration = [
             en: {
                 suffix: "Mode of oper.: ",
                 desc: "Mode of operating"
+            },
+            it: {
+                suffix: "Tipo di funzionamento.: ",
+                desc: "Tipo di funzionamento"
             }
         }
     },
@@ -529,7 +641,7 @@ const entities_configuration = [
         offset: 6,
         fontSize: "40px",
         align: "left",
-        "suffix": "Therm. Leistung: ",
+        suffix: "Therm. Leistung: ",
         texts: {
             de: {
                 suffix: "Therm. Leistung: ",
@@ -538,6 +650,10 @@ const entities_configuration = [
             en: {
                 suffix: "Thermal power: ",
                 desc: "Thermal power"
+            },
+            it: {
+                suffix: "Potenza termica: ",
+                desc: "Potenza termica"
             }
         }
     },
@@ -555,6 +671,10 @@ const entities_configuration = [
                 desc: "COP"
             },
             en: {
+                suffix: "COP: ",
+                desc: "COP"
+            },
+            it: {
                 suffix: "COP: ",
                 desc: "COP"
             }
@@ -576,18 +696,26 @@ const entities_configuration = [
             en: {
                 suffix: "Room setpoint: ",
                 desc: "Room setpoint"
+            },
+            it: {
+                suffix: "Temperatura ambiente attuale: ",
+                desc: "Temperatura ambiente attuale"
             }
         }
     }
 ];
 
-const languages = ["de", "en"];
+const languages = ["de", "en", "it"];
 const text_map = {
     "de" : {
         "on": "An",
         "off": "Aus"
     },
     "en" : {
+        "on": "On",
+        "off": "Off"
+    },
+    "it" : {
         "on": "On",
         "off": "Off"
     }
@@ -903,7 +1031,8 @@ class HPSUDashboardCard extends HTMLElement {
                                     entity_conf.labelElement.textContent = `${entityState} ${unit}`;
                                     if (entity_conf.id != "fehlercode" ||
                                         entity_conf.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" ||
-                                        entity_conf.texts[this.language].suffix == "Error code: " && "No Error") {
+                                        entity_conf.texts[this.language].suffix == "Error code: " && "No Error" ||
+                                        entity_conf.texts[this.language].suffix == "Codice d'errore: " && "Nessun errore") {
 
                                         entity_conf.labelElement.setAttribute("fill", "silver");
                                     } else {
