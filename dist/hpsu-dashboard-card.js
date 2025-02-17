@@ -229,6 +229,24 @@ const entities_configuration = [
         }
     },
     {
+        id: "spread",
+        type: "sensor",
+        label_rect: "spread_label",
+        rectId: "spread_value",
+        offset: 6,
+        unit: "°C",
+        texts: {
+            de: {
+                label: "Spreizung",
+                desc: "Spreizung"
+            },
+            en: {
+                label: "Spread",
+                desc: "Temperature spread"
+            }
+        }
+    },
+    {
         id: "vorlauf_1",
         type: "sensor",
         label_rect: "flow_label",
@@ -270,7 +288,7 @@ const entities_configuration = [
         unit: "°C",
         texts: {
             de: {
-                label: "Soll",
+                label: "Vorlauf-Soll",
                 desc: "Vorlauf Soll"
             },
             en: {
