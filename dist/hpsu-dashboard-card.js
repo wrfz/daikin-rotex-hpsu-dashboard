@@ -126,7 +126,7 @@ const entities_configuration = [
                 desc: "Circulation pump"
             },
             it: {
-                label: "Pompa circolazione",
+                label: "Pompa circ.",
                 desc: "Pompa di circolazione"
             }
         }
@@ -356,7 +356,7 @@ const entities_configuration = [
                 desc: "Flow setpoint"
             },
             it: {
-                label: "Mandata impostata",
+                label: "Impostata",
                 desc: "Temperatura di mandata impostata"
             }
         }
