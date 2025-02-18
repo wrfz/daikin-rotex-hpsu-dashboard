@@ -513,7 +513,6 @@ const entities_configuration = [
         label_rect: "storage_setpoint_label",
         rectId: "storage_setpoint_value",
         offset: 6,
-        unit: "°C",
         texts: {
             de: {
                 label: "Soll",
