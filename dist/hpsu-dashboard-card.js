@@ -126,7 +126,7 @@ const entities_configuration = [
                 desc: "Circulation pump"
             },
             it: {
-                label: "Pom. circ.",
+                label: "Pompa circolazione",
                 desc: "Pompa di circolazione"
             }
         }
@@ -145,7 +145,7 @@ const entities_configuration = [
                 desc: "Circulation pump status"
             },
             it: {
-                desc: "Stato della pompa di circolazione"
+                desc: "Stato pompa di circolazione"
             }
         }
     },
@@ -356,8 +356,8 @@ const entities_configuration = [
                 desc: "Flow setpoint"
             },
             it: {
-                label: "Mand. imp.",
-                desc: "Mandata impostata"
+                label: "Mandata impostata",
+                desc: "Temperatura di mandata impostata"
             }
         }
     },
@@ -502,8 +502,8 @@ const entities_configuration = [
                 desc: "Current storage value"
             },
             it: {
-                label: "Accumulatore",
-                desc: "Accumulatore attuale"
+                label: "Serbatoio",
+                desc: "Temperatura serbatoio attuale"
             }
         }
     },
@@ -524,8 +524,8 @@ const entities_configuration = [
                 desc: "Storage setpoint"
             },
             it: {
-                label: "Impostato",
-                desc: "Accumulatore impostato"
+                label: "Impostata",
+                desc: "Temperatura serbatoio impostata"
             }
         }
     },
@@ -585,8 +585,8 @@ const entities_configuration = [
                 desc: "Error code"
             },
             it: {
-                suffix: "Codice d'errore: ",
-                desc: "Codice d'errore"
+                suffix: "Codice errore: ",
+                desc: "Codice di errore"
             }
         }
     },
@@ -698,8 +698,8 @@ const entities_configuration = [
                 desc: "Room setpoint"
             },
             it: {
-                suffix: "Temperatura ambiente attuale: ",
-                desc: "Temperatura ambiente attuale"
+                suffix: "Temperatura ambiente impostata: ",
+                desc: "Temperatura ambiente impostata"
             }
         }
     }
