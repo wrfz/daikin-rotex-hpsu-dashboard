@@ -1032,7 +1032,7 @@ class HPSUDashboardCard extends HTMLElement {
                                     if (entity_conf.id != "fehlercode" ||
                                         entity_conf.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" ||
                                         entity_conf.texts[this.language].suffix == "Error code: " && "No Error" ||
-                                        entity_conf.texts[this.language].suffix == "Codice d'errore: " && "Nessun errore") {
+                                        entity_conf.texts[this.language].suffix == "Codice errore: " && "Nessun errore") {
 
                                         entity_conf.labelElement.setAttribute("fill", "silver");
                                     } else {
