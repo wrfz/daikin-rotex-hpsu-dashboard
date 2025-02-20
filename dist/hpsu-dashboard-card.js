@@ -57,6 +57,7 @@ const entities_configuration = [
         rectId: "eev_val",
         offset: 6,
         unit: "%",
+        digits: 0,
         texts: {
             de: {
                 label: "EEV",
@@ -116,6 +117,7 @@ const entities_configuration = [
         rectId: "uwp_value",
         offset: 6,
         unit: "%",
+        digits: 0,
         texts: {
             de: {
                 label: "Umwälzpumpe",
@@ -155,6 +157,7 @@ const entities_configuration = [
         label_rect: "flow_rate_label",
         rectId: "flow_rate_value",
         offset: 6,
+        digits: 0,
         texts: {
             de: {
                 label: "Durchfluss",
@@ -448,6 +451,7 @@ const entities_configuration = [
         offset: 6,
         category: "Reihe 3",
         unit: "RPM",
+        digits: 0,
         texts: {
             de: {
                 label: "Lüfter",
@@ -470,6 +474,7 @@ const entities_configuration = [
         rectId: "compressor_value",
         offset: 6,
         unit: "RPM",
+        digits: 0,
         texts: {
             de: {
                 label: "Verdichter",
@@ -534,6 +539,7 @@ const entities_configuration = [
         rectId: "dhw_mixer_value",
         offset: 6,
         unit: "%",
+        digits: 0,
         fontSize: "40px",
         texts: {
             de: {
@@ -553,6 +559,7 @@ const entities_configuration = [
         rectId: "bypass_value",
         offset: 6,
         unit: "%",
+        digits: 0,
         fontSize: "40px",
         texts: {
             de: {
@@ -699,6 +706,46 @@ const entities_configuration = [
             it: {
                 suffix: "Temperatura ambiente impostata: ",
                 desc: "Temperatura ambiente impostata"
+            }
+        }
+    },
+    {
+        id: "system_date",
+        type: "sensor",
+        rectId: "date_value",
+        parent: "date_value",
+        offset: 6,
+        fontSize: "40px",
+        optional: true,
+        texts: {
+            de: {
+                desc: "Datum"
+            },
+            en: {
+                desc: "Date"
+            },
+            it: {
+                desc: "Data"
+            }
+        }
+    },
+    {
+        id: "system_time",
+        type: "sensor",
+        rectId: "time_value",
+        parent: "time_value",
+        offset: 6,
+        fontSize: "40px",
+        optional: true,
+        texts: {
+            de: {
+                desc: "Zeit"
+            },
+            en: {
+                desc: "Time"
+            },
+            it: {
+                desc: "Ora"
             }
         }
     }
@@ -1019,7 +1066,7 @@ class HPSUDashboardCard extends HTMLElement {
                                     );
                                     entity_conf.labelElement.setAttribute("fill", entityState === "on" ? "yellow" : "silver");
                                 } else {
-                                    entityState = this.formatNumber(entityState);
+                                    entityState = this.formatNumber(newState, entity_conf.digits ?? 1);
                                     if (entityState == "Warmwasserbereitung") {
                                         entityState = "Warmwasser";
                                     }
@@ -1027,7 +1074,7 @@ class HPSUDashboardCard extends HTMLElement {
                                         entityState = entity_conf.texts[this.language].suffix + entityState;
                                     }
 
-                                    entity_conf.labelElement.textContent = `${entityState} ${unit}`;
+                                    entity_conf.labelElement.textContent = entityState;
                                     if (entity_conf.id != "fehlercode" ||
                                         entity_conf.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" ||
                                         entity_conf.texts[this.language].suffix == "Error code: " && "No Error" ||
@@ -1105,9 +1152,26 @@ class HPSUDashboardCard extends HTMLElement {
         }
     }
 
-    formatNumber(value) {
-        let formatted = value.toString().replace('.', ',');
-        return formatted.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    formatNumber(entity, digits) {
+        if (!entity || !entity.state) {
+            return entity;
+        }
+
+        const value = entity.state;
+        const unit = entity.attributes?.unit_of_measurement || "";
+
+        const number = Number(value);
+
+        if (isNaN(number)) {
+            return value;
+        }
+
+        const formattedNum = new Intl.NumberFormat(this._hass.language, {
+            minimumFractionDigits: digits,
+            maximumFractionDigits: digits,
+        }).format(number);
+
+        return unit ? `${formattedNum} ${unit}` : formattedNum;
     }
 
     isBooleanSensor(entityId) {
