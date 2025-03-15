@@ -1,4 +1,3 @@
-//import { LitElement, html, css } from "lit";
 import { LitElement, html, css } from "./lit-core.js";
 
 const entities_configuration = [
@@ -649,7 +648,7 @@ const entities_configuration = [
         suffix: "Therm. Leistung: ",
         texts: {
             de: {
-                suffix: "Therm. Leistung: ",
+                suffix: "Thermische Leistung: ",
                 desc: "Thermische Leistung"
             },
             en: {
@@ -659,6 +658,29 @@ const entities_configuration = [
             it: {
                 suffix: "Potenza termica: ",
                 desc: "Potenza termica"
+            }
+        }
+    },
+    {
+        id: "el_power",
+        type: "sensor",
+        rectId: "el_power_value",
+        offset: 6,
+        fontSize: "40px",
+        align: "left",
+        optional: true,
+        texts: {
+            de: {
+                suffix: "Elekrische Leistung: ",
+                desc: "Elektrische Leistung"
+            },
+            en: {
+                suffix: "Electric power: ",
+                desc: "Electric power"
+            },
+            it: {
+                suffix: "Potenza elettrica: ",
+                desc: "Potenza elettrica"
             }
         }
     },

@@ -22,7 +22,7 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="0.45254835"
-     inkscape:cx="687.21939"
+     inkscape:cx="2026.3028"
      inkscape:cy="657.38832"
      inkscape:window-width="1920"
      inkscape:window-height="1129"
@@ -549,9 +549,15 @@
          width="526.3158"
          height="80.5"
          x="2179.5"
-         y="866.65594" /><rect
+         y="945.60333" /><rect
          style="fill:none;stroke:none;stroke-width:5.8464"
          id="cop_value"
+         width="526.3158"
+         height="80.5"
+         x="2179.5"
+         y="866.65594" /><rect
+         style="fill:none;stroke:none;stroke-width:5.69837"
+         id="el_power_value"
          width="526.3158"
          height="80.5"
          x="2179.5"
