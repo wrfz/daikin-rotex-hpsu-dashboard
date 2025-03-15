@@ -1,6 +1,5 @@
 //import { LitElement, html, css } from "lit";
-import { LitElement, html, css } from "https://unpkg.com/lit-element@2.0.1/lit-element.js?module";
-
+import { LitElement, html, css } from "./lit-core.js";
 
 const entities_configuration = [
     {
