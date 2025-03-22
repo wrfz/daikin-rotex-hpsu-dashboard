@@ -1142,7 +1142,7 @@ class HPSUDashboardCard extends HTMLElement {
                         this.shadowRoot.getElementById("eev_arrow_left").setAttribute('fill', color);
                         this.shadowRoot.getElementById("eev_arrow_right").setAttribute('fill', color);
                     } else if (entity_conf.id == "buh_power") {
-                        const color = newState && newState.state > 0 ? '#f1e300ff' : '#7f7f7f';
+                        const color = newState && newState.state > 0 ? '#d4aa00ff' : '#7f7f7f';
 
                         this.shadowRoot.getElementById("buh-control").setAttribute('fill', color);
                     }
