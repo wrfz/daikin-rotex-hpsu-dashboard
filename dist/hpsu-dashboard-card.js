@@ -532,6 +532,28 @@ const entities_configuration = [
         }
     },
     {
+        id: "buh_power",
+        type: "sensor",
+        label_rect: "buh_info_label",
+        rectId: "buh_info_value",
+        offset: 6,
+        unit: "kW",
+        texts: {
+            de: {
+                label: "Heizstab",
+                desc: "Heizstableistung"
+            },
+            en: {
+                label: "Heating rod",
+                desc: "Heating rod power"
+            },
+            it: {
+                label: "Resistenza",
+                desc: "Potenza della barra riscaldante"
+            }
+        }
+    },
+    {
         id: "mischer",
         type: "sensor",
         rectId: "dhw_mixer_value",
@@ -1119,6 +1141,10 @@ class HPSUDashboardCard extends HTMLElement {
 
                         this.shadowRoot.getElementById("eev_arrow_left").setAttribute('fill', color);
                         this.shadowRoot.getElementById("eev_arrow_right").setAttribute('fill', color);
+                    } else if (entity_conf.id == "buh_power") {
+                        const color = newState && newState.state > 0 ? '#f1e300ff' : '#7f7f7f';
+
+                        this.shadowRoot.getElementById("buh-control").setAttribute('fill', color);
                     }
                 });
 
