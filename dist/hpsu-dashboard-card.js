@@ -538,6 +538,9 @@ const entities_configuration = [
         rectId: "buh_info_value",
         offset: 6,
         unit: "kW",
+        digits: 0,
+        optional: true,
+        parent: "buh",
         texts: {
             de: {
                 label: "Heizstab",
