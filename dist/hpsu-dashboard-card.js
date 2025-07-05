@@ -964,15 +964,16 @@ class HPSUDashboardCard extends HTMLElement {
 
         const ha = document.querySelector("home-assistant");
         if (ha) {
-            const homeAssistantStyle = document.createElement("style"); // Removes additional empty scroll area on mobile phones
+/*            const homeAssistantStyle = document.createElement("style"); // Removes additional empty scroll area on mobile phones
             homeAssistantStyle.textContent = `
                 :host {
                     display: block;
                     overflow: auto;
+                    border: 5px blue solid;
                 }
             `;
             ha.shadowRoot.appendChild(homeAssistantStyle);
-
+*/
             const huiCard = this.shadowRoot.host.parentNode;
             const huiPanelViewShadowRoot = huiCard.getRootNode();
 
