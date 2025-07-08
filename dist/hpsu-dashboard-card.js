@@ -932,10 +932,16 @@ class HPSUDashboardCard extends HTMLElement {
         const style = document.createElement('style');
         if (this.isPanelView()) {
             style.textContent = `
+            :host {
+                display: block;
+                max-height: 100vh;
+                overflow: auto;
+            }
             svg {
                 display: block;
                 width: calc(100vw - var(--mdc-drawer-width));
-                height: auto;
+                max-height: 100vh;
+                overflow: auto;
             }
             @media (min-width: 768px) {
                 svg {
@@ -961,33 +967,6 @@ class HPSUDashboardCard extends HTMLElement {
             `;
         }
         this.shadowRoot.appendChild(style);
-
-        const ha = document.querySelector("home-assistant");
-        if (ha) {
-/*            const homeAssistantStyle = document.createElement("style"); // Removes additional empty scroll area on mobile phones
-            homeAssistantStyle.textContent = `
-                :host {
-                    display: block;
-                    overflow: auto;
-                    border: 5px blue solid;
-                }
-            `;
-            ha.shadowRoot.appendChild(homeAssistantStyle);
-*/
-            const huiCard = this.shadowRoot.host.parentNode;
-            const huiPanelViewShadowRoot = huiCard.getRootNode();
-
-            if (this.config.style) {
-                const huiPanelViewStyle = document.createElement("style");
-                huiPanelViewStyle.textContent = `
-                :host {
-                    display:block;
-                    ${this.config.style};
-                }
-                `;
-                huiPanelViewShadowRoot.appendChild(huiPanelViewStyle);
-            }
-        }
 
         //console.log("<< createCSS");
     }
