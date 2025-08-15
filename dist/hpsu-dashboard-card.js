@@ -54,7 +54,7 @@ const entities_configuration = [
         type: "sensor",
         rectId: "eev_val",
         offset: 6,
-        unit: "%",
+        unit: "pls",
         digits: 0,
         texts: {
             de: {
