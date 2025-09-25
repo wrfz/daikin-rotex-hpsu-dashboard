@@ -1,9 +1,10 @@
 {
-    "name": "Daikin/Rotext - HPSU Dashboard",
+    "name": "Daikin/Rotex - HPSU Dashboard",
     "render_readme": true,
     "filename": "hpsu-dashboard-card.js",
     "resources": [
         "/hacsfiles/daikin-rotex-hpsu-dashboard/hpsu-dashboard-card.js"
     ],
-    "content_in_root": false
+    "content_in_root": false,
+    "dist": true
 }
