@@ -1,108 +1,122 @@
 import { html, LitElement, css } from "lit";
-import { svg_item_config, SVGItem, languages, validateConfig } from "./svg_item_config";
+import { property, state } from "lit/decorators.js";
+import { LovelaceCardConfig, HomeAssistant } from "custom-card-helpers";
+import {
+    svg_item_config,
+    SVGItem,
+    Category,
+    languages,
+    validateConfig,
+} from "./svg_item_config";
 
 declare global {
   interface Window {
     loadCardHelpers(): Promise<any>;
   }
 }
+
 export class HpsuDashboardCardEditor extends LitElement {
-    private entities: any[];
-    private svg_item_config: SVGItem[];
-    private config: any;
-    private _hass: any;
-    private language: any;
+    @property({ attribute: false }) public hass!: HomeAssistant;
+    @property({ type: Object }) public config!: LovelaceCardConfig;
 
-    static get properties() {
-        return {
-            config: { type: Object },
-            entities: { type: Array }
-        };
-    }
+    @state() private language: string = "en";
+    @state() private svgItemConfig: SVGItem[] = [];
 
-    constructor() {
-        console.log("editor.ctor");
-        super();
-        this.entities = []; // Initialisiere das Array für die Entities
-    }
-
-    async setConfig(config) {
-        console.log("editor.setConfig");
-        const cardHelpers = await window.loadCardHelpers();
+    async setConfig(config: LovelaceCardConfig) {
+        // HACK: This call is necessary to load the ha-entity-picker components.
+        const cardHelpers = await (window as any).loadCardHelpers();
         const entitiesCard = await cardHelpers.createCardElement({ type: "entities", entities: [] });
-
-        // Lade den Editor über die statische Methode getConfigElement
-        const editorElement = entitiesCard.constructor.getConfigElement();
-
-        svg_item_config.forEach(svg_item => {
-            svg_item.entityId = config.entities?.[svg_item.id] ?? null;
-        });
-        this.svg_item_config = svg_item_config;
+        await entitiesCard.constructor.getConfigElement();
+        // HACK end
 
         this.config = validateConfig(config);
-
-        // Füge den Editor dem DOM hinzu
-        //this.shadowRoot.appendChild(editorElement);
+        this.svgItemConfig = svg_item_config.map(svg_item => ({
+            ...svg_item,
+            entityId: this.config.entities?.[svg_item.id] ?? null
+        }));
     }
 
-    set hass(hass) {
-        console.log(">> edit.hass");
-
-        const lang = hass.language.split("-")[0];
-        this._hass = hass;
-        this.language = languages.includes(lang) ? lang : "de";
+    protected willUpdate(changedProperties: Map<string, any>): void {
+        if (changedProperties.has("hass") && this.hass?.language) {
+            const lang = this.hass.language.split("-")[0];
+            this.language = languages.includes(lang) ? lang : "en";
+        }
     }
 
-    get hass() {
-        return this._hass;
-    }
+    protected render() {
+        if (!this.config) {
+            return html``;
+        }
 
-    render() {
-        console.log("editor.render");
-        if (!this.config) return html``;
+        const categories: Record<string, SVGItem[]> = {};
+
+        if (this.svgItemConfig[0].category) {
+            let lastCategory: Category = this.svgItemConfig[0].category;
+
+            this.svgItemConfig.forEach(item => {
+                let currentCategory: Category | undefined = item.category;
+
+                if (currentCategory) {
+                    lastCategory = currentCategory;
+                } else {
+                    currentCategory = lastCategory;
+                }
+
+                const category = currentCategory[this.language];
+
+                if (!categories[category]) {
+                    categories[category] = [];
+                }
+                categories[category].push(item);
+            });
+
+        }
 
         return html`
-            ${this.svg_item_config.map(
-                (svg_item) => {
-                    return html`
-                    ${(svg_item.category) ? html`<h2>${svg_item.category}</h2>` : ""}
-                    <ha-entity-picker
-                        allow-custom-entity
-                        data-id=${svg_item.id}
-                        label=${svg_item.texts[this.language]?.desc || "<missing>"}
-                        .value=${svg_item.entityId}
-                        .curValue=${svg_item.entityId}
-                        .hass=${this.hass}
-                        .includeDomains=${svg_item.type}
-                        .includeUnitOfMeasurement=${svg_item.unit}
-                        .disabled=false
-                        .createDomains=false
-                        @value-changed=${this._entityChanged}
-                    ></ha-entity-picker>`;
-                }
-            )}
+            <div class="card-config">
+                ${Object.keys(categories).map(category => html`
+                    <ha-expansion-panel
+                        .header=${category}
+                    >
+                        ${categories[category].map(svg_item => html`
+                            <ha-entity-picker
+                                allow-custom-entity
+                                data-id=${svg_item.id}
+                                label=${svg_item.texts[this.language]?.desc || "<missing>"}
+                                .value=${svg_item.entityId}
+                                .hass=${this.hass}
+                                .includeDomains=${svg_item.type}
+                                @value-changed=${this._entityChanged}
+                            ></ha-entity-picker>
+                        `)}
+                    </ha-expansion-panel>
+                `)}
+            </div>
         `;
     }
 
-    _entityChanged(event) {
+    private _entityChanged(event: CustomEvent): void {
         event.stopPropagation();
+        const picker = event.target as HTMLElement;
+        const entityId = picker.getAttribute("data-id");
 
-        const entityId = event.target.getAttribute("data-id");
+        if (!entityId) return;
 
-        // make a copy => avoid entity is read-only error
         const updatedEntities = { ...this.config.entities };
-        updatedEntities[entityId] = event.detail.value;
+        updatedEntities[entityId] = (event.detail as any).value;
 
         this.config = {
             ...this.config,
             entities: updatedEntities
         };
 
-        this.dispatchEvent(new CustomEvent('config-changed', { detail: { config: this.config } }));
-    }
-
-    _stopPropagation(event) {
-        event.stopPropagation();
+        this.dispatchEvent(
+            new CustomEvent('config-changed', {
+                detail: { config: this.config },
+                bubbles: true,
+                composed: true,
+            })
+        );
     }
 
     static get styles() {
@@ -115,19 +129,11 @@ export class HpsuDashboardCardEditor extends LitElement {
             h2 {
                 font-size: 20px;
                 margin-bottom: 16px;
+                margin-top: 24px;
             }
-            paper-input {
-                margin-bottom: 16px; /* Abstand zwischen den Eingabefeldern */
+            ha-entity-picker {
+                margin-bottom: 16px;
             }
         `;
-    }
-
-    getKyeByValue(map, searchValue) {
-        for (let [key, value] of map.entries()) {
-            if (value === searchValue) {
-                return key;
-            }
-        }
-        return null;
     }
 }

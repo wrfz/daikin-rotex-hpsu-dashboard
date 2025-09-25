@@ -1464,6 +1464,8 @@ const $33e813419ea8f3a8$export$1cb98903879b8bf5 = (0, $107bb7d062dde330$export$9
 
 
 
+
+
 const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
     {
         id: "ta",
@@ -1471,7 +1473,11 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
         type: "sensor",
         value_rect_id: "ta_val",
         offset: 6,
-        category: "Reihe 1",
+        category: {
+            de: "Oben",
+            en: "Top",
+            it: "In alto"
+        },
         unit: "\xb0C",
         texts: {
             de: {
@@ -1681,7 +1687,11 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
         label_rect_id: "evaporator_label",
         value_rect_id: "evaporator_value",
         offset: 6,
-        category: "Reihe 2",
+        category: {
+            de: "Mitte",
+            en: "Middle",
+            it: "Centro"
+        },
         unit: "\xb0C",
         texts: {
             de: {
@@ -1911,7 +1921,11 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
         label_rect_id: "fan_label",
         value_rect_id: "fan_value",
         offset: 6,
-        category: "Reihe 3",
+        category: {
+            de: "Unten",
+            en: "Bottom",
+            it: "In basso"
+        },
         unit: "RPM",
         digits: 0,
         texts: {
@@ -2067,7 +2081,11 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
         offset: 6,
         fontSize: "40px",
         align: "left",
-        category: "Info",
+        category: {
+            de: "Info",
+            en: "Info",
+            it: "Info"
+        },
         texts: {
             de: {
                 suffix: "Fehlercode: ",
@@ -2289,74 +2307,68 @@ const $eb5cfe1dd9fe4e85$export$127f9a442b42d18 = function(config) {
 
 
 class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$export$3f2f9f5909897157) {
-    static get properties() {
-        return {
-            config: {
-                type: Object
-            },
-            entities: {
-                type: Array
-            }
-        };
-    }
-    constructor(){
-        console.log("editor.ctor");
-        super();
-        this.entities = []; // Initialisiere das Array für die Entities
-    }
     async setConfig(config) {
-        console.log("editor.setConfig");
+        // HACK: This call is necessary to load the ha-entity-picker components.
         const cardHelpers = await window.loadCardHelpers();
         const entitiesCard = await cardHelpers.createCardElement({
             type: "entities",
             entities: []
         });
-        // Lade den Editor über die statische Methode getConfigElement
-        const editorElement = entitiesCard.constructor.getConfigElement();
-        (0, $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16).forEach((svg_item)=>{
-            svg_item.entityId = config.entities?.[svg_item.id] ?? null;
-        });
-        this.svg_item_config = (0, $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16);
+        await entitiesCard.constructor.getConfigElement();
+        // HACK end
         this.config = (0, $eb5cfe1dd9fe4e85$export$127f9a442b42d18)(config);
-    // Füge den Editor dem DOM hinzu
-    //this.shadowRoot.appendChild(editorElement);
+        this.svgItemConfig = (0, $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16).map((svg_item)=>({
+                ...svg_item,
+                entityId: this.config.entities?.[svg_item.id] ?? null
+            }));
     }
-    set hass(hass) {
-        console.log(">> edit.hass");
-        const lang = hass.language.split("-")[0];
-        this._hass = hass;
-        this.language = (0, $eb5cfe1dd9fe4e85$export$d0d68bb9ed2c643d).includes(lang) ? lang : "de";
-    }
-    get hass() {
-        return this._hass;
+    willUpdate(changedProperties) {
+        if (changedProperties.has("hass") && this.hass?.language) {
+            const lang = this.hass.language.split("-")[0];
+            this.language = (0, $eb5cfe1dd9fe4e85$export$d0d68bb9ed2c643d).includes(lang) ? lang : "en";
+        }
     }
     render() {
-        console.log("editor.render");
         if (!this.config) return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)``;
+        const categories = {};
+        if (this.svgItemConfig[0].category) {
+            let lastCategory = this.svgItemConfig[0].category;
+            this.svgItemConfig.forEach((item)=>{
+                let currentCategory = item.category;
+                if (currentCategory) lastCategory = currentCategory;
+                else currentCategory = lastCategory;
+                const category = currentCategory[this.language];
+                if (!categories[category]) categories[category] = [];
+                categories[category].push(item);
+            });
+        }
         return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
-            ${this.svg_item_config.map((svg_item)=>{
-            return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
-                    ${svg_item.category ? (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<h2>${svg_item.category}</h2>` : ""}
-                    <ha-entity-picker
-                        allow-custom-entity
-                        data-id=${svg_item.id}
-                        label=${svg_item.texts[this.language]?.desc || "<missing>"}
-                        .value=${svg_item.entityId}
-                        .curValue=${svg_item.entityId}
-                        .hass=${this.hass}
-                        .includeDomains=${svg_item.type}
-                        .includeUnitOfMeasurement=${svg_item.unit}
-                        .disabled=false
-                        .createDomains=false
-                        @value-changed=${this._entityChanged}
-                    ></ha-entity-picker>`;
-        })}
+            <div class="card-config">
+                ${Object.keys(categories).map((category)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+                    <ha-expansion-panel
+                        .header=${category}
+                    >
+                        ${categories[category].map((svg_item)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+                            <ha-entity-picker
+                                allow-custom-entity
+                                data-id=${svg_item.id}
+                                label=${svg_item.texts[this.language]?.desc || "<missing>"}
+                                .value=${svg_item.entityId}
+                                .hass=${this.hass}
+                                .includeDomains=${svg_item.type}
+                                @value-changed=${this._entityChanged}
+                            ></ha-entity-picker>
+                        `)}
+                    </ha-expansion-panel>
+                `)}
+            </div>
         `;
     }
     _entityChanged(event) {
         event.stopPropagation();
-        const entityId = event.target.getAttribute("data-id");
-        // make a copy => avoid entity is read-only error
+        const picker = event.target;
+        const entityId = picker.getAttribute("data-id");
+        if (!entityId) return;
         const updatedEntities = {
             ...this.config.entities
         };
@@ -2368,11 +2380,10 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
         this.dispatchEvent(new CustomEvent('config-changed', {
             detail: {
                 config: this.config
-            }
+            },
+            bubbles: true,
+            composed: true
         }));
-    }
-    _stopPropagation(event) {
-        event.stopPropagation();
     }
     static get styles() {
         return (0, $def2de46b9306e8a$export$dbf350e5966cf602)`
@@ -2384,19 +2395,33 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             h2 {
                 font-size: 20px;
                 margin-bottom: 16px;
+                margin-top: 24px;
             }
-            paper-input {
-                margin-bottom: 16px; /* Abstand zwischen den Eingabefeldern */
+            ha-entity-picker {
+                margin-bottom: 16px;
             }
         `;
     }
-    getKyeByValue(map, searchValue) {
-        for (let [key, value] of map.entries()){
-            if (value === searchValue) return key;
-        }
-        return null;
+    constructor(...args){
+        super(...args), this.language = "en", this.svgItemConfig = [];
     }
 }
+(0, $24c52f343453d62d$export$29e00dfd3077644b)([
+    (0, $9cd908ed2625c047$export$d541bacb2bda4494)({
+        attribute: false
+    })
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "hass", void 0);
+(0, $24c52f343453d62d$export$29e00dfd3077644b)([
+    (0, $9cd908ed2625c047$export$d541bacb2bda4494)({
+        type: Object
+    })
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "config", void 0);
+(0, $24c52f343453d62d$export$29e00dfd3077644b)([
+    (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "language", void 0);
+(0, $24c52f343453d62d$export$29e00dfd3077644b)([
+    (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "svgItemConfig", void 0);
 
 
 
@@ -2568,7 +2593,6 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             if (this.svg_item_config) this.svg_item_config.forEach((svg_item)=>{
                 const newState = svg_item.entityId ? this.hass.states[svg_item.entityId] : null;
                 const parentBox = svg_item.parent ? this.shadowRoot.getElementById(svg_item.parent) : null;
-                console.log(`${svg_item.parent} ${parentBox}`);
                 if (parentBox) parentBox.style.display = newState ? "block" : "none";
                 if (svg_item.valueBox) {
                     const id = `${svg_item.valueBox.id}_text`;
@@ -2696,6 +2720,13 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
 ], $a399cc6bbb0eb26a$export$9de59f1af66e4f03.prototype, "svgContent", void 0);
 customElements.define("hpsu-dashboard-card", $a399cc6bbb0eb26a$export$9de59f1af66e4f03);
 customElements.define("hpsu-dashboard-card-editor", (0, $d067581fc0d59830$export$70410bc798970b36));
+window.customCards = window.customCards || [];
+window.customCards.push({
+    type: "hpsu-dashboard-card",
+    name: "HPSU Dashboard",
+    description: "A Lovelace card for visualizing the Daikin HPSU status.",
+    preview: true
+});
 
 
 export {$a399cc6bbb0eb26a$export$4661a56c3a27d933 as DashboardState, $a399cc6bbb0eb26a$export$9de59f1af66e4f03 as HPSUDashboardCard};

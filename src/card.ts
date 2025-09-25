@@ -233,7 +233,6 @@ export class HPSUDashboardCard extends LitElement {
                     const newState = svg_item.entityId ? this.hass.states[svg_item.entityId] : null;
 
                     const parentBox = svg_item.parent ? this.shadowRoot!.getElementById(svg_item.parent) : null;
-                    console.log(`${svg_item.parent} ${parentBox}`);
                     if (parentBox) {
                         parentBox.style.display = newState ? "block" : "none";
                     }
@@ -386,3 +385,11 @@ export class HPSUDashboardCard extends LitElement {
 
 customElements.define("hpsu-dashboard-card", HPSUDashboardCard);
 customElements.define("hpsu-dashboard-card-editor", HpsuDashboardCardEditor);
+
+(window as any).customCards = (window as any).customCards || [];
+(window as any).customCards.push({
+    type: "hpsu-dashboard-card",
+    name: "HPSU Dashboard",
+    description: "A Lovelace card for visualizing the Daikin HPSU status.",
+    preview: true,
+});

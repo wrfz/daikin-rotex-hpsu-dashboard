@@ -1,3 +1,9 @@
+export interface Category {
+    de: string;
+    en: string;
+    it: string;
+};
+
 export interface SVGItem {
     entityId?: string;
     parent?: string;
@@ -9,7 +15,7 @@ export interface SVGItem {
     type: string;
     value_rect_id?: string;
     offset?: number;
-    category?: string;
+    category?: Category;
     unit?: string;
     digits?: number;
     fontSize?: string;
@@ -42,7 +48,11 @@ export const svg_item_config: SVGItem[] = [
         type: "sensor",
         value_rect_id: "ta_val",
         offset: 6,
-        category: "Reihe 1",
+        category: {
+            de: "Oben",
+            en: "Top",
+            it: "In alto"
+        },
         unit: "°C",
         texts: {
             de: {
@@ -252,7 +262,11 @@ export const svg_item_config: SVGItem[] = [
         label_rect_id: "evaporator_label",
         value_rect_id: "evaporator_value",
         offset: 6,
-        category: "Reihe 2",
+        category: {
+            de: "Mitte",
+            en: "Middle",
+            it: "Centro"
+        },
         unit: "°C",
         texts: {
             de: {
@@ -482,7 +496,11 @@ export const svg_item_config: SVGItem[] = [
         label_rect_id: "fan_label",
         value_rect_id: "fan_value",
         offset: 6,
-        category: "Reihe 3",
+        category: {
+            de: "Unten",
+            en: "Bottom",
+            it: "In basso"
+        },
         unit: "RPM",
         digits: 0,
         texts: {
@@ -638,7 +656,11 @@ export const svg_item_config: SVGItem[] = [
         offset: 6,
         fontSize: "40px",
         align: "left",
-        category: "Info",
+        category: {
+            de: "Info",
+            en: "Info",
+            it: "Info"
+        },
         texts: {
             de: {
                 suffix: "Fehlercode: ",
