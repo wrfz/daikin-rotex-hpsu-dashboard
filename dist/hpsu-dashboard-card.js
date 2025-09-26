@@ -2672,12 +2672,10 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
     }
     makeURL(filename) {
         const scriptUrl = "file:///src/card.ts";
-        const urlParams = new URLSearchParams(scriptUrl.split("?")[1]);
-        const hacsTag = urlParams.get("hacstag");
-        return this.isNumeric(hacsTag) ? `/hacsfiles/daikin-rotex-hpsu-dashboard/${filename}?${hacsTag}` : `/local/daikin-rotex-hpsu-dashboard/dist/${filename}?${Date.now()}`;
-    }
-    isNumeric(value) {
-        return value !== null && /^-?\d+$/.test(value);
+        const hacsTag = new URLSearchParams(scriptUrl.split("?")[1]).get("hacstag");
+        const repoName = "daikin-rotex-hpsu-dashboard";
+        if (hacsTag) return `/hacsfiles/${repoName}/${filename}?hacstag=${hacsTag}`;
+        else return `/local/${repoName}/dist/${filename}?v=${Date.now()}`;
     }
     formatNumber(entity, digits) {
         if (!entity || !entity.state) return "--";

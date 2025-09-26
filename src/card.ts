@@ -346,15 +346,14 @@ export class HPSUDashboardCard extends LitElement {
 
     private makeURL(filename: string): string {
         const scriptUrl = import.meta.url;
-        const urlParams = new URLSearchParams(scriptUrl.split("?")[1]);
-        const hacsTag = urlParams.get("hacstag");
-        return this.isNumeric(hacsTag)
-            ? `/hacsfiles/daikin-rotex-hpsu-dashboard/${filename}?${hacsTag}`
-            : `/local/daikin-rotex-hpsu-dashboard/dist/${filename}?${Date.now()}`;
-    }
+        const hacsTag = new URLSearchParams(scriptUrl.split("?")[1]).get("hacstag");
+        const repoName = "daikin-rotex-hpsu-dashboard";
 
-    private isNumeric(value: string | null): boolean {
-        return value !== null && /^-?\d+$/.test(value);
+        if (hacsTag) {
+            return `/hacsfiles/${repoName}/${filename}?hacstag=${hacsTag}`;
+        } else {
+            return `/local/${repoName}/dist/${filename}?v=${Date.now()}`;
+        }
     }
 
     private formatNumber(entity: HassEntity, digits: number): string {
