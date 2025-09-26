@@ -345,9 +345,13 @@ export class HPSUDashboardCard extends LitElement {
     }
 
     private makeURL(filename: string): string {
-        const scriptUrl = import.meta.url;
-        const hacsTag = new URLSearchParams(scriptUrl.split("?")[1]).get("hacstag");
         const repoName = "daikin-rotex-hpsu-dashboard";
+        const scriptElement = document.querySelector(`script[src*="/hacsfiles/${repoName}/"]`) as HTMLScriptElement;
+
+        const scriptUrl = scriptElement && scriptElement.src ? scriptElement.src : "";
+        const hacsTag = new URLSearchParams(scriptUrl.split("?")[1]).get("hacstag");
+
+        console.log(`Script url: ${scriptUrl}, tag: ${hacsTag}`);
 
         if (hacsTag) {
             return `/hacsfiles/${repoName}/${filename}?hacstag=${hacsTag}`;

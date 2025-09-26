@@ -2671,9 +2671,11 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         }));
     }
     makeURL(filename) {
-        const scriptUrl = "file:///src/card.ts";
-        const hacsTag = new URLSearchParams(scriptUrl.split("?")[1]).get("hacstag");
         const repoName = "daikin-rotex-hpsu-dashboard";
+        const scriptElement = document.querySelector(`script[src*="/hacsfiles/${repoName}/"]`);
+        const scriptUrl = scriptElement && scriptElement.src ? scriptElement.src : "";
+        const hacsTag = new URLSearchParams(scriptUrl.split("?")[1]).get("hacstag");
+        console.log(`Script url: ${scriptUrl}, tag: ${hacsTag}`);
         if (hacsTag) return `/hacsfiles/${repoName}/${filename}?hacstag=${hacsTag}`;
         else return `/local/${repoName}/dist/${filename}?v=${Date.now()}`;
     }
