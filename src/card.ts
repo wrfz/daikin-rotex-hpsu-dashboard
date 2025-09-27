@@ -94,6 +94,12 @@ export class HPSUDashboardCard extends LitElement {
     }
 
     protected updated(changedProperties: Map<string | number | symbol, unknown>): void {
+        if (this.isPanelView()) {
+            this.setAttribute('panel-view', '');
+        } else {
+            this.removeAttribute('panel-view');
+        }
+
         if (this._state == DashboardState.Ready) {
             this.updateLabels();
             this.updateOpacity();
@@ -109,24 +115,53 @@ export class HPSUDashboardCard extends LitElement {
         return document.createElement("hpsu-dashboard-card-editor");
     }
 
+
     static styles: CSSResultGroup = css`
-        :host {
+        .card-config {
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+        }
+        h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        paper-input {
+            margin-bottom: 16px;
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        :host([panel-view]) {
             display: block;
             max-height: 100vh;
             overflow: auto;
         }
-        svg {
+
+        :host([panel-view]) svg {
             display: block;
-            width: 100%;
-            height: auto;
+            width: calc(100vw - var(--mdc-drawer-width, 256px));
             max-height: 100vh;
+            overflow: auto;
         }
+
         @media (min-width: 768px) {
-            svg {
-                max-height: calc(100vh - var(--header-height));
+            :host([panel-view]) svg {
+                max-height: calc(100vh - var(--header-height, 64px));
             }
         }
-    `;
+
+        @media (max-width: 767px) {
+            :host([panel-view]) svg {
+                width: auto;
+                height: calc(100vh - var(--header-height, 56px));
+            }
+        }
+        `;
 
     protected render(): TemplateResult {
         switch (this._state) {
@@ -139,7 +174,6 @@ export class HPSUDashboardCard extends LitElement {
                     </hpsu-dashboard-card-container>
                 `;
             default:
-            //return nothing;
                 return html``;
         }
     }
@@ -358,6 +392,15 @@ export class HPSUDashboardCard extends LitElement {
         } else {
             return `/local/${repoName}/dist/${filename}?v=${Date.now()}`;
         }
+    }
+
+    isPanelView() {
+        let node = this;
+        while (node) {
+            if (node.tagName?.toLowerCase() === "hui-panel-view") return true;
+            node = node.getRootNode()?.host;
+        }
+        return false;
     }
 
     private formatNumber(entity: HassEntity, digits: number): string {

@@ -2482,6 +2482,8 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         setClickHandler("eev_arrow_right", pressureEqualizationEntityId);
     }
     updated(changedProperties) {
+        if (this.isPanelView()) this.setAttribute('panel-view', '');
+        else this.removeAttribute('panel-view');
         if (this._state == "ready") {
             this.updateLabels();
             this.updateOpacity();
@@ -2496,23 +2498,51 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
     }
     static{
         this.styles = (0, $def2de46b9306e8a$export$dbf350e5966cf602)`
-        :host {
+        .card-config {
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+        }
+        h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        paper-input {
+            margin-bottom: 16px;
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        :host([panel-view]) {
             display: block;
             max-height: 100vh;
             overflow: auto;
         }
-        svg {
+
+        :host([panel-view]) svg {
             display: block;
-            width: 100%;
-            height: auto;
+            width: calc(100vw - var(--mdc-drawer-width, 256px));
             max-height: 100vh;
+            overflow: auto;
         }
+
         @media (min-width: 768px) {
-            svg {
-                max-height: calc(100vh - var(--header-height));
+            :host([panel-view]) svg {
+                max-height: calc(100vh - var(--header-height, 64px));
             }
         }
-    `;
+
+        @media (max-width: 767px) {
+            :host([panel-view]) svg {
+                width: auto;
+                height: calc(100vh - var(--header-height, 56px));
+            }
+        }
+        `;
     }
     render() {
         switch(this._state){
@@ -2525,7 +2555,6 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                     </hpsu-dashboard-card-container>
                 `;
             default:
-                //return nothing;
                 return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)``;
         }
     }
@@ -2678,6 +2707,14 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         console.log(`Script url: ${scriptUrl}, tag: ${hacsTag}`);
         if (hacsTag) return `/hacsfiles/${repoName}/${filename}?hacstag=${hacsTag}`;
         else return `/local/${repoName}/dist/${filename}?v=${Date.now()}`;
+    }
+    isPanelView() {
+        let node = this;
+        while(node){
+            if (node.tagName?.toLowerCase() === "hui-panel-view") return true;
+            node = node.getRootNode()?.host;
+        }
+        return false;
     }
     formatNumber(entity, digits) {
         if (!entity || !entity.state) return "--";
