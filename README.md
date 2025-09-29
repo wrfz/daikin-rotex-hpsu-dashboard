@@ -60,3 +60,5 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
               fehlercode: sensor.hpsu_can_fehlercode
               thermische_leistung: sensor.hpsu_can_thermische_leistung
               cop: sensor.hpsu_cop_clipped
+              spread: sensor.hpsu_can_spreizung
+
