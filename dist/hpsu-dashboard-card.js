@@ -540,484 +540,699 @@ var $24c52f343453d62d$export$2e2bcd8739ae039 = {
 
 const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
     {
-        id: "ta",
+        group_id: "TA",
         label_rect_id: "ta_label",
-        domain: "sensor",
-        device: "CAN",
-        unit: "\xb0C",
-        value_rect_id: "ta_val",
         offset: 6,
         category: {
             de: "Oben",
             en: "Top",
             it: "In alto"
         },
+        visual_container: true,
+        values: [
+            {
+                id: "ta",
+                device: "CAN",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "ta_val",
+                texts: {
+                    de: {
+                        desc: "TA - Au\xdfentemperatur"
+                    },
+                    en: {
+                        desc: "TA - Outside Temperature"
+                    },
+                    it: {
+                        desc: "TA - Temperatura esterna"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "TA",
-                desc: "TA - Au\xdfentemperatur"
+                label: "TA"
             },
             en: {
-                label: "TA",
-                desc: "TA - Outside Temperature"
+                label: "TA"
             },
             it: {
-                label: "TA",
-                desc: "TA - Temperatura esterna"
+                label: "TA"
             }
         }
     },
     {
-        id: "ta2",
+        group_id: "TA2",
         label_rect_id: "ta2_label",
-        domain: "sensor",
-        device: "CAN",
-        unit: "\xb0C",
-        value_rect_id: "ta2_val",
         offset: 6,
-        optional: true,
         parent: "TA2",
+        visual_container: true,
+        values: [
+            {
+                id: "ta2",
+                device: "CAN",
+                domain: "sensor",
+                unit: "\xb0C",
+                optional: true,
+                value_rect_id: "ta2_val",
+                texts: {
+                    de: {
+                        desc: "TA2 - Im Au\xdfenger\xe4t"
+                    },
+                    en: {
+                        desc: "TA2 - In the outdoor unit"
+                    },
+                    it: {
+                        desc: "TA2 - Nell'unit\xe0 esterna"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "TA2",
-                desc: "TA2 - Im Au\xdfenger\xe4t"
+                label: "TA2"
             },
             en: {
-                label: "TA2",
-                desc: "TA2 - In the outdoor unit"
+                label: "TA2"
             },
             it: {
-                label: "TA2",
-                desc: "TA2 - Nell'unit\xe0 esterna"
+                label: "TA2"
             }
         }
     },
     {
-        id: "expansion_valve",
+        group_id: "EEV",
         label_rect_id: "eev_label",
-        domain: "sensor",
-        device: "UART",
-        unit: "pls",
-        value_rect_id: "eev_val",
         offset: 6,
         digits: 0,
+        visual_container: true,
+        values: [
+            {
+                id: "expansion_valve",
+                device: "UART",
+                domain: "sensor",
+                unit: "pls",
+                value_rect_id: "eev_val",
+                texts: {
+                    de: {
+                        desc: "Elektonisches Expansionsventil"
+                    },
+                    en: {
+                        desc: "Electronic Expansion Valve"
+                    },
+                    it: {
+                        desc: "Valvola di espansione elettronica"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "EEV",
-                desc: "Elektonisches Expansionsventil"
+                label: "EEV"
             },
             en: {
-                label: "EEV",
-                desc: "Electronic Expansion Valve"
+                label: "EEV"
             },
             it: {
-                label: "EEV",
-                desc: "Valvola di espansione elettronica"
+                label: "EEV"
             }
         }
     },
     {
-        id: "pressure_equalization",
-        domain: "binary_sensor",
-        device: "UART",
-        texts: {
-            de: {
-                desc: "Druckausgleich"
-            },
-            en: {
-                desc: "Pressure equalization"
-            },
-            it: {
-                desc: "Equalizzazione della pressione"
+        group_id: "eev-schema",
+        values: [
+            {
+                id: "pressure_equalization",
+                device: "UART",
+                domain: "binary_sensor",
+                texts: {
+                    de: {
+                        desc: "Druckausgleich"
+                    },
+                    en: {
+                        desc: "Pressure equalization"
+                    },
+                    it: {
+                        desc: "Equalizzazione della pressione"
+                    }
+                }
             }
-        }
+        ]
     },
     {
-        id: "kondensat",
+        group_id: "Kondensat",
         label_rect_id: "kondensat_label",
-        domain: "sensor",
-        device: "UART",
-        unit: "\xb0C",
-        value_rect_id: "kondensat_value",
+        visual_container: true,
         offset: 6,
+        values: [
+            {
+                id: "kondensat",
+                device: "UART",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "kondensat_value",
+                texts: {
+                    de: {
+                        desc: "Kondensat"
+                    },
+                    en: {
+                        desc: "Condensate"
+                    },
+                    it: {
+                        desc: "Condensato"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Kondensat",
-                desc: "Kondensat"
+                label: "Kondensat"
             },
             en: {
-                label: "Condensate",
-                desc: "Condensate"
+                label: "Condensate"
             },
             it: {
-                label: "Condensato",
-                desc: "Condensato"
+                label: "Condensato"
             }
         }
     },
     {
-        id: "umwaelzpumpe",
+        group_id: "Umwaelzpumpe",
         label_rect_id: "uwp_label",
-        domain: "sensor",
-        device: "CAN",
-        unit: "%",
-        value_rect_id: "uwp_value",
+        visual_container: true,
         offset: 6,
         digits: 0,
+        values: [
+            {
+                id: "umwaelzpumpe",
+                device: "CAN",
+                domain: "sensor",
+                unit: "%",
+                value_rect_id: "uwp_value",
+                texts: {
+                    de: {
+                        desc: "Umw\xe4lzpumpe"
+                    },
+                    en: {
+                        desc: "Circulation pump"
+                    },
+                    it: {
+                        desc: "Pompa di circolazione"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Umw\xe4lzpumpe",
-                desc: "Umw\xe4lzpumpe"
+                label: "Umw\xe4lzpumpe"
             },
             en: {
-                label: "Circulation pump",
-                desc: "Circulation pump"
+                label: "Circulation pump"
             },
             it: {
-                label: "Pompa circ.",
-                desc: "Pompa di circolazione"
+                label: "Pompa circ."
             }
         }
     },
     {
-        id: "umwaelzpumpe_an_aus",
-        domain: "binary_sensor",
-        device: "CAN",
-        value_rect_id: "circ_pump_rect",
+        group_id: "Umwaelzpumpe-Status",
         offset: 2,
         fontSize: "30px",
-        texts: {
-            de: {
-                desc: "Status Umw\xe4lzpumpe"
-            },
-            en: {
-                desc: "Circulation pump status"
-            },
-            it: {
-                desc: "Stato pompa di circolazione"
+        values: [
+            {
+                id: "umwaelzpumpe_an_aus",
+                device: "CAN",
+                domain: "binary_sensor",
+                value_rect_id: "circ_pump_rect",
+                texts: {
+                    de: {
+                        desc: "Status Umw\xe4lzpumpe"
+                    },
+                    en: {
+                        desc: "Circulation pump status"
+                    },
+                    it: {
+                        desc: "Stato pompa di circolazione"
+                    }
+                }
             }
-        }
+        ]
     },
     {
-        id: "durchfluss",
-        domain: "sensor",
-        device: "CAN",
-        unit: "L/h",
+        group_id: "Durchfluss",
         label_rect_id: "flow_rate_label",
-        value_rect_id: "flow_rate_value",
+        visual_container: true,
         offset: 6,
         digits: 0,
+        values: [
+            {
+                id: "durchfluss",
+                device: "CAN",
+                domain: "sensor",
+                unit: "L/h",
+                value_rect_id: "flow_rate_value",
+                texts: {
+                    de: {
+                        desc: "Durchfluss"
+                    },
+                    en: {
+                        desc: "Flow rate"
+                    },
+                    it: {
+                        desc: "Portata"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Durchfluss",
-                desc: "Durchfluss"
+                label: "Durchfluss"
             },
             en: {
-                label: "Flow rate",
-                desc: "Flow rate"
+                label: "Flow rate"
             },
             it: {
-                label: "Portata",
-                desc: "Portata"
+                label: "Portata"
             }
         }
     },
     {
-        id: "ruecklauf_1",
-        domain: "sensor",
-        device: "CAN",
-        unit: "\xb0C",
+        group_id: "Ruecklauf",
         label_rect_id: "return_flow_label",
-        value_rect_id: "return_flow_can_value",
+        visual_container: true,
         offset: 6,
+        values: [
+            {
+                id: "ruecklauf",
+                device: "CAN",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "return_flow_can_value",
+                texts: {
+                    de: {
+                        desc: "R\xfccklauf - CAN"
+                    },
+                    en: {
+                        desc: "Return flow - CAN"
+                    },
+                    it: {
+                        desc: "Ritorno - CAN"
+                    }
+                }
+            },
+            {
+                id: "ruecklauf_2",
+                domain: "sensor",
+                value_rect_id: "return_flow_uart_value",
+                texts: {
+                    de: {
+                        desc: "R\xfccklauf - UART"
+                    },
+                    en: {
+                        desc: "Return flow - UART"
+                    },
+                    it: {
+                        desc: "Ritorno - UART"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "R\xfccklauf",
-                desc: "R\xfccklauf - CAN"
+                label: "R\xfccklauf"
             },
             en: {
-                label: "Return flow",
-                desc: "Return flow - CAN"
+                label: "Return flow"
             },
             it: {
-                label: "Ritorno",
-                desc: "Ritorno - CAN"
+                label: "Ritorno"
             }
         }
     },
     {
-        id: "ruecklauf_2",
-        domain: "sensor",
-        device: "UART",
-        unit: "\xb0C",
-        value_rect_id: "return_flow_uart_value",
-        offset: 6,
-        texts: {
-            de: {
-                desc: "R\xfccklauf - UART"
-            },
-            en: {
-                desc: "Return flow - UART"
-            },
-            it: {
-                desc: "Ritorno - UART"
-            }
-        }
-    },
-    {
-        id: "verdampfer",
-        domain: "sensor",
-        device: "UART",
-        unit: "\xb0C",
+        group_id: "Verdampfer",
         label_rect_id: "evaporator_label",
-        value_rect_id: "evaporator_value",
+        visual_container: true,
         offset: 6,
         category: {
             de: "Mitte",
             en: "Middle",
             it: "Centro"
         },
+        values: [
+            {
+                id: "verdampfer",
+                device: "UART",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "evaporator_value",
+                texts: {
+                    de: {
+                        desc: "Verdampfer"
+                    },
+                    en: {
+                        desc: "Evaporator"
+                    },
+                    it: {
+                        desc: "Evaporatore"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Verdampfer",
-                desc: "Verdampfer"
+                label: "Verdampfer"
             },
             en: {
-                label: "Evaporator",
-                desc: "Evaporator"
+                label: "Evaporator"
             },
             it: {
-                label: "Evaporatore",
-                desc: "Evaporatore"
+                label: "Evaporatore"
             }
         }
     },
     {
-        id: "hot_gas",
-        domain: "sensor",
-        device: "UART",
-        unit: "\xb0C",
+        group_id: "hot_gas",
         label_rect_id: "hot_gas_label",
-        value_rect_id: "hot_gas_value",
+        visual_container: true,
         offset: 6,
+        values: [
+            {
+                id: "hot_gas",
+                device: "UART",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "hot_gas_value",
+                texts: {
+                    de: {
+                        desc: "Hei\xdfgas"
+                    },
+                    en: {
+                        desc: "Hot gas"
+                    },
+                    it: {
+                        desc: "Gas caldo"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Hei\xdfgas",
-                desc: "Hei\xdfgas"
+                label: "Hei\xdfgas"
             },
             en: {
-                label: "Hot gas",
-                desc: "Hot gas"
+                label: "Hot gas"
             },
             it: {
-                label: "Gas caldo",
-                desc: "Gas caldo"
+                label: "Gas caldo"
             }
         }
     },
     {
-        id: "hot_gas_condenser",
-        domain: "sensor",
-        unit: "\xb0C",
+        group_id: "hot_gas_condenser",
         label_rect_id: "hot_gas_condenser_label",
-        value_rect_id: "hot_gas_condenser_value",
+        visual_container: true,
         offset: 6,
-        optional: true,
         parent: "hot_gas_condenser",
+        values: [
+            {
+                id: "hot_gas_condenser",
+                domain: "sensor",
+                unit: "\xb0C",
+                optional: true,
+                value_rect_id: "hot_gas_condenser_value",
+                texts: {
+                    de: {
+                        desc: "Hei\xdfgas am Kondensator"
+                    },
+                    en: {
+                        desc: "Hot gas at the condenser"
+                    },
+                    it: {
+                        desc: "Gas caldo al condensatore"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Hei\xdfgas",
-                desc: "Hei\xdfgas am Kondensator"
+                label: "Hei\xdfgas"
             },
             en: {
-                label: "Hot gas",
-                desc: "Hot gas at the condenser"
+                label: "Hot gas"
             },
             it: {
-                label: "Gas caldo",
-                desc: "Gas caldo al condensatore"
+                label: "Gas caldo"
             }
         }
     },
     {
-        id: "spread",
-        domain: "sensor",
-        device: "CAN",
-        unit: "\xb0C",
+        group_id: "Spreizung",
         label_rect_id: "spread_label",
-        value_rect_id: "spread_value",
+        visual_container: true,
         offset: 6,
+        values: [
+            {
+                id: "spread",
+                device: "CAN",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "spread_value",
+                texts: {
+                    de: {
+                        desc: "Spreizung"
+                    },
+                    en: {
+                        desc: "Temperature spread"
+                    },
+                    it: {
+                        desc: "Differenza di temperatura"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Spreizung",
-                desc: "Spreizung"
+                label: "Spreizung"
             },
             en: {
-                label: "Spread",
-                desc: "Temperature spread"
+                label: "Spread"
             },
             it: {
-                label: "\u0394T",
-                desc: "Differenza di temperatura"
+                label: "\u0394T"
             }
         }
     },
     {
-        id: "vorlauf_1",
-        domain: "sensor",
-        device: "CAN",
-        unit: "\xb0C",
+        group_id: "Vorlauf",
         label_rect_id: "flow_label",
-        value_rect_id: "flow_can_value",
+        visual_container: true,
         offset: 6,
+        values: [
+            {
+                id: "vorlauf_1",
+                device: "CAN",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "flow_can_value",
+                texts: {
+                    de: {
+                        desc: "Vorlauf - CAN"
+                    },
+                    en: {
+                        desc: "Flow - CAN"
+                    },
+                    it: {
+                        desc: "Mandata - CAN"
+                    }
+                }
+            },
+            {
+                id: "vorlauf_2",
+                device: "UART",
+                domain: "sensor",
+                value_rect_id: "flow_uart_value",
+                texts: {
+                    de: {
+                        desc: "Vorlauf - UART"
+                    },
+                    en: {
+                        desc: "Flow - UART"
+                    },
+                    it: {
+                        desc: "Mandata - UART"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Vorlauf",
-                desc: "Vorlauf - CAN"
+                label: "Vorlauf"
             },
             en: {
-                label: "Flow",
-                desc: "Flow - CAN"
+                label: "Flow"
             },
             it: {
-                label: "Mandata",
-                desc: "Mandata - CAN"
+                label: "Mandata"
             }
         }
     },
     {
-        id: "vorlauf_2",
-        domain: "sensor",
-        device: "UART",
-        unit: "\xb0C",
-        value_rect_id: "flow_uart_value",
-        offset: 6,
-        texts: {
-            de: {
-                desc: "Vorlauf - UART"
-            },
-            en: {
-                desc: "Flow - UART"
-            },
-            it: {
-                desc: "Mandata - UART"
-            }
-        }
-    },
-    {
-        id: "vorlauf_soll",
-        domain: "sensor",
-        device: "CAN",
-        unit: "\xb0C",
+        group_id: "Vorlauf-Soll",
         label_rect_id: "flow_setpoint_label",
-        value_rect_id: "flow_setpoint_value",
+        visual_container: true,
         offset: 6,
+        values: [
+            {
+                id: "vorlauf_soll",
+                device: "CAN",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "flow_setpoint_value",
+                texts: {
+                    de: {
+                        desc: "Vorlauf Soll"
+                    },
+                    en: {
+                        desc: "Flow setpoint"
+                    },
+                    it: {
+                        desc: "Temperatura di mandata impostata"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Vorlauf-Soll",
-                desc: "Vorlauf Soll"
+                label: "Vorlauf-Soll"
             },
             en: {
-                label: "Setpoint",
-                desc: "Flow setpoint"
+                label: "Setpoint"
             },
             it: {
-                label: "Impostata",
-                desc: "Temperatura di mandata impostata"
+                label: "Impostata"
             }
         }
     },
     {
-        id: "wasserdruck",
-        domain: "sensor",
-        device: "CAN",
-        unit: "bar",
+        group_id: "Druck",
         label_rect_id: "pressure_label",
-        value_rect_id: "pressure_value",
+        visual_container: true,
         offset: 6,
+        values: [
+            {
+                id: "wasserdruck",
+                device: "CAN",
+                domain: "sensor",
+                unit: "bar",
+                value_rect_id: "pressure_value",
+                texts: {
+                    de: {
+                        desc: "Wasserdruck"
+                    },
+                    en: {
+                        desc: "Water Pressure"
+                    },
+                    it: {
+                        desc: "Pressione dell'acqua"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Druck",
-                desc: "Wasserdruck"
+                label: "Druck"
             },
             en: {
-                label: "Pressure",
-                desc: "Water Pressure"
+                label: "Pressure"
             },
             it: {
-                label: "Pressione",
-                desc: "Pressione dell'acqua"
+                label: "Pressione"
             }
         }
     },
     {
-        id: "vorlauf_bh_1",
-        domain: "sensor",
-        device: "CAN",
-        unit: "\xb0C",
+        group_id: "Vorlauf-BH",
         label_rect_id: "flow_bh_label",
-        value_rect_id: "flow_bh_can_value",
+        visual_container: true,
         offset: 6,
+        values: [
+            {
+                id: "vorlauf_bh_1",
+                device: "CAN",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "flow_bh_can_value",
+                texts: {
+                    de: {
+                        desc: "VorlaufBH - CAN"
+                    },
+                    en: {
+                        desc: "Flow BH - CAN"
+                    },
+                    it: {
+                        desc: "Mandata al riscaldatore di backup - CAN"
+                    }
+                }
+            },
+            {
+                id: "vorlauf_bh_2",
+                device: "UART",
+                domain: "sensor",
+                value_rect_id: "flow_bh_uart_value",
+                texts: {
+                    de: {
+                        desc: "VorlaufBH - UART"
+                    },
+                    en: {
+                        desc: "Flow BH - UART"
+                    },
+                    it: {
+                        desc: "Flow BH - UART"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Vorlauf BH",
-                desc: "VorlaufBH - CAN"
+                label: "Vorlauf BH"
             },
             en: {
-                label: "Flow BH",
-                desc: "Flow BH - CAN"
+                label: "Flow BH"
             },
             it: {
-                label: "Mandata BH",
-                desc: "Mandata al riscaldatore di backup - CAN"
+                label: "Mandata BH"
             }
         }
     },
     {
-        id: "vorlauf_bh_2",
-        domain: "sensor",
-        device: "UART",
-        unit: "\xb0C",
-        value_rect_id: "flow_bh_uart_value",
-        offset: 6,
-        texts: {
-            de: {
-                desc: "VorlaufBH - UART"
-            },
-            en: {
-                desc: "Flow BH - UART"
-            },
-            it: {
-                desc: "Flow BH - UART"
-            }
-        }
-    },
-    {
-        id: "kompressor_an_aus",
-        domain: "binary_sensor",
-        device: "CAN",
-        value_rect_id: "comp_rect",
+        group_id: "compressor_on_off_group",
         offset: 2,
         fontSize: "40px",
-        texts: {
-            de: {
-                desc: "Status Kompressor"
-            },
-            en: {
-                desc: "Compressor status"
-            },
-            it: {
-                desc: "Stato del compressore"
+        values: [
+            {
+                id: "kompressor_an_aus",
+                device: "CAN",
+                domain: "binary_sensor",
+                value_rect_id: "comp_rect",
+                texts: {
+                    de: {
+                        desc: "Status Kompressor"
+                    },
+                    en: {
+                        desc: "Compressor status"
+                    },
+                    it: {
+                        desc: "Stato del compressore"
+                    }
+                }
             }
-        }
+        ]
     },
     {
-        id: "luefter",
-        domain: "sensor",
-        device: "UART",
-        unit: "RPM",
+        group_id: "Luefter",
         label_rect_id: "fan_label",
-        value_rect_id: "fan_value",
+        visual_container: true,
         offset: 6,
         category: {
             de: "Unten",
@@ -1025,166 +1240,247 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             it: "In basso"
         },
         digits: 0,
-        texts: {
-            de: {
-                label: "L\xfcfter",
-                desc: "L\xfcfter Drehzahl"
-            },
-            en: {
-                label: "Fan",
-                desc: "Fan speed"
-            },
-            it: {
-                label: "Ventilatore",
-                desc: "Velocit\xe0 del ventilatore"
+        values: [
+            {
+                id: "luefter",
+                device: "UART",
+                domain: "sensor",
+                unit: "RPM",
+                value_rect_id: "fan_value",
+                texts: {
+                    de: {
+                        desc: "L\xfcfter Drehzahl"
+                    },
+                    en: {
+                        desc: "Fan speed"
+                    },
+                    it: {
+                        desc: "Velocit\xe0 del ventilatore"
+                    }
+                }
             }
-        }
-    },
-    {
-        id: "verdichter",
-        domain: "sensor",
-        device: "UART",
-        unit: "RPM",
-        label_rect_id: "compressor_label",
-        value_rect_id: "compressor_value",
-        offset: 6,
-        digits: 0,
-        texts: {
-            de: {
-                label: "Verdichter",
-                desc: "Verdichter Drehzahl"
-            },
-            en: {
-                label: "Compressor",
-                desc: "Compressor speed"
-            },
-            it: {
-                label: "Compressore",
-                desc: "Velocit\xe0 del compressore"
-            }
-        }
-    },
-    {
-        id: "speicher",
-        domain: "sensor",
-        device: "CAN",
-        unit: "\xb0C",
-        label_rect_id: "storage_label",
-        value_rect_id: "storage_value",
-        offset: 6,
-        texts: {
-            de: {
-                label: "Speicher",
-                desc: "Speicher Ist"
-            },
-            en: {
-                label: "Storage",
-                desc: "Current storage value"
-            },
-            it: {
-                label: "Serbatoio",
-                desc: "Temperatura serbatoio attuale"
-            }
-        }
-    },
-    {
-        id: "speicher_soll",
-        domain: "select",
-        device: "CAN",
-        unit: "\xb0C",
-        label_rect_id: "storage_setpoint_label",
-        value_rect_id: "storage_setpoint_value",
-        offset: 6,
-        texts: {
-            de: {
-                label: "Soll",
-                desc: "Speicher Soll"
-            },
-            en: {
-                label: "Setpoint",
-                desc: "Storage setpoint"
-            },
-            it: {
-                label: "Impostata",
-                desc: "Temperatura serbatoio impostata"
-            }
-        }
-    },
-    {
-        id: "buh_power",
-        domain: "sensor",
-        unit: [
-            "W",
-            "kW"
         ],
+        texts: {
+            de: {
+                label: "L\xfcfter"
+            },
+            en: {
+                label: "Fan"
+            },
+            it: {
+                label: "Ventilatore"
+            }
+        }
+    },
+    {
+        group_id: "Verdichter",
+        label_rect_id: "compressor_label",
+        visual_container: true,
+        offset: 6,
+        digits: 0,
+        values: [
+            {
+                id: "verdichter",
+                device: "UART",
+                domain: "sensor",
+                unit: "RPM",
+                value_rect_id: "compressor_value",
+                texts: {
+                    de: {
+                        desc: "Verdichter Drehzahl"
+                    },
+                    en: {
+                        desc: "Compressor speed"
+                    },
+                    it: {
+                        desc: "Velocit\xe0 del compressore"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Verdichter"
+            },
+            en: {
+                label: "Compressor"
+            },
+            it: {
+                label: "Compressore"
+            }
+        }
+    },
+    {
+        group_id: "Speicher",
+        label_rect_id: "storage_label",
+        visual_container: true,
+        offset: 6,
+        values: [
+            {
+                id: "speicher",
+                device: "CAN",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "storage_value",
+                texts: {
+                    de: {
+                        desc: "Speicher Ist"
+                    },
+                    en: {
+                        desc: "Current storage value"
+                    },
+                    it: {
+                        desc: "Temperatura serbatoio attuale"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Speicher"
+            },
+            en: {
+                label: "Storage"
+            },
+            it: {
+                label: "Serbatoio"
+            }
+        }
+    },
+    {
+        group_id: "Speicher-Soll",
+        label_rect_id: "storage_setpoint_label",
+        visual_container: true,
+        offset: 6,
+        values: [
+            {
+                id: "speicher_soll",
+                device: "CAN",
+                domain: "select",
+                unit: "\xb0C",
+                value_rect_id: "storage_setpoint_value",
+                texts: {
+                    de: {
+                        desc: "Speicher Soll"
+                    },
+                    en: {
+                        desc: "Storage setpoint"
+                    },
+                    it: {
+                        desc: "Temperatura serbatoio impostata"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Soll"
+            },
+            en: {
+                label: "Setpoint"
+            },
+            it: {
+                label: "Impostata"
+            }
+        }
+    },
+    {
+        group_id: "buh",
         label_rect_id: "buh_info_label",
-        value_rect_id: "buh_info_value",
+        visual_container: true,
         offset: 6,
         digits: 0,
-        optional: true,
         parent: "buh",
+        values: [
+            {
+                id: "buh_power",
+                domain: "sensor",
+                unit: [
+                    "W",
+                    "kW"
+                ],
+                optional: true,
+                value_rect_id: "buh_info_value",
+                texts: {
+                    de: {
+                        desc: "Heizstableistung"
+                    },
+                    en: {
+                        desc: "Heating rod power"
+                    },
+                    it: {
+                        desc: "Potenza della barra riscaldante"
+                    }
+                }
+            }
+        ],
         texts: {
             de: {
-                label: "Heizstab",
-                desc: "Heizstableistung"
+                label: "Heizstab"
             },
             en: {
-                label: "Heating rod",
-                desc: "Heating rod power"
+                label: "Heating rod"
             },
             it: {
-                label: "Resistenza",
-                desc: "Potenza della barra riscaldante"
+                label: "Resistenza"
             }
         }
     },
     {
-        id: "mischer",
-        domain: "sensor",
-        device: "CAN",
-        unit: "%",
-        value_rect_id: "dhw_mixer_value",
+        group_id: "DHW-Valve",
         offset: 6,
         digits: 0,
         fontSize: "40px",
-        texts: {
-            de: {
-                desc: "Mischer"
-            },
-            en: {
-                desc: "Mixer"
-            },
-            it: {
-                desc: "Miscelatore"
+        values: [
+            {
+                id: "mischer",
+                device: "CAN",
+                domain: "sensor",
+                unit: "%",
+                value_rect_id: "dhw_mixer_value",
+                texts: {
+                    de: {
+                        desc: "Mischer"
+                    },
+                    en: {
+                        desc: "Mixer"
+                    },
+                    it: {
+                        desc: "Miscelatore"
+                    }
+                }
             }
-        }
+        ]
     },
     {
-        id: "bypass",
-        domain: "sensor",
-        device: "CAN",
-        unit: "%",
-        value_rect_id: "bypass_value",
+        group_id: "BPV-Valve",
         offset: 6,
         digits: 0,
         fontSize: "40px",
-        texts: {
-            de: {
-                desc: "Bypass"
-            },
-            en: {
-                desc: "Bypass"
-            },
-            it: {
-                desc: "Bypass"
+        values: [
+            {
+                id: "bypass",
+                device: "CAN",
+                domain: "sensor",
+                unit: "%",
+                value_rect_id: "bypass_value",
+                texts: {
+                    de: {
+                        desc: "Bypass"
+                    },
+                    en: {
+                        desc: "Bypass"
+                    },
+                    it: {
+                        desc: "Bypass"
+                    }
+                }
             }
-        }
+        ]
     },
     {
-        id: "fehlercode",
-        domain: "sensor",
-        device: "CAN",
-        value_rect_id: "fehlercode_value",
+        group_id: "Info",
+        visual_container: true,
         offset: 6,
         fontSize: "40px",
         align: "left",
@@ -1193,203 +1489,194 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             en: "Info",
             it: "Info"
         },
-        texts: {
-            de: {
-                suffix: "Fehlercode: ",
-                desc: "Fehlercode"
+        values: [
+            {
+                id: "fehlercode",
+                device: "CAN",
+                domain: "sensor",
+                value_rect_id: "fehlercode_value",
+                texts: {
+                    de: {
+                        suffix: "Fehlercode: ",
+                        desc: "Fehlercode"
+                    },
+                    en: {
+                        suffix: "Error code: ",
+                        desc: "Error code"
+                    },
+                    it: {
+                        suffix: "Codice errore: ",
+                        desc: "Codice di errore"
+                    }
+                }
             },
-            en: {
-                suffix: "Error code: ",
-                desc: "Error code"
+            {
+                id: "betriebsmodus",
+                device: "CAN",
+                domain: "sensor",
+                value_rect_id: "betriebsmodus_value",
+                texts: {
+                    de: {
+                        suffix: "Modus: ",
+                        desc: "Betriebsmodus"
+                    },
+                    en: {
+                        suffix: "Mode: ",
+                        desc: "Operating mode"
+                    },
+                    it: {
+                        suffix: "Modalit\xe0: ",
+                        desc: "Modalit\xe0 di funzionamento"
+                    }
+                }
             },
-            it: {
-                suffix: "Codice errore: ",
-                desc: "Codice di errore"
+            {
+                id: "betriebsart",
+                device: "CAN",
+                domain: "sensor",
+                value_rect_id: "betriebsart_value",
+                texts: {
+                    de: {
+                        suffix: "Betriebsart: ",
+                        desc: "Betriebsart"
+                    },
+                    en: {
+                        suffix: "Mode of oper.: ",
+                        desc: "Mode of operating"
+                    },
+                    it: {
+                        suffix: "Tipo di funzionamento.: ",
+                        desc: "Tipo di funzionamento"
+                    }
+                }
+            },
+            {
+                id: "thermische_leistung",
+                device: "CAN",
+                domain: "sensor",
+                unit: "kW",
+                value_rect_id: "therm_leistung_value",
+                texts: {
+                    de: {
+                        suffix: "Thermische Leistung: ",
+                        desc: "Thermische Leistung"
+                    },
+                    en: {
+                        suffix: "Thermal power: ",
+                        desc: "Thermal power"
+                    },
+                    it: {
+                        suffix: "Potenza termica: ",
+                        desc: "Potenza termica"
+                    }
+                }
+            },
+            {
+                id: "el_power",
+                domain: "sensor",
+                unit: "kW",
+                optional: true,
+                value_rect_id: "el_power_value",
+                texts: {
+                    de: {
+                        suffix: "Elekrische Leistung: ",
+                        desc: "Elektrische Leistung"
+                    },
+                    en: {
+                        suffix: "Electric power: ",
+                        desc: "Electric power"
+                    },
+                    it: {
+                        suffix: "Potenza elettrica: ",
+                        desc: "Potenza elettrica"
+                    }
+                }
+            },
+            {
+                id: "cop",
+                domain: "sensor",
+                optional: true,
+                value_rect_id: "cop_value",
+                texts: {
+                    de: {
+                        suffix: "COP: ",
+                        desc: "COP"
+                    },
+                    en: {
+                        suffix: "COP: ",
+                        desc: "COP"
+                    },
+                    it: {
+                        suffix: "COP: ",
+                        desc: "COP"
+                    }
+                }
+            },
+            {
+                id: "t_room_is",
+                domain: "sensor",
+                optional: true,
+                value_rect_id: "t_room_is_value",
+                texts: {
+                    de: {
+                        suffix: "Raum-Ist: ",
+                        desc: "Raum-Ist"
+                    },
+                    en: {
+                        suffix: "Room setpoint: ",
+                        desc: "Room setpoint"
+                    },
+                    it: {
+                        suffix: "Temperatura ambiente impostata: ",
+                        desc: "Temperatura ambiente impostata"
+                    }
+                }
             }
-        }
+        ]
     },
     {
-        id: "betriebsmodus",
-        domain: "select",
-        device: "CAN",
-        value_rect_id: "betriebsmodus_value",
-        offset: 6,
-        fontSize: "40px",
-        align: "left",
-        texts: {
-            de: {
-                suffix: "Modus: ",
-                desc: "Betriebsmodus"
-            },
-            en: {
-                suffix: "Mode: ",
-                desc: "Operating mode"
-            },
-            it: {
-                suffix: "Modalit\xe0: ",
-                desc: "Modalit\xe0 di funzionamento"
-            }
-        }
-    },
-    {
-        id: "betriebsart",
-        domain: "sensor",
-        device: "CAN",
-        value_rect_id: "betriebsart_value",
-        offset: 6,
-        fontSize: "40px",
-        align: "left",
-        texts: {
-            de: {
-                suffix: "Betriebsart: ",
-                desc: "Betriebsart"
-            },
-            en: {
-                suffix: "Mode of oper.: ",
-                desc: "Mode of operating"
-            },
-            it: {
-                suffix: "Tipo di funzionamento.: ",
-                desc: "Tipo di funzionamento"
-            }
-        }
-    },
-    {
-        id: "thermische_leistung",
-        domain: "sensor",
-        device: "CAN",
-        unit: "kW",
-        value_rect_id: "therm_leistung_value",
-        offset: 6,
-        fontSize: "40px",
-        align: "left",
-        suffix: "Therm. Leistung: ",
-        texts: {
-            de: {
-                suffix: "Thermische Leistung: ",
-                desc: "Thermische Leistung"
-            },
-            en: {
-                suffix: "Thermal power: ",
-                desc: "Thermal power"
-            },
-            it: {
-                suffix: "Potenza termica: ",
-                desc: "Potenza termica"
-            }
-        }
-    },
-    {
-        id: "el_power",
-        domain: "sensor",
-        unit: "kW",
-        value_rect_id: "el_power_value",
-        offset: 6,
-        fontSize: "40px",
-        align: "left",
-        optional: true,
-        texts: {
-            de: {
-                suffix: "Elekrische Leistung: ",
-                desc: "Elektrische Leistung"
-            },
-            en: {
-                suffix: "Electric power: ",
-                desc: "Electric power"
-            },
-            it: {
-                suffix: "Potenza elettrica: ",
-                desc: "Potenza elettrica"
-            }
-        }
-    },
-    {
-        id: "cop",
-        domain: "sensor",
-        value_rect_id: "cop_value",
-        offset: 6,
-        fontSize: "40px",
-        align: "left",
-        optional: true,
-        texts: {
-            de: {
-                suffix: "COP: ",
-                desc: "COP"
-            },
-            en: {
-                suffix: "COP: ",
-                desc: "COP"
-            },
-            it: {
-                suffix: "COP: ",
-                desc: "COP"
-            }
-        }
-    },
-    {
-        id: "t_room_is",
-        domain: "sensor",
-        value_rect_id: "t_room_is_value",
-        offset: 6,
-        fontSize: "40px",
-        align: "left",
-        optional: true,
-        texts: {
-            de: {
-                suffix: "Raum-Ist: ",
-                desc: "Raum-Ist"
-            },
-            en: {
-                suffix: "Room setpoint: ",
-                desc: "Room setpoint"
-            },
-            it: {
-                suffix: "Temperatura ambiente impostata: ",
-                desc: "Temperatura ambiente impostata"
-            }
-        }
-    },
-    {
-        id: "system_date",
-        domain: "sensor",
-        device: "CAN",
-        value_rect_id: "date_value",
+        group_id: "DateTime",
         parent: "date_value",
         offset: 6,
         fontSize: "40px",
-        optional: true,
-        texts: {
-            de: {
-                desc: "Datum"
+        values: [
+            {
+                id: "system_date",
+                device: "CAN",
+                domain: "sensor",
+                optional: true,
+                value_rect_id: "date_value",
+                texts: {
+                    de: {
+                        desc: "Datum"
+                    },
+                    en: {
+                        desc: "Date"
+                    },
+                    it: {
+                        desc: "Ora"
+                    }
+                }
             },
-            en: {
-                desc: "Date"
-            },
-            it: {
-                desc: "Data"
+            {
+                id: "system_time",
+                device: "CAN",
+                domain: "sensor",
+                optional: true,
+                value_rect_id: "time_value",
+                texts: {
+                    de: {
+                        desc: "Zeit"
+                    },
+                    en: {
+                        desc: "Time"
+                    },
+                    it: {
+                        desc: "Ora"
+                    }
+                }
             }
-        }
-    },
-    {
-        id: "system_time",
-        domain: "sensor",
-        device: "CAN",
-        value_rect_id: "time_value",
-        parent: "time_value",
-        offset: 6,
-        fontSize: "40px",
-        optional: true,
-        texts: {
-            de: {
-                desc: "Zeit"
-            },
-            en: {
-                desc: "Time"
-            },
-            it: {
-                desc: "Ora"
-            }
-        }
+        ]
     }
 ];
 const $eb5cfe1dd9fe4e85$export$d0d68bb9ed2c643d = [
@@ -1412,7 +1699,7 @@ const $eb5cfe1dd9fe4e85$export$f8cda7abf1aa048 = {
     }
 };
 const $eb5cfe1dd9fe4e85$export$127f9a442b42d18 = function(config) {
-    const validEntities = Object.fromEntries(Object.entries(config.entities ?? {}).filter(([key])=>$eb5cfe1dd9fe4e85$export$9b06e6104ce35b16.some((entity_conf)=>entity_conf.id === key)));
+    const validEntities = Object.fromEntries(Object.entries(config.entities ?? {}).filter(([key])=>$eb5cfe1dd9fe4e85$export$9b06e6104ce35b16.some((item)=>item.values.some((value)=>value.id === key))));
     return {
         ...config,
         entities: validEntities
@@ -2291,7 +2578,10 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
         this.config = (0, $eb5cfe1dd9fe4e85$export$127f9a442b42d18)(config);
         this.svgItemConfig = (0, $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16).map((svg_item)=>({
                 ...svg_item,
-                entityId: this.config.entities?.[svg_item.id] ?? null
+                values: svg_item.values.map((value)=>({
+                        ...value,
+                        entityId: this.config.entities?.[value.id] || null
+                    }))
             }));
     }
     willUpdate(changedProperties) {
@@ -2349,38 +2639,41 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
                         .header=${category}
                     >
                         ${categories[category].map((svg_item)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
-                            <ha-selector
-                                .hass=${this.hass}
-                                .selector=${{
-                    entity: {
-                        include_entities: this.getRelevantEntityIds(svg_item)
-                    }
-                }}
-                                .placeholder=${svg_item.texts[this.language]?.desc || "<missing>"}
-                                .value=${svg_item.entityId}
-                                @value-changed=${this._entityChanged}
-                                data-id=${svg_item.id}
-                            >
-                            </ha-selector>
+                            ${svg_item.values.map((value_item, index)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+                                <ha-selector
+                                    .hass=${this.hass}
+                                    .selector=${{
+                        entity: {
+                            include_entities: this.getRelevantEntityIds(svg_item, value_item)
+                        }
+                    }}
+                                    .placeholder=${value_item.texts[this.language]?.desc || "<missing>"}
+                                    .value=${value_item.entityId}
+                                    @value-changed=${this._entityChanged}
+                                    data-id=${value_item.id}
+                                    data-index=${index}
+                                >
+                                </ha-selector>
+                            `)}
                         `)}
                     </ha-expansion-panel>
                 `)}
             </div>
         `;
     }
-    getRelevantEntityIds(svg_item) {
+    getRelevantEntityIds(svg_item, value_item) {
         const relevantEntityIds = [];
-        const targetDeviceId = svg_item.device === "UART" ? this.config.uartDevice : this.config.canDevice;
-        const targetUnit = $d067581fc0d59830$var$ensureArray(svg_item.unit);
+        const targetDeviceId = value_item.device === "UART" ? this.config.uartDevice : this.config.canDevice;
+        const targetUnit = $d067581fc0d59830$var$ensureArray(value_item.unit);
         for(const entityId in this.hass.states){
             if (!Object.prototype.hasOwnProperty.call(this.hass.states, entityId)) continue;
             const entity = this.hass.states[entityId];
             const domain = entityId.substring(0, entityId.indexOf('.'));
-            if (svg_item.device && targetDeviceId) {
+            if (value_item.device && targetDeviceId) {
                 const entityRegistryEntry = this.hass.entities[entityId];
                 if (!entityRegistryEntry || entityRegistryEntry.device_id !== targetDeviceId) continue;
             }
-            if (svg_item.domain !== undefined && svg_item.domain !== domain) continue;
+            if (value_item.domain !== undefined && value_item.domain !== domain) continue;
             if (domain !== "select") {
                 const unitOfMeasurement = entity.attributes.unit_of_measurement;
                 if (!targetUnit.includes(unitOfMeasurement)) continue;
@@ -2417,9 +2710,9 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
     }
     static sortRecordBySvgOrder(data, svgItems) {
         const dataKeys = Object.keys(data);
-        const sortedEntries = svgItems.filter((item)=>dataKeys.includes(item.id)).map((item)=>[
-                item.id,
-                data[item.id]
+        const sortedEntries = svgItems.flatMap((item)=>item.values).filter((value)=>dataKeys.includes(value.id)).map((value)=>[
+                value.id,
+                data[value.id]
             ]);
         return Object.fromEntries(sortedEntries);
     }
@@ -2550,7 +2843,10 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         this.config = (0, $eb5cfe1dd9fe4e85$export$127f9a442b42d18)(config);
         this.svg_item_config = (0, $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16).map((svg_item)=>({
                 ...svg_item,
-                entityId: this.config.entities?.[svg_item.id] || null
+                values: svg_item.values.map((value)=>({
+                        ...value,
+                        entityId: this.config.entities?.[value.id] || null
+                    }))
             }));
     }
     willUpdate(changed) {
@@ -2586,10 +2882,12 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             }
         };
         this.svg_item_config.forEach((svg_item)=>{
-            if (svg_item.valueBox && svg_item.entityId) {
-                const id = `${svg_item.valueBox.id}_text`;
-                setClickHandler(id, svg_item.entityId);
-            }
+            svg_item.values.forEach((value_item)=>{
+                if (value_item.valueBox && value_item.entityId) {
+                    const id = `${value_item.valueBox.id}_text`;
+                    setClickHandler(id, value_item.entityId);
+                }
+            });
         });
         const pressureEqualizationEntityId = this.findEntityIdById(this.svg_item_config, "pressure_equalization");
         setClickHandler("eev_arrow_left", pressureEqualizationEntityId);
@@ -2659,17 +2957,16 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         `;
     }
     render() {
+        return this.renderContent();
+    }
+    renderContent() {
         switch(this._state){
             case "error":
-                return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<ha-card>Fehler beim Laden des HPSU Dashboards.</ha-card>`;
+                return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`Fehler beim Laden des HPSU Dashboards.`;
             case "ready":
-                return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
-                    <hpsu-dashboard-card-container>
-                        ${this.svgContent ? (0, $33e813419ea8f3a8$export$1cb98903879b8bf5)(this.svgContent) : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
-                    </hpsu-dashboard-card-container>
-                `;
+                return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<ha-card>${this.svgContent ? (0, $33e813419ea8f3a8$export$1cb98903879b8bf5)(this.svgContent) : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}</ha-card>`;
             default:
-                return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)``;
+                return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<ha-card></ha-card>`;
         }
     }
     createSvgWithLabels(svgString) {
@@ -2686,27 +2983,132 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         this.createStateLabels(svgDoc);
         return new XMLSerializer().serializeToString(svgElement);
     }
+    strToFloat(str) {
+        if (str === "" || str === undefined || str === null || str.trim() === "") return 0;
+        return parseFloat(str);
+    }
     createStateLabels(svgDoc) {
+        const haCard = this.haCardElement;
+        if (!haCard) return;
+        let style = getComputedStyle(haCard);
+        let rootStyle = getComputedStyle(document.body); // Oder document.documentElement
+        let backgroundColor = style.getPropertyValue('--ha-card-background').trim();
+        let borderColor = style.getPropertyValue('--ha-card-border-color').trim();
+        if (borderColor === "") borderColor = style.getPropertyValue('--divider-color').trim();
+        if (borderColor === "") borderColor = '#000000ff';
+        let borderWidth = style.getPropertyValue('--ha-card-border-width').trim();
+        let globalWidth = rootStyle.getPropertyValue('--ha-card-border-width').trim();
+        console.log("global-width: " + globalWidth + ", " + this.strToFloat(borderWidth) + "|" + borderWidth);
+        if (this.strToFloat(borderWidth) === 0) {
+            if (backgroundColor === "") borderWidth = "5px";
+            else borderWidth = "0px";
+        }
+        if (backgroundColor === "") backgroundColor = "none";
+        //const borderWidth = "5px";
+        let borderRadius = style.getPropertyValue('--ha-card-border-radius').trim();
+        /*if (parseFloat(borderRadius) === 0) {
+            let rootStyle = getComputedStyle(document.body); // Oder document.documentElement
+            let globalRadius = rootStyle.getPropertyValue('--ha-card-border-radius').trim();
+            borderRadius = "10px"; //globalRadius;
+        }*/ const secondaryTextColor = style.getPropertyValue('--secondary-text-color').trim() || '#808080';
+        console.log("bg-color:" + backgroundColor + "|radius: " + borderRadius + "|border-color: " + borderColor + "|border-width:" + borderWidth);
+        let currentBackgroundColor = backgroundColor;
         this.svg_item_config.forEach((svg_item)=>{
-            svg_item.valueBox = svgDoc.getElementById(svg_item.value_rect_id ?? "");
-            if (svg_item.valueBox) {
-                const group = svg_item.valueBox.parentNode;
-                if (group) {
-                    svg_item.entityId = this.config.entities?.[svg_item.id] ?? null;
-                    const valueText = this.createText(svg_item.valueBox);
-                    svg_item.labelBox = svg_item.label_rect_id ? svgDoc.getElementById(svg_item.label_rect_id) : null;
-                    if (svg_item.labelBox) {
-                        const labelText = this.createText(svg_item.labelBox);
-                        group.appendChild(labelText);
-                        labelText.setAttribute("font-size", "35");
-                        labelText.setAttribute("fill", "rgb(191, 191, 191)");
-                        labelText.textContent = svg_item.texts[this.language] ? svg_item.texts[this.language].label : svg_item.id + "<missing>";
-                        this.layoutText(labelText, svg_item.labelBox, "middle", 3);
-                    }
-                    group.appendChild(valueText);
-                } else console.warn(`Rect with ID ${svg_item.value_rect_id} parent not found.`);
+            const group = svgDoc.getElementById(svg_item.group_id ?? "");
+            svg_item.labelBox = svg_item.label_rect_id ? svgDoc.getElementById(svg_item.label_rect_id) : null;
+            // Create label text
+            if (group && svg_item.labelBox) {
+                svg_item.labelBox.setAttribute("fill", backgroundColor);
+                svg_item.labelBox.setAttribute("stroke", borderColor);
+                svg_item.labelBox.setAttribute("stroke-width", borderWidth);
+                svg_item.labelBox.setAttribute("rx", borderRadius);
+                svg_item.labelBox.setAttribute("ry", borderRadius);
+                const labelText = this.createText(svg_item.labelBox);
+                group.appendChild(labelText);
+                labelText.setAttribute("font-size", "35");
+                labelText.setAttribute("fill", secondaryTextColor);
+                labelText.textContent = svg_item.texts?.[this.language] ? svg_item.texts[this.language].label : svg_item.group_id + "<missing>";
+                this.layoutText(labelText, svg_item.labelBox, "middle", 3);
             }
+            // Create parent rect with round corners
+            var roundCorners = this.strToFloat(borderRadius) > 0;
+            if (svg_item.visual_container && group && roundCorners) {
+                const bbox = this.getBBox(group);
+                const parent_box = this.createRect(svg_item.group_id);
+                parent_box.setAttribute("x", bbox.x.toString());
+                parent_box.setAttribute("y", bbox.y.toString());
+                parent_box.setAttribute("width", bbox.width.toString());
+                parent_box.setAttribute("height", bbox.height.toString());
+                parent_box.setAttribute("fill", backgroundColor);
+                parent_box.setAttribute("stroke", borderColor);
+                parent_box.setAttribute("stroke-width", borderWidth);
+                parent_box.setAttribute("rx", borderRadius);
+                parent_box.setAttribute("ry", borderRadius);
+                group.insertBefore(parent_box, parent_box.firstChild);
+                currentBackgroundColor = "none";
+            }
+            if (roundCorners && svg_item.labelBox) this.removeSVGElement(svg_item.labelBox);
+            // Create value texts
+            svg_item.values.forEach((value_item)=>{
+                value_item.valueBox = svgDoc.getElementById(value_item.value_rect_id ?? "");
+                if (value_item.valueBox) {
+                    let currentBorderColor = borderColor;
+                    value_item.valueBox.setAttribute("fill", currentBackgroundColor);
+                    value_item.valueBox.setAttribute("stroke", currentBorderColor);
+                    value_item.valueBox.setAttribute("stroke-width", borderWidth);
+                    //svg_item.valueBox.setAttribute("rx", borderRadius);
+                    //svg_item.valueBox.setAttribute("ry", borderRadius);
+                    if (group) {
+                        value_item.entityId = this.config.entities?.[value_item.id] ?? null;
+                        const valueText = this.createText(value_item.valueBox);
+                        group.appendChild(valueText);
+                    } else console.warn(`Rect with ID ${value_item.value_rect_id} parent not found.`);
+                }
+            });
         });
+    }
+    removeSVGElement(childElement) {
+        const parentElement = childElement.parentElement;
+        if (parentElement) parentElement.removeChild(childElement);
+    }
+    getBBox(group) {
+        const clonedGroup = group.cloneNode(true);
+        const cleanupCallback = (child, parent)=>{
+            const tagName = child.tagName.toLowerCase();
+            if (tagName === 'path') {
+                parent.removeChild(child);
+                return true;
+            }
+            if (tagName === 'rect') child.setAttribute('fill', 'rgba(0, 0, 0, 0.01)');
+            return false;
+        };
+        this.processNode(clonedGroup, cleanupCallback);
+        const tempSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        tempSvg.style.cssText = `
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        `;
+        tempSvg.appendChild(clonedGroup);
+        this.shadowRoot.appendChild(tempSvg);
+        try {
+            return clonedGroup.getBBox();
+        } finally{
+            this.shadowRoot.removeChild(tempSvg);
+        }
+    }
+    processNode(node, callback) {
+        for(let i = node.children.length - 1; i >= 0; i--){
+            const child = node.children[i];
+            if (child.tagName.toLowerCase() === 'g') this.processNode(child, callback);
+            else {
+                const wasRemoved = callback(child, node);
+                if (wasRemoved) continue;
+            }
+        }
     }
     createText(box) {
         const textText = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -2716,6 +3118,11 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         const transform = box.getAttribute('transform');
         if (transform) textText.setAttribute("transform", transform);
         return textText;
+    }
+    createRect(group_id) {
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.id = `${group_id}_rect`;
+        return rect;
     }
     layoutText(text, box, align, yOffset) {
         const xPos = parseFloat(box.getAttribute('x') ?? "");
@@ -2732,53 +3139,61 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         if (yOffset != undefined) text.setAttribute("y", (yPos + height / 2 + yOffset).toString());
     }
     updateLabels() {
+        const haCard = this.haCardElement;
+        if (!haCard) return;
         if (this.config) {
-            if (this.svg_item_config) this.svg_item_config.forEach((svg_item)=>{
-                const newState = svg_item.entityId ? this.hass.states[svg_item.entityId] : null;
-                const parentBox = svg_item.parent ? this.shadowRoot.getElementById(svg_item.parent) : null;
-                if (parentBox) parentBox.style.display = newState ? "block" : "none";
-                if (svg_item.valueBox) {
-                    const id = `${svg_item.valueBox.id}_text`;
-                    const valueText = this.shadowRoot.getElementById(id);
-                    if (valueText) {
-                        const fontSize = svg_item.fontSize || "56";
-                        if (!newState) {
-                            valueText.textContent = "N/D";
-                            valueText.setAttribute("fill", "orange");
-                            valueText.setAttribute("font-size", "30px");
-                            valueText.setAttribute("display", svg_item.optional === true ? "none" : "block");
-                        } else if (newState.state == "unknown" || newState.state == "unavailable") {
-                            valueText.textContent = "N/A";
-                            valueText.setAttribute("fill", "orange");
-                            valueText.setAttribute("font-size", "30px");
-                        } else {
-                            let entityState = newState.state || "--";
-                            valueText.setAttribute("font-size", fontSize);
-                            if (this.isBooleanSensor(svg_item.entityId)) {
-                                const lang_map = (0, $eb5cfe1dd9fe4e85$export$f8cda7abf1aa048)[this.language];
-                                valueText.textContent = entityState === "on" ? lang_map.on : entityState === "off" ? lang_map.off : "<invalid>";
-                                valueText.setAttribute("fill", entityState === "on" ? "yellow" : "silver");
-                            } else {
-                                entityState = this.formatNumber(newState, svg_item.digits ?? 1);
-                                if (entityState == "Warmwasserbereitung") entityState = "Warmwasser";
-                                if (svg_item.texts[this.language].suffix) entityState = svg_item.texts[this.language].suffix + entityState;
-                                valueText.textContent = entityState;
-                                if (svg_item.id != "fehlercode" || svg_item.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" || svg_item.texts[this.language].suffix == "Error code: " && "No Error" || svg_item.texts[this.language].suffix == "Codice errore: " && "Nessun errore") valueText.setAttribute("fill", "silver");
-                                else valueText.setAttribute("fill", "red");
+            if (this.svg_item_config) {
+                let style = getComputedStyle(haCard);
+                const primaryTextColor = style.getPropertyValue('--primary-text-color').trim() || 'black';
+                this.svg_item_config.forEach((svg_item)=>{
+                    svg_item.values.forEach((value_item)=>{
+                        svg_item.values.forEach((value_item)=>{
+                            const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
+                            const parentBox = svg_item.parent ? this.shadowRoot.getElementById(svg_item.parent) : null;
+                            if (parentBox) parentBox.style.display = newState ? "block" : "none";
+                            const id = `${value_item.value_rect_id}_text`;
+                            const valueText = this.shadowRoot.querySelector(`#${id}`);
+                            if (valueText) {
+                                const fontSize = svg_item.fontSize || "56";
+                                if (!newState) {
+                                    valueText.textContent = "N/D";
+                                    valueText.setAttribute("fill", "orange");
+                                    valueText.setAttribute("font-size", "30px");
+                                    valueText.setAttribute("display", value_item.optional === true ? "none" : "block");
+                                } else if (newState.state == "unknown" || newState.state == "unavailable") {
+                                    valueText.textContent = "N/A";
+                                    valueText.setAttribute("fill", "orange");
+                                    valueText.setAttribute("font-size", "30px");
+                                } else {
+                                    let entityState = newState.state || "--";
+                                    valueText.setAttribute("font-size", fontSize);
+                                    if (this.isBooleanSensor(value_item.entityId)) {
+                                        const lang_map = (0, $eb5cfe1dd9fe4e85$export$f8cda7abf1aa048)[this.language];
+                                        valueText.textContent = entityState === "on" ? lang_map.on : entityState === "off" ? lang_map.off : "<invalid>";
+                                        valueText.setAttribute("fill", entityState === "on" ? "yellow" : "silver");
+                                    } else {
+                                        entityState = this.formatNumber(newState, svg_item.digits ?? 1);
+                                        if (entityState == "Warmwasserbereitung") entityState = "Warmwasser";
+                                        if (value_item.texts[this.language].suffix) entityState = value_item.texts[this.language].suffix + entityState;
+                                        valueText.textContent = entityState;
+                                        if (value_item.id != "fehlercode" || value_item.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" || value_item.texts[this.language].suffix == "Error code: " && "No Error" || value_item.texts[this.language].suffix == "Codice errore: " && "Nessun errore") valueText.setAttribute("fill", primaryTextColor);
+                                        else valueText.setAttribute("fill", "red");
+                                    }
+                                }
+                                this.layoutText(valueText, value_item.valueBox, svg_item.align, svg_item.offset);
+                            } else console.warn("Value text not found: " + value_item.entityId);
+                            if (value_item.id == "pressure_equalization") {
+                                const color = newState && newState.state == "on" ? '#00ff0080' : '#7f7f7f';
+                                this.shadowRoot.getElementById("eev_arrow_left").setAttribute('fill', color);
+                                this.shadowRoot.getElementById("eev_arrow_right").setAttribute('fill', color);
+                            } else if (value_item.id == "buh_power") {
+                                const color = newState && this.isPositiveNumber(newState.state) ? '#d4aa00ff' : '#7f7f7f';
+                                this.shadowRoot.getElementById("buh-control").setAttribute('fill', color);
                             }
-                        }
-                        this.layoutText(valueText, svg_item.valueBox, svg_item.align, svg_item.offset);
-                    } else console.warn("Label not found: " + svg_item.entityId);
-                }
-                if (svg_item.id == "pressure_equalization") {
-                    const color = newState && newState.state == "on" ? '#00ff0080' : '#7f7f7f';
-                    this.shadowRoot.getElementById("eev_arrow_left").setAttribute('fill', color);
-                    this.shadowRoot.getElementById("eev_arrow_right").setAttribute('fill', color);
-                } else if (svg_item.id == "buh_power") {
-                    const color = newState && this.isPositiveNumber(newState.state) ? '#d4aa00ff' : '#7f7f7f';
-                    this.shadowRoot.getElementById("buh-control").setAttribute('fill', color);
-                }
-            });
+                        });
+                    });
+                });
+            }
         }
     }
     updateOpacity() {
@@ -2869,6 +3284,9 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
 (0, $24c52f343453d62d$export$29e00dfd3077644b)([
     (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
 ], $a399cc6bbb0eb26a$export$9de59f1af66e4f03.prototype, "svgContent", void 0);
+(0, $24c52f343453d62d$export$29e00dfd3077644b)([
+    (0, $02a1f3a787c54a30$export$2fa187e846a241c4)('ha-card')
+], $a399cc6bbb0eb26a$export$9de59f1af66e4f03.prototype, "haCardElement", void 0);
 customElements.define("hpsu-dashboard-card", $a399cc6bbb0eb26a$export$9de59f1af66e4f03);
 customElements.define("hpsu-dashboard-card-editor", (0, $d067581fc0d59830$export$70410bc798970b36));
 window.customCards = window.customCards || [];
