@@ -48,7 +48,9 @@ export class HPSUDashboardCard extends LitElement {
 
     protected willUpdate(changed: Map<PropertyKey, unknown>): void {
         if (changed.has("hass") && this.hass?.language) {
-            const lang = this.hass.language.split("-")[0];
+            // Use config language if set, otherwise use Home Assistant language
+            const configLang = this.config?.language;
+            const lang = configLang || this.hass.language.split("-")[0];
             this.language = languages.includes(lang) ? lang : "de";
         }
     }
