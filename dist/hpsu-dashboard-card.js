@@ -537,7 +537,6 @@ var $24c52f343453d62d$export$2e2bcd8739ae039 = {
 };
 
 
-
 const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
     {
         group_id: "TA",
@@ -3229,13 +3228,14 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         }));
     }
     makeURL(filename) {
-        const repoName = "daikin-rotex-hpsu-dashboard";
-        const scriptElement = document.querySelector(`script[src*="/hacsfiles/${repoName}/"]`);
-        const scriptUrl = scriptElement && scriptElement.src ? scriptElement.src : "";
-        const hacsTag = new URLSearchParams(scriptUrl.split("?")[1]).get("hacstag");
-        console.log(`Script url: ${scriptUrl}, tag: ${hacsTag}`);
-        if (hacsTag) return `/hacsfiles/${repoName}/${filename}?hacstag=${hacsTag}`;
-        else return `/local/${repoName}/dist/${filename}?v=${Date.now()}`;
+        // Resolve next to this module, independent of install location
+        // (/hacsfiles/, /local/, /local/community/, ...).
+        // Variable base: keeps Parcel from treating this as an asset reference.
+        const moduleUrl = "file:///src/card.ts";
+        const url = new URL(filename, moduleUrl);
+        // Reuse the module's own query string (hacstag / v=...) as cache key.
+        url.search = new URL(moduleUrl).search;
+        return url.href;
     }
     isPanelView() {
         let node = this;

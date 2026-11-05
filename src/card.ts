@@ -570,19 +570,14 @@ export class HPSUDashboardCard extends LitElement {
     }
 
     private makeURL(filename: string): string {
-        const repoName = "daikin-rotex-hpsu-dashboard";
-        const scriptElement = document.querySelector(`script[src*="/hacsfiles/${repoName}/"]`) as HTMLScriptElement;
-
-        const scriptUrl = scriptElement && scriptElement.src ? scriptElement.src : "";
-        const hacsTag = new URLSearchParams(scriptUrl.split("?")[1]).get("hacstag");
-
-        console.log(`Script url: ${scriptUrl}, tag: ${hacsTag}`);
-
-        if (hacsTag) {
-            return `/hacsfiles/${repoName}/${filename}?hacstag=${hacsTag}`;
-        } else {
-            return `/local/${repoName}/dist/${filename}?v=${Date.now()}`;
-        }
+        // Resolve next to this module, independent of install location
+        // (/hacsfiles/, /local/, /local/community/, ...).
+        // Variable base: keeps Parcel from treating this as an asset reference.
+        const moduleUrl: string = import.meta.url;
+        const url = new URL(filename, moduleUrl);
+        // Reuse the module's own query string (hacstag / v=...) as cache key.
+        url.search = new URL(moduleUrl).search;
+        return url.href;
     }
 
     private isPanelView(): boolean {
