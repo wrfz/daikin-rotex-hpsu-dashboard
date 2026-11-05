@@ -570,13 +570,27 @@ export class HPSUDashboardCard extends LitElement {
     }
 
     private makeURL(filename: string): string {
-        // Resolve next to this module, independent of install location
+        // Resolve next to this card's own script, independent of install location
         // (/hacsfiles/, /local/, /local/community/, ...).
-        // Variable base: keeps Parcel from treating this as an asset reference.
-        const moduleUrl: string = import.meta.url;
-        const url = new URL(filename, moduleUrl);
-        // Reuse the module's own query string (hacstag / v=...) as cache key.
-        url.search = new URL(moduleUrl).search;
+        // Not import.meta.url: Parcel inlines it as "file:///src/card.ts".
+        const scriptName = "hpsu-dashboard-card.js";
+        const scriptEl = Array.from(document.querySelectorAll<HTMLScriptElement>("script[src]"))
+            .find((s) => new URL(s.src, document.baseURI).pathname.endsWith(`/${scriptName}`));
+        const scriptUrl =
+            scriptEl?.src ??
+            performance
+                .getEntriesByType("resource")
+                .map((e) => e.name)
+                .find((n) => new URL(n, document.baseURI).pathname.endsWith(`/${scriptName}`));
+
+        if (!scriptUrl) {
+            console.warn(`hpsu-dashboard-card: cannot locate ${scriptName}, using default path`);
+            return `/local/community/daikin-rotex-hpsu-dashboard/${filename}`;
+        }
+
+        const url = new URL(filename, scriptUrl);
+        // Reuse the script's own query string (hacstag / v=...) as cache key.
+        url.search = new URL(scriptUrl).search;
         return url.href;
     }
 
