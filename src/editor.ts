@@ -5,6 +5,8 @@ import {
     Category,
     languages,
     validateConfig,
+    layouts,
+    DEFAULT_LAYOUT,
 } from "./svg_item_config";
 
 import type { LovelaceCardConfig } from "@ha/data/lovelace/config/card";
@@ -86,8 +88,31 @@ export class HpsuDashboardCardEditor extends LitElement {
         }
 
         const deviceLabel = "HPSU Devices";
+        const layoutLabel = ({ de: "Layout", en: "Layout", it: "Layout" } as Record<string, string>)[this.language] ?? "Layout";
+        const animationsLabel = ({ de: "Animationen", en: "Animations", it: "Animazioni" } as Record<string, string>)[this.language] ?? "Animations";
         return html`
             <div class="card-config">
+                <ha-selector
+                    .hass=${this.hass}
+                    .selector=${{
+                        select: {
+                            mode: "dropdown",
+                            options: layouts.map(l => ({ value: l.id, label: l.labels[this.language] ?? l.labels.en }))
+                        }
+                    }}
+                    .label=${layoutLabel}
+                    .value=${this.config.layout ?? DEFAULT_LAYOUT}
+                    @value-changed=${this._layoutChanged}
+                    id="layout-selector">
+                </ha-selector>
+                <ha-selector
+                    .hass=${this.hass}
+                    .selector=${{ boolean: {} }}
+                    .label=${animationsLabel}
+                    .value=${this.config.animations !== false}
+                    @value-changed=${this._animationsChanged}
+                    id="animations-selector">
+                </ha-selector>
                 <ha-expansion-panel
                     .header=${deviceLabel}
                 >
@@ -176,6 +201,32 @@ export class HpsuDashboardCardEditor extends LitElement {
         }
 
         return relevantEntityIds;
+    }
+
+    private _animationsChanged(event: CustomEvent): void {
+        event.stopPropagation();
+        this.config = { ...this.config, animations: (event.detail as any).value };
+
+        this.dispatchEvent(
+            new CustomEvent('config-changed', {
+                detail: { config: this.config },
+                bubbles: true,
+                composed: true,
+            })
+        );
+    }
+
+    private _layoutChanged(event: CustomEvent): void {
+        event.stopPropagation();
+        this.config = { ...this.config, layout: (event.detail as any).value };
+
+        this.dispatchEvent(
+            new CustomEvent('config-changed', {
+                detail: { config: this.config },
+                bubbles: true,
+                composed: true,
+            })
+        );
     }
 
     private _entityChanged(event: CustomEvent): void {

@@ -1683,6 +1683,46 @@ const $eb5cfe1dd9fe4e85$export$d0d68bb9ed2c643d = [
     "en",
     "it"
 ];
+const $eb5cfe1dd9fe4e85$export$cfaf3f619f4fde4d = "classic";
+const $eb5cfe1dd9fe4e85$export$1ecca0613f5e56d2 = [
+    {
+        id: "classic",
+        file: "hpsu.svg",
+        labels: {
+            de: "Klassisch",
+            en: "Classic",
+            it: "Classico"
+        }
+    },
+    {
+        id: "glass-dark",
+        file: "hpsu_glass_dark.svg",
+        labels: {
+            de: "Glas, dunkel",
+            en: "Glass, dark",
+            it: "Vetro, scuro"
+        }
+    },
+    {
+        id: "glass-light",
+        file: "hpsu_glass_light.svg",
+        labels: {
+            de: "Glas, hell",
+            en: "Glass, light",
+            it: "Vetro, chiaro"
+        }
+    },
+    {
+        id: "glass-petrol",
+        file: "hpsu_glass_petrol.svg",
+        labels: {
+            de: "Glas, Petrol",
+            en: "Glass, petrol",
+            it: "Vetro, petrolio"
+        }
+    }
+];
+const $eb5cfe1dd9fe4e85$export$6fb81034e128eb0 = (id)=>($eb5cfe1dd9fe4e85$export$1ecca0613f5e56d2.find((l)=>l.id === id) ?? $eb5cfe1dd9fe4e85$export$1ecca0613f5e56d2.find((l)=>l.id === $eb5cfe1dd9fe4e85$export$cfaf3f619f4fde4d)).file;
 const $eb5cfe1dd9fe4e85$export$f8cda7abf1aa048 = {
     "de": {
         "on": "An",
@@ -2604,8 +2644,44 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             });
         }
         const deviceLabel = "HPSU Devices";
+        const layoutLabel = {
+            de: "Layout",
+            en: "Layout",
+            it: "Layout"
+        }[this.language] ?? "Layout";
+        const animationsLabel = {
+            de: "Animationen",
+            en: "Animations",
+            it: "Animazioni"
+        }[this.language] ?? "Animations";
         return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
             <div class="card-config">
+                <ha-selector
+                    .hass=${this.hass}
+                    .selector=${{
+            select: {
+                mode: "dropdown",
+                options: (0, $eb5cfe1dd9fe4e85$export$1ecca0613f5e56d2).map((l)=>({
+                        value: l.id,
+                        label: l.labels[this.language] ?? l.labels.en
+                    }))
+            }
+        }}
+                    .label=${layoutLabel}
+                    .value=${this.config.layout ?? (0, $eb5cfe1dd9fe4e85$export$cfaf3f619f4fde4d)}
+                    @value-changed=${this._layoutChanged}
+                    id="layout-selector">
+                </ha-selector>
+                <ha-selector
+                    .hass=${this.hass}
+                    .selector=${{
+            boolean: {}
+        }}
+                    .label=${animationsLabel}
+                    .value=${this.config.animations !== false}
+                    @value-changed=${this._animationsChanged}
+                    id="animations-selector">
+                </ha-selector>
                 <ha-expansion-panel
                     .header=${deviceLabel}
                 >
@@ -2680,6 +2756,34 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             relevantEntityIds.push(entityId);
         }
         return relevantEntityIds;
+    }
+    _animationsChanged(event) {
+        event.stopPropagation();
+        this.config = {
+            ...this.config,
+            animations: event.detail.value
+        };
+        this.dispatchEvent(new CustomEvent('config-changed', {
+            detail: {
+                config: this.config
+            },
+            bubbles: true,
+            composed: true
+        }));
+    }
+    _layoutChanged(event) {
+        event.stopPropagation();
+        this.config = {
+            ...this.config,
+            layout: event.detail.value
+        };
+        this.dispatchEvent(new CustomEvent('config-changed', {
+            detail: {
+                config: this.config
+            },
+            bubbles: true,
+            composed: true
+        }));
     }
     _entityChanged(event) {
         event.stopPropagation();
@@ -2847,6 +2951,14 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                         entityId: this.config.entities?.[value.id] || null
                     }))
             }));
+        if (this.hasUpdated && this._state === "ready") this.updateAnimations();
+        // Layout switched while the card is already shown (e.g. in the card editor): reload the SVG.
+        if (this.hasUpdated && this.loadedLayoutFile !== null && (0, $eb5cfe1dd9fe4e85$export$6fb81034e128eb0)(this.config.layout) !== this.loadedLayoutFile) {
+            this.clickHandlersAdded = false;
+            this._state = "loading";
+            this.svgContent = null;
+            this.updateComplete.then(()=>this.createDashboard());
+        }
     }
     willUpdate(changed) {
         if (changed.has("hass") && this.hass?.language) {
@@ -2858,11 +2970,13 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         await this.createDashboard();
     }
     async createDashboard() {
-        const url = this.makeURL("hpsu.svg");
+        const file = (0, $eb5cfe1dd9fe4e85$export$6fb81034e128eb0)(this.config?.layout);
+        const url = this.makeURL(file);
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Failed to fetch '${url}' (${response.status})`);
             const rawSvgString = await response.text();
+            this.loadedLayoutFile = file;
             this.svgContent = this.createSvgWithLabels(rawSvgString);
             this._state = "ready";
         } catch (e) {
@@ -2889,6 +3003,9 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             });
         });
         const pressureEqualizationEntityId = this.findEntityIdById(this.svg_item_config, "pressure_equalization");
+        // Layouts without status texts show on/off on the symbol itself; clicking it opens the details.
+        setClickHandler("compressor-symbol", this.findEntityIdById(this.svg_item_config, "kompressor_an_aus"));
+        setClickHandler("pump-symbol", this.findEntityIdById(this.svg_item_config, "umwaelzpumpe_an_aus"));
         setClickHandler("eev_arrow_left", pressureEqualizationEntityId);
         setClickHandler("eev_arrow_right", pressureEqualizationEntityId);
     }
@@ -2898,6 +3015,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         if (this._state == "ready") {
             this.updateLabels();
             this.updateOpacity();
+            this.updateAnimations();
             if (!this.clickHandlersAdded) {
                 this.addClickHandlers();
                 this.clickHandlersAdded = true;
@@ -2977,6 +3095,14 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             console.error("The SVG was not parsed correctly.");
             return null;
         }
+        this.layoutStyle = {
+            radius: svgElement.getAttribute("data-box-radius") ?? undefined,
+            fill: svgElement.getAttribute("data-box-fill") ?? undefined,
+            stroke: svgElement.getAttribute("data-box-stroke") ?? undefined,
+            strokeWidth: svgElement.getAttribute("data-box-stroke-width") ?? undefined,
+            text: svgElement.getAttribute("data-text-color") ?? undefined,
+            label: svgElement.getAttribute("data-label-color") ?? undefined
+        };
         svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
         svgElement.style.display = "block";
         this.createStateLabels(svgDoc);
@@ -3009,8 +3135,13 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             let rootStyle = getComputedStyle(document.body); // Oder document.documentElement
             let globalRadius = rootStyle.getPropertyValue('--ha-card-border-radius').trim();
             borderRadius = "10px"; //globalRadius;
-        }*/ const secondaryTextColor = style.getPropertyValue('--secondary-text-color').trim() || '#808080';
+        }*/ const secondaryTextColor = this.layoutStyle.label ?? (style.getPropertyValue('--secondary-text-color').trim() || '#808080');
         console.log("bg-color:" + backgroundColor + "|radius: " + borderRadius + "|border-color: " + borderColor + "|border-width:" + borderWidth);
+        // A layout may bring its own box style (rounded corners, colours); it wins over the HA theme.
+        if (this.layoutStyle.radius !== undefined) borderRadius = this.layoutStyle.radius;
+        if (this.layoutStyle.fill !== undefined) backgroundColor = this.layoutStyle.fill;
+        if (this.layoutStyle.stroke !== undefined) borderColor = this.layoutStyle.stroke;
+        if (this.layoutStyle.strokeWidth !== undefined) borderWidth = this.layoutStyle.strokeWidth;
         let currentBackgroundColor = backgroundColor;
         this.svg_item_config.forEach((svg_item)=>{
             const group = svgDoc.getElementById(svg_item.group_id ?? "");
@@ -3043,20 +3174,41 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                 parent_box.setAttribute("stroke-width", borderWidth);
                 parent_box.setAttribute("rx", borderRadius);
                 parent_box.setAttribute("ry", borderRadius);
-                group.insertBefore(parent_box, parent_box.firstChild);
+                group.insertBefore(parent_box, group.firstChild);
                 currentBackgroundColor = "none";
             }
+            const hadLabel = !!svg_item.labelBox;
             if (roundCorners && svg_item.labelBox) this.removeSVGElement(svg_item.labelBox);
+            // With a layout-owned rounded container the single frame is drawn by the container;
+            // inner value boxes get no stroke of their own, only a thin divider line on top.
+            const ownFrame = this.layoutStyle.radius !== undefined && currentBackgroundColor === "none";
             // Create value texts
             svg_item.values.forEach((value_item)=>{
                 value_item.valueBox = svgDoc.getElementById(value_item.value_rect_id ?? "");
                 if (value_item.valueBox) {
                     let currentBorderColor = borderColor;
                     value_item.valueBox.setAttribute("fill", currentBackgroundColor);
-                    value_item.valueBox.setAttribute("stroke", currentBorderColor);
+                    value_item.valueBox.setAttribute("stroke", ownFrame ? "none" : currentBorderColor);
                     value_item.valueBox.setAttribute("stroke-width", borderWidth);
                     //svg_item.valueBox.setAttribute("rx", borderRadius);
                     //svg_item.valueBox.setAttribute("ry", borderRadius);
+                    if (group && ownFrame && !value_item.optional && (hadLabel || svg_item.values.indexOf(value_item) > 0)) {
+                        const box = value_item.valueBox;
+                        const bx = this.strToFloat(box.getAttribute("x") ?? "");
+                        const by = this.strToFloat(box.getAttribute("y") ?? "");
+                        const bw = this.strToFloat(box.getAttribute("width") ?? "");
+                        const divider = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        divider.setAttribute("x1", bx.toString());
+                        divider.setAttribute("x2", (bx + bw).toString());
+                        divider.setAttribute("y1", by.toString());
+                        divider.setAttribute("y2", by.toString());
+                        divider.setAttribute("stroke", borderColor);
+                        divider.setAttribute("stroke-width", "1.5");
+                        divider.setAttribute("stroke-opacity", "0.6");
+                        const boxTransform = box.getAttribute("transform");
+                        if (boxTransform) divider.setAttribute("transform", boxTransform);
+                        group.appendChild(divider);
+                    }
                     if (group) {
                         value_item.entityId = this.config.entities?.[value_item.id] ?? null;
                         const valueText = this.createText(value_item.valueBox);
@@ -3143,13 +3295,25 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         if (this.config) {
             if (this.svg_item_config) {
                 let style = getComputedStyle(haCard);
-                const primaryTextColor = style.getPropertyValue('--primary-text-color').trim() || 'black';
+                const primaryTextColor = this.layoutStyle.text ?? (style.getPropertyValue('--primary-text-color').trim() || 'black');
                 this.svg_item_config.forEach((svg_item)=>{
                     svg_item.values.forEach((value_item)=>{
                         svg_item.values.forEach((value_item)=>{
                             const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
                             const parentBox = svg_item.parent ? this.shadowRoot.getElementById(svg_item.parent) : null;
                             if (parentBox) parentBox.style.display = newState ? "block" : "none";
+                            if (value_item.optional === true && value_item.valueBox) // optional value without entity: do not leave an empty box behind
+                            value_item.valueBox.style.display = newState ? "" : "none";
+                            const symbolId = {
+                                kompressor_an_aus: "compressor-symbol",
+                                umwaelzpumpe_an_aus: "pump-symbol"
+                            }[value_item.id];
+                            const symbol = symbolId ? this.shadowRoot.getElementById(symbolId) : null;
+                            if (symbol) {
+                                // on: coloured, off or unknown: grey
+                                symbol.style.transition = "filter 0.4s";
+                                symbol.style.filter = newState?.state === "on" ? "" : "grayscale(1) opacity(0.55)";
+                            }
                             const id = `${value_item.value_rect_id}_text`;
                             const valueText = this.shadowRoot.querySelector(`#${id}`);
                             if (valueText) {
@@ -3179,15 +3343,15 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                                         else valueText.setAttribute("fill", "red");
                                     }
                                 }
-                                this.layoutText(valueText, value_item.valueBox, svg_item.align, svg_item.offset);
-                            } else console.warn("Value text not found: " + value_item.entityId);
+                                this.layoutText(valueText, value_item.valueBox, value_item.valueBox.getAttribute("data-align") ?? svg_item.align, svg_item.offset);
+                            } else if (!symbol) console.warn("Value text not found: " + value_item.entityId);
                             if (value_item.id == "pressure_equalization") {
                                 const color = newState && newState.state == "on" ? '#00ff0080' : '#7f7f7f';
-                                this.shadowRoot.getElementById("eev_arrow_left").setAttribute('fill', color);
-                                this.shadowRoot.getElementById("eev_arrow_right").setAttribute('fill', color);
+                                this.shadowRoot.getElementById("eev_arrow_left")?.setAttribute('fill', color);
+                                this.shadowRoot.getElementById("eev_arrow_right")?.setAttribute('fill', color);
                             } else if (value_item.id == "buh_power") {
                                 const color = newState && this.isPositiveNumber(newState.state) ? '#d4aa00ff' : '#7f7f7f';
-                                this.shadowRoot.getElementById("buh-control").setAttribute('fill', color);
+                                this.shadowRoot.getElementById("buh-control")?.setAttribute('fill', color);
                             }
                         });
                     });
@@ -3195,12 +3359,36 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             }
         }
     }
+    updateAnimations() {
+        const svg = this.shadowRoot?.querySelector("ha-card svg");
+        if (!svg || typeof svg.pauseAnimations !== "function") return;
+        if (this.config?.animations === false) {
+            svg.pauseAnimations();
+            svg.setCurrentTime(0);
+        } else svg.unpauseAnimations();
+    }
     updateOpacity() {
         if (this.config) {
             const dhwOpenArrows = this.shadowRoot.querySelector(`#dhw-open-arrows`);
             const dhwClosedArrows = this.shadowRoot.querySelector(`#dhw-closed-arrows`);
             const bpvOpenArrows = this.shadowRoot.querySelector(`#bpv-open-arrows`);
             const bpvClosedArrows = this.shadowRoot.querySelector(`#bpv-closed-arrows`);
+            const flowRateId = this.config.entities?.['durchfluss'] ?? null;
+            const mixerEntity = this.config.entities?.['mischer'] ?? null;
+            const bypassEntity = this.config.entities?.['bypass'] ?? null;
+            // valve flaps (layouts with T-piece valves): angle follows the percentage
+            const setFlap = (id, entity)=>{
+                const flap = this.shadowRoot.getElementById(id);
+                if (!flap) return;
+                const raw = entity && this.hass.states[entity] ? parseFloat(this.hass.states[entity].state) : 0;
+                const share = Math.min(1, Math.max(0, Number.isFinite(raw) ? raw / 100 : 0));
+                const [px, py] = (flap.getAttribute("data-pivot") ?? "0 0").split(" ");
+                const a0 = parseFloat(flap.getAttribute("data-a0") ?? "0");
+                const a1 = parseFloat(flap.getAttribute("data-a1") ?? "0");
+                flap.setAttribute("transform", `rotate(${a0 + (a1 - a0) * share} ${px} ${py})`);
+            };
+            setFlap("dhw-flap", mixerEntity);
+            setFlap("bpv-flap", bypassEntity);
             if (!dhwOpenArrows || !dhwClosedArrows || !bpvOpenArrows || !bpvClosedArrows) return;
             const flow_rate_id = this.config.entities?.['durchfluss'] ?? null;
             const mixer_id = this.config.entities?.['mischer'] ?? null;
@@ -3269,11 +3457,12 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         return !!value && !isNaN(Number(value)) && Number(value) > 0;
     }
     findEntityIdById(entities, id) {
-        const entity = entities.find((entity)=>entity.id === id);
-        return entity ? entity.entityId : undefined;
+        const value = entities.flatMap((item)=>item.values).find((value)=>value.id === id);
+        return value?.entityId ?? undefined;
     }
     constructor(...args){
-        super(...args), this._state = "loading", this.language = "de", this.svgContent = null, this.svg_item_config = [], this.clickHandlersAdded = false;
+        super(...args), this._state = "loading", this.language = "de", this.svgContent = null, this.svg_item_config = [], this.clickHandlersAdded = false, this.loadedLayoutFile = null, // Optional box/text styling provided by the SVG layout itself (data-* attributes on the <svg> root).
+        this.layoutStyle = {};
     }
 }
 (0, $24c52f343453d62d$export$29e00dfd3077644b)([

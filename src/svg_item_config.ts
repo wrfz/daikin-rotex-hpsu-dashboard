@@ -1195,6 +1195,24 @@ export const svg_item_config: SVGItem[] = [
 ];
 
 export const languages = ["de", "en", "it"];
+
+export interface LayoutOption {
+    id: string;
+    file: string;
+    labels: { de: string; en: string; it: string };
+}
+
+export const DEFAULT_LAYOUT = "classic";
+
+export const layouts: LayoutOption[] = [
+    { id: "classic", file: "hpsu.svg", labels: { de: "Klassisch", en: "Classic", it: "Classico" } },
+    { id: "glass-dark", file: "hpsu_glass_dark.svg", labels: { de: "Glas, dunkel", en: "Glass, dark", it: "Vetro, scuro" } },
+    { id: "glass-light", file: "hpsu_glass_light.svg", labels: { de: "Glas, hell", en: "Glass, light", it: "Vetro, chiaro" } },
+    { id: "glass-petrol", file: "hpsu_glass_petrol.svg", labels: { de: "Glas, Petrol", en: "Glass, petrol", it: "Vetro, petrolio" } },
+];
+
+export const layoutFile = (id?: string): string =>
+    (layouts.find(l => l.id === id) ?? layouts.find(l => l.id === DEFAULT_LAYOUT)!).file;
 export const text_map = {
     "de" : {
         "on": "An",
