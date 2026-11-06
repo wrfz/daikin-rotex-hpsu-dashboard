@@ -841,7 +841,9 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             },
             {
                 id: "ruecklauf_2",
+                device: "UART",
                 domain: "sensor",
+                unit: "\xb0C",
                 value_rect_id: "return_flow_uart_value",
                 texts: {
                     de: {
@@ -1050,6 +1052,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                 id: "vorlauf_2",
                 device: "UART",
                 domain: "sensor",
+                unit: "\xb0C",
                 value_rect_id: "flow_uart_value",
                 texts: {
                     de: {
@@ -1178,6 +1181,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                 id: "vorlauf_bh_2",
                 device: "UART",
                 domain: "sensor",
+                unit: "\xb0C",
                 value_rect_id: "flow_bh_uart_value",
                 texts: {
                     de: {
@@ -1614,6 +1618,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "t_room_is",
                 domain: "sensor",
+                unit: "\xb0C",
                 optional: true,
                 value_rect_id: "t_room_is_value",
                 texts: {
@@ -2738,6 +2743,13 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
     }
     getRelevantEntityIds(svg_item, value_item) {
         const relevantEntityIds = [];
+        const isRuecklauf = value_item.id === "ruecklauf" || value_item.id === "ruecklauf_2";
+        if (isRuecklauf) {
+            console.log("value_item.id", value_item.id);
+            console.log("device", value_item.device);
+            console.log("domain", value_item.domain);
+            console.log("unit", value_item.unit);
+        }
         const targetDeviceId = value_item.device === "UART" ? this.config.uartDevice : this.config.canDevice;
         const targetUnit = $d067581fc0d59830$var$ensureArray(value_item.unit);
         for(const entityId in this.hass.states){
@@ -2755,6 +2767,8 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             }
             relevantEntityIds.push(entityId);
         }
+        // never drop the entity that is already selected, otherwise the picker reports "unknown entity"
+        if (value_item.entityId && this.hass.states[value_item.entityId] && !relevantEntityIds.includes(value_item.entityId)) relevantEntityIds.push(value_item.entityId);
         return relevantEntityIds;
     }
     _animationsChanged(event) {
@@ -3006,6 +3020,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         // Layouts without status texts show on/off on the symbol itself; clicking it opens the details.
         setClickHandler("compressor-symbol", this.findEntityIdById(this.svg_item_config, "kompressor_an_aus"));
         setClickHandler("pump-symbol", this.findEntityIdById(this.svg_item_config, "umwaelzpumpe_an_aus"));
+        setClickHandler("eev-symbol", pressureEqualizationEntityId);
         setClickHandler("eev_arrow_left", pressureEqualizationEntityId);
         setClickHandler("eev_arrow_right", pressureEqualizationEntityId);
     }
@@ -3101,7 +3116,9 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             stroke: svgElement.getAttribute("data-box-stroke") ?? undefined,
             strokeWidth: svgElement.getAttribute("data-box-stroke-width") ?? undefined,
             text: svgElement.getAttribute("data-text-color") ?? undefined,
-            label: svgElement.getAttribute("data-label-color") ?? undefined
+            label: svgElement.getAttribute("data-label-color") ?? undefined,
+            // the SVG styles the states itself (CSS on [data-state]); the card only sets the state
+            ownStates: svgElement.hasAttribute("data-own-state-style")
         };
         svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
         svgElement.style.display = "block";
@@ -3309,44 +3326,54 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                                 umwaelzpumpe_an_aus: "pump-symbol"
                             }[value_item.id];
                             const symbol = symbolId ? this.shadowRoot.getElementById(symbolId) : null;
-                            if (symbol) {
-                                // on: coloured, off or unknown: grey
-                                symbol.style.transition = "filter 0.4s";
-                                symbol.style.filter = newState?.state === "on" ? "" : "grayscale(1) opacity(0.55)";
-                            }
+                            if (symbol) // the look of "on" / "off" is defined by the SVG (CSS on [data-state])
+                            symbol.setAttribute("data-state", newState?.state === "on" ? "on" : "off");
                             const id = `${value_item.value_rect_id}_text`;
                             const valueText = this.shadowRoot.querySelector(`#${id}`);
                             if (valueText) {
                                 const fontSize = svg_item.fontSize || "56";
                                 if (!newState) {
                                     valueText.textContent = "N/D";
-                                    valueText.setAttribute("fill", "orange");
-                                    valueText.setAttribute("font-size", "30px");
+                                    this.textState(valueText, "na", {
+                                        "fill": "orange",
+                                        "font-size": "30px"
+                                    });
                                     valueText.setAttribute("display", value_item.optional === true ? "none" : "block");
                                 } else if (newState.state == "unknown" || newState.state == "unavailable") {
                                     valueText.textContent = "N/A";
-                                    valueText.setAttribute("fill", "orange");
-                                    valueText.setAttribute("font-size", "30px");
+                                    this.textState(valueText, "unavailable", {
+                                        "fill": "orange",
+                                        "font-size": "30px"
+                                    });
                                 } else {
                                     let entityState = newState.state || "--";
                                     valueText.setAttribute("font-size", fontSize);
                                     if (this.isBooleanSensor(value_item.entityId)) {
                                         const lang_map = (0, $eb5cfe1dd9fe4e85$export$f8cda7abf1aa048)[this.language];
                                         valueText.textContent = entityState === "on" ? lang_map.on : entityState === "off" ? lang_map.off : "<invalid>";
-                                        valueText.setAttribute("fill", entityState === "on" ? "yellow" : "silver");
+                                        this.textState(valueText, entityState === "on" ? "on" : "off", {
+                                            "fill": entityState === "on" ? "yellow" : "silver"
+                                        });
                                     } else {
                                         entityState = this.formatNumber(newState, svg_item.digits ?? 1);
                                         if (entityState == "Warmwasserbereitung") entityState = "Warmwasser";
                                         if (value_item.texts[this.language].suffix) entityState = value_item.texts[this.language].suffix + entityState;
                                         valueText.textContent = entityState;
-                                        if (value_item.id != "fehlercode" || value_item.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" || value_item.texts[this.language].suffix == "Error code: " && "No Error" || value_item.texts[this.language].suffix == "Codice errore: " && "Nessun errore") valueText.setAttribute("fill", primaryTextColor);
-                                        else valueText.setAttribute("fill", "red");
+                                        if (value_item.id != "fehlercode" || value_item.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" || value_item.texts[this.language].suffix == "Error code: " && "No Error" || value_item.texts[this.language].suffix == "Codice errore: " && "Nessun errore") this.textState(valueText, "normal", {
+                                            "fill": primaryTextColor
+                                        });
+                                        else this.textState(valueText, "error", {
+                                            "fill": "red"
+                                        });
                                     }
                                 }
                                 this.layoutText(valueText, value_item.valueBox, value_item.valueBox.getAttribute("data-align") ?? svg_item.align, svg_item.offset);
-                            } else if (!symbol) console.warn("Value text not found: " + value_item.entityId);
+                            } else if (!symbol && value_item.value_rect_id) console.warn("Value text not found: " + value_item.entityId);
                             if (value_item.id == "pressure_equalization") {
                                 const color = newState && newState.state == "on" ? '#00ff0080' : '#7f7f7f';
+                                // layouts with an EEV graphic: the SVG decides how an active pressure equalisation looks
+                                const eevSymbol = this.shadowRoot.getElementById("eev-symbol");
+                                if (eevSymbol) eevSymbol.setAttribute("data-state", newState?.state === "on" ? "on" : "off");
                                 this.shadowRoot.getElementById("eev_arrow_left")?.setAttribute('fill', color);
                                 this.shadowRoot.getElementById("eev_arrow_right")?.setAttribute('fill', color);
                             } else if (value_item.id == "buh_power") {
@@ -3358,6 +3385,12 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                 });
             }
         }
+    }
+    // Sets the semantic state of a value text. Layouts that style the states themselves (data-own-state-style)
+    // only get the state; all other layouts get the classic inline colours.
+    textState(el, state, fallback) {
+        el.setAttribute("data-state", state);
+        if (!this.layoutStyle.ownStates || state === "normal") for (const [name, value] of Object.entries(fallback))el.setAttribute(name, value);
     }
     updateAnimations() {
         const svg = this.shadowRoot?.querySelector("ha-card svg");

@@ -77,7 +77,7 @@ export class HpsuDashboardCardEditor extends LitElement {
                     currentCategory = lastCategory;
                 }
 
-                const category = currentCategory[this.language];
+                const category = currentCategory[this.language as keyof typeof currentCategory];
 
                 if (!categories[category]) {
                     categories[category] = [];
@@ -97,7 +97,7 @@ export class HpsuDashboardCardEditor extends LitElement {
                     .selector=${{
                         select: {
                             mode: "dropdown",
-                            options: layouts.map(l => ({ value: l.id, label: l.labels[this.language] ?? l.labels.en }))
+                            options: layouts.map(l => ({ value: l.id, label: l.labels[this.language as keyof typeof l.labels] ?? l.labels.en }))
                         }
                     }}
                     .label=${layoutLabel}
@@ -149,7 +149,7 @@ export class HpsuDashboardCardEditor extends LitElement {
                                             include_entities: this.getRelevantEntityIds(svg_item, value_item)
                                         }
                                     }}
-                                    .placeholder=${value_item.texts[this.language]?.desc || "<missing>"}
+                                    .placeholder=${value_item.texts[this.language as keyof typeof value_item.texts]?.desc || "<missing>"}
                                     .value=${value_item.entityId}
                                     @value-changed=${this._entityChanged}
                                     data-id=${value_item.id}
@@ -166,6 +166,14 @@ export class HpsuDashboardCardEditor extends LitElement {
 
     private getRelevantEntityIds(svg_item: SVGItem, value_item: SVGValue): string[] {
         const relevantEntityIds: string[] = [];
+
+        const isRuecklauf = value_item.id === "ruecklauf" || value_item.id === "ruecklauf_2";
+        if (isRuecklauf) {
+            console.log("value_item.id", value_item.id);
+            console.log("device", value_item.device);
+            console.log("domain", value_item.domain);
+            console.log("unit", value_item.unit);
+        }
 
         const targetDeviceId = value_item.device === "UART" ? this.config.uartDevice : this.config.canDevice;
         const targetUnit = ensureArray(value_item.unit);
@@ -198,6 +206,11 @@ export class HpsuDashboardCardEditor extends LitElement {
                 }
             }
             relevantEntityIds.push(entityId);
+        }
+
+        // never drop the entity that is already selected, otherwise the picker reports "unknown entity"
+        if (value_item.entityId && this.hass.states[value_item.entityId] && !relevantEntityIds.includes(value_item.entityId)) {
+            relevantEntityIds.push(value_item.entityId);
         }
 
         return relevantEntityIds;

@@ -42,7 +42,7 @@ export class HPSUDashboardCard extends LitElement {
     private clickHandlersAdded = false;
     private loadedLayoutFile: string | null = null;
     // Optional box/text styling provided by the SVG layout itself (data-* attributes on the <svg> root).
-    private layoutStyle: { radius?: string; fill?: string; stroke?: string; strokeWidth?: string; text?: string; label?: string } = {};
+    private layoutStyle: { radius?: string; fill?: string; stroke?: string; strokeWidth?: string; text?: string; label?: string; ownStates?: boolean } = {};
 
     @query('ha-card')
     private haCardElement!: HTMLElement;
@@ -123,6 +123,7 @@ export class HPSUDashboardCard extends LitElement {
         // Layouts without status texts show on/off on the symbol itself; clicking it opens the details.
         setClickHandler("compressor-symbol", this.findEntityIdById(this.svg_item_config, "kompressor_an_aus"));
         setClickHandler("pump-symbol", this.findEntityIdById(this.svg_item_config, "umwaelzpumpe_an_aus"));
+        setClickHandler("eev-symbol", pressureEqualizationEntityId);
         setClickHandler("eev_arrow_left", pressureEqualizationEntityId);
         setClickHandler("eev_arrow_right", pressureEqualizationEntityId);
     }
@@ -234,6 +235,8 @@ export class HPSUDashboardCard extends LitElement {
             strokeWidth: svgElement.getAttribute("data-box-stroke-width") ?? undefined,
             text: svgElement.getAttribute("data-text-color") ?? undefined,
             label: svgElement.getAttribute("data-label-color") ?? undefined,
+            // the SVG styles the states itself (CSS on [data-state]); the card only sets the state
+            ownStates: svgElement.hasAttribute("data-own-state-style"),
         };
 
         svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
@@ -530,9 +533,8 @@ export class HPSUDashboardCard extends LitElement {
                             const symbolId = ({ kompressor_an_aus: "compressor-symbol", umwaelzpumpe_an_aus: "pump-symbol" } as Record<string, string>)[value_item.id];
                             const symbol = symbolId ? this.shadowRoot!.getElementById(symbolId) : null;
                             if (symbol) {
-                                // on: coloured, off or unknown: grey
-                                symbol.style.transition = "filter 0.4s";
-                                symbol.style.filter = newState?.state === "on" ? "" : "grayscale(1) opacity(0.55)";
+                                // the look of "on" / "off" is defined by the SVG (CSS on [data-state])
+                                symbol.setAttribute("data-state", newState?.state === "on" ? "on" : "off");
                             }
 
                             const id = `${value_item.value_rect_id}_text`;
@@ -543,13 +545,11 @@ export class HPSUDashboardCard extends LitElement {
 
                                 if (!newState) {
                                     valueText.textContent = "N/D";
-                                    valueText.setAttribute("fill", "orange");
-                                    valueText.setAttribute("font-size", "30px");
+                                    this.textState(valueText, "na", { "fill": "orange", "font-size": "30px" });
                                     valueText.setAttribute("display", value_item.optional === true ? "none" : "block");
                                 } else if (newState.state == "unknown" || newState.state == "unavailable") {
                                     valueText.textContent = "N/A";
-                                    valueText.setAttribute("fill", "orange");
-                                    valueText.setAttribute("font-size", "30px");
+                                    this.textState(valueText, "unavailable", { "fill": "orange", "font-size": "30px" });
                                 } else {
                                     let entityState = newState.state || "--";
                                     valueText.setAttribute("font-size", fontSize);
@@ -559,7 +559,7 @@ export class HPSUDashboardCard extends LitElement {
                                         valueText.textContent = entityState === "on" ? lang_map.on : (
                                             entityState === "off" ? lang_map.off : "<invalid>"
                                         );
-                                        valueText.setAttribute("fill", entityState === "on" ? "yellow" : "silver");
+                                        this.textState(valueText, entityState === "on" ? "on" : "off", { "fill": entityState === "on" ? "yellow" : "silver" });
                                     } else {
                                         entityState = this.formatNumber(newState, svg_item.digits ?? 1);
                                         if (entityState == "Warmwasserbereitung") {
@@ -575,21 +575,26 @@ export class HPSUDashboardCard extends LitElement {
                                             value_item.texts[this.language].suffix == "Error code: " && "No Error" ||
                                             value_item.texts[this.language].suffix == "Codice errore: " && "Nessun errore") {
 
-                                            valueText.setAttribute("fill", primaryTextColor);
+                                            this.textState(valueText, "normal", { "fill": primaryTextColor });
                                         } else {
-                                            valueText.setAttribute("fill", "red");
+                                            this.textState(valueText, "error", { "fill": "red" });
                                         }
                                     }
                                 }
 
                                 this.layoutText(valueText, value_item.valueBox, value_item.valueBox.getAttribute("data-align") ?? svg_item.align, svg_item.offset);
-                            } else if (!symbol) {
+                            } else if (!symbol && value_item.value_rect_id) {
                                 console.warn("Value text not found: " + value_item.entityId);
                             }
 
                             if (value_item.id == "pressure_equalization") {
                                 const color = newState && newState.state == "on" ? '#00ff0080' : '#7f7f7f';
 
+                                // layouts with an EEV graphic: the SVG decides how an active pressure equalisation looks
+                                const eevSymbol = this.shadowRoot!.getElementById("eev-symbol");
+                                if (eevSymbol) {
+                                    eevSymbol.setAttribute("data-state", newState?.state === "on" ? "on" : "off");
+                                }
                                 this.shadowRoot!.getElementById("eev_arrow_left")?.setAttribute('fill', color);
                                 this.shadowRoot!.getElementById("eev_arrow_right")?.setAttribute('fill', color);
                             } else if (value_item.id == "buh_power") {
@@ -600,6 +605,17 @@ export class HPSUDashboardCard extends LitElement {
                     });
                 });
 
+            }
+        }
+    }
+
+    // Sets the semantic state of a value text. Layouts that style the states themselves (data-own-state-style)
+    // only get the state; all other layouts get the classic inline colours.
+    private textState(el: HTMLElement, state: string, fallback: Record<string, string>): void {
+        el.setAttribute("data-state", state);
+        if (!this.layoutStyle.ownStates || state === "normal") {
+            for (const [name, value] of Object.entries(fallback)) {
+                el.setAttribute(name, value);
             }
         }
     }

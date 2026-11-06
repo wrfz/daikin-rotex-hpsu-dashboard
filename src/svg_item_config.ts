@@ -359,7 +359,9 @@ export const svg_item_config: SVGItem[] = [
             },
             {
                 id: "ruecklauf_2",
+                device: "UART",
                 domain: "sensor",
+                unit: "°C",
                 value_rect_id: "return_flow_uart_value",
                 texts: {
                     de: {
@@ -568,6 +570,7 @@ export const svg_item_config: SVGItem[] = [
                 id: "vorlauf_2",
                 device: "UART",
 				domain: "sensor",
+                unit: "°C",
                 value_rect_id: "flow_uart_value",
                 texts: {
                     de: {
@@ -696,6 +699,7 @@ export const svg_item_config: SVGItem[] = [
                 id: "vorlauf_bh_2",
                 device: "UART",
 				domain: "sensor",
+                unit: "°C",
                 value_rect_id: "flow_bh_uart_value",
                 texts: {
                     de: {
@@ -1129,6 +1133,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "t_room_is",
                 domain: "sensor",
+                unit: "°C",
                 optional: true,
                 value_rect_id: "t_room_is_value",
                 texts: {
