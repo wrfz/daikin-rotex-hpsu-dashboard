@@ -525,9 +525,13 @@ export class HPSUDashboardCard extends LitElement {
                                 parentBox.style.display = newState ? "block" : "none";
                             }
 
-                            if (value_item.optional === true && value_item.valueBox) {
-                                // optional value without entity: do not leave an empty box behind
-                                value_item.valueBox.style.display = newState ? "" : "none";
+                            // optional value without entity: do not leave an empty box behind.
+                            // value_item.valueBox belongs to the parsed SVG document, so look up the live element.
+                            const liveBox = value_item.optional === true && value_item.value_rect_id
+                                ? this.shadowRoot!.getElementById(value_item.value_rect_id)
+                                : null;
+                            if (liveBox) {
+                                liveBox.style.display = newState ? "" : "none";
                             }
 
                             const symbolId = ({ kompressor_an_aus: "compressor-symbol", umwaelzpumpe_an_aus: "pump-symbol" } as Record<string, string>)[value_item.id];
