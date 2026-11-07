@@ -28,6 +28,7 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
         type: panel
         cards:
           - type: custom:hpsu-dashboard-card
+            layout: classic
             language: de # Überschreibt die Sprache in Home Assistant
             entities:
               ta: sensor.hpsu_can_aussentemperatur
@@ -63,3 +64,15 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
               cop: sensor.hpsu_cop_clipped
               spread: sensor.hpsu_can_spreizung
 
+
+
+## Layout
+
+Mit `layout` wählst du die Darstellung (auch im Karten-Editor ganz oben auswählbar):
+
+| Wert | Darstellung |
+|------|-------------|
+| `classic` | bisheriges Schema (Standard) |
+| `glass-dark` | modernes Glas-Layout, dunkel |
+| `glass-light` | modernes Glas-Layout, hell |
+| `glass-petrol` | modernes Glas-Layout, Petrol |

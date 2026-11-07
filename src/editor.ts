@@ -1,9 +1,12 @@
 import {
     svg_item_config,
     SVGItem,
+    SVGValue,
     Category,
     languages,
     validateConfig,
+    layouts,
+    DEFAULT_LAYOUT,
 } from "./svg_item_config";
 
 import type { LovelaceCardConfig } from "@ha/data/lovelace/config/card";
@@ -41,7 +44,10 @@ export class HpsuDashboardCardEditor extends LitElement {
         this.config = validateConfig(config);
         this.svgItemConfig = svg_item_config.map(svg_item => ({
             ...svg_item,
-            entityId: this.config.entities?.[svg_item.id] ?? null
+            values: svg_item.values.map(value => ({
+                ...value,
+                entityId: this.config.entities?.[value.id] || null
+            }))
         }));
     }
 
@@ -71,7 +77,7 @@ export class HpsuDashboardCardEditor extends LitElement {
                     currentCategory = lastCategory;
                 }
 
-                const category = currentCategory[this.language];
+                const category = currentCategory[this.language as keyof typeof currentCategory];
 
                 if (!categories[category]) {
                     categories[category] = [];
@@ -82,8 +88,31 @@ export class HpsuDashboardCardEditor extends LitElement {
         }
 
         const deviceLabel = "HPSU Devices";
+        const layoutLabel = ({ de: "Layout", en: "Layout", it: "Layout" } as Record<string, string>)[this.language] ?? "Layout";
+        const animationsLabel = ({ de: "Animationen", en: "Animations", it: "Animazioni" } as Record<string, string>)[this.language] ?? "Animations";
         return html`
             <div class="card-config">
+                <ha-selector
+                    .hass=${this.hass}
+                    .selector=${{
+                        select: {
+                            mode: "dropdown",
+                            options: layouts.map(l => ({ value: l.id, label: l.labels[this.language as keyof typeof l.labels] ?? l.labels.en }))
+                        }
+                    }}
+                    .label=${layoutLabel}
+                    .value=${this.config.layout ?? DEFAULT_LAYOUT}
+                    @value-changed=${this._layoutChanged}
+                    id="layout-selector">
+                </ha-selector>
+                <ha-selector
+                    .hass=${this.hass}
+                    .selector=${{ boolean: {} }}
+                    .label=${animationsLabel}
+                    .value=${this.config.animations !== false}
+                    @value-changed=${this._animationsChanged}
+                    id="animations-selector">
+                </ha-selector>
                 <ha-expansion-panel
                     .header=${deviceLabel}
                 >
@@ -112,19 +141,22 @@ export class HpsuDashboardCardEditor extends LitElement {
                         .header=${category}
                     >
                         ${categories[category].map(svg_item => html`
-                            <ha-selector
-                                .hass=${this.hass}
-                                .selector=${{
-                                    entity: {
-                                        include_entities: this.getRelevantEntityIds(svg_item)
-                                    }
-                                }}
-                                .placeholder=${svg_item.texts[this.language]?.desc || "<missing>"}
-                                .value=${svg_item.entityId}
-                                @value-changed=${this._entityChanged}
-                                data-id=${svg_item.id}
-                            >
-                            </ha-selector>
+                            ${svg_item.values.map((value_item, index) => html`
+                                <ha-selector
+                                    .hass=${this.hass}
+                                    .selector=${{
+                                        entity: {
+                                            include_entities: this.getRelevantEntityIds(svg_item, value_item)
+                                        }
+                                    }}
+                                    .placeholder=${value_item.texts[this.language as keyof typeof value_item.texts]?.desc || "<missing>"}
+                                    .value=${value_item.entityId}
+                                    @value-changed=${this._entityChanged}
+                                    data-id=${value_item.id}
+                                    data-index=${index}
+                                >
+                                </ha-selector>
+                            `)}
                         `)}
                     </ha-expansion-panel>
                 `)}
@@ -132,11 +164,19 @@ export class HpsuDashboardCardEditor extends LitElement {
         `;
     }
 
-    private getRelevantEntityIds(svg_item: SVGItem): string[] {
+    private getRelevantEntityIds(svg_item: SVGItem, value_item: SVGValue): string[] {
         const relevantEntityIds: string[] = [];
 
-        const targetDeviceId = svg_item.device === "UART" ? this.config.uartDevice : this.config.canDevice;
-        const targetUnit = ensureArray(svg_item.unit);
+        const isRuecklauf = value_item.id === "ruecklauf" || value_item.id === "ruecklauf_2";
+        if (isRuecklauf) {
+            console.log("value_item.id", value_item.id);
+            console.log("device", value_item.device);
+            console.log("domain", value_item.domain);
+            console.log("unit", value_item.unit);
+        }
+
+        const targetDeviceId = value_item.device === "UART" ? this.config.uartDevice : this.config.canDevice;
+        const targetUnit = ensureArray(value_item.unit);
 
         for (const entityId in this.hass.states) {
             if (!Object.prototype.hasOwnProperty.call(this.hass.states, entityId)) {
@@ -146,7 +186,7 @@ export class HpsuDashboardCardEditor extends LitElement {
             const entity = this.hass.states[entityId];
             const domain = entityId.substring(0, entityId.indexOf('.'));
 
-            if (svg_item.device && targetDeviceId) {
+            if (value_item.device && targetDeviceId) {
                 const entityRegistryEntry = this.hass.entities[entityId];
 
                 if (!entityRegistryEntry || entityRegistryEntry.device_id !== targetDeviceId) {
@@ -154,7 +194,7 @@ export class HpsuDashboardCardEditor extends LitElement {
                 }
             }
 
-            if (svg_item.domain !== undefined && svg_item.domain !== domain) {
+            if (value_item.domain !== undefined && value_item.domain !== domain) {
                 continue;
             }
 
@@ -168,7 +208,38 @@ export class HpsuDashboardCardEditor extends LitElement {
             relevantEntityIds.push(entityId);
         }
 
+        // never drop the entity that is already selected, otherwise the picker reports "unknown entity"
+        if (value_item.entityId && this.hass.states[value_item.entityId] && !relevantEntityIds.includes(value_item.entityId)) {
+            relevantEntityIds.push(value_item.entityId);
+        }
+
         return relevantEntityIds;
+    }
+
+    private _animationsChanged(event: CustomEvent): void {
+        event.stopPropagation();
+        this.config = { ...this.config, animations: (event.detail as any).value };
+
+        this.dispatchEvent(
+            new CustomEvent('config-changed', {
+                detail: { config: this.config },
+                bubbles: true,
+                composed: true,
+            })
+        );
+    }
+
+    private _layoutChanged(event: CustomEvent): void {
+        event.stopPropagation();
+        this.config = { ...this.config, layout: (event.detail as any).value };
+
+        this.dispatchEvent(
+            new CustomEvent('config-changed', {
+                detail: { config: this.config },
+                bubbles: true,
+                composed: true,
+            })
+        );
     }
 
     private _entityChanged(event: CustomEvent): void {
@@ -210,8 +281,9 @@ export class HpsuDashboardCardEditor extends LitElement {
     private static sortRecordBySvgOrder(data: Record<string, string>, svgItems: SVGItem[]): Record<string, string> {
         const dataKeys = Object.keys(data);
         const sortedEntries: [string, string][] = svgItems
-            .filter(item => dataKeys.includes(item.id))
-            .map(item => [item.id, data[item.id]]);
+            .flatMap(item => item.values)
+            .filter(value => dataKeys.includes(value.id))
+            .map(value => [value.id, data[value.id]]);
         return Object.fromEntries(sortedEntries) as Record<string, string>;
     }
 
