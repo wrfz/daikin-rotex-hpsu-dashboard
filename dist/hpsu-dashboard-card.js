@@ -1582,7 +1582,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                 value_rect_id: "el_power_value",
                 texts: {
                     de: {
-                        suffix: "Elekrische Leistung: ",
+                        suffix: "Elektrische Leistung: ",
                         desc: "Elektrische Leistung"
                     },
                     en: {

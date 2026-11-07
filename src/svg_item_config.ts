@@ -1097,7 +1097,7 @@ export const svg_item_config: SVGItem[] = [
                 value_rect_id: "el_power_value",
                 texts: {
                     de: {
-                        suffix: "Elekrische Leistung: ",
+                        suffix: "Elektrische Leistung: ",
                         desc: "Elektrische Leistung"
                     },
                     en: {
