@@ -2976,7 +2976,9 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
     }
     willUpdate(changed) {
         if (changed.has("hass") && this.hass?.language) {
-            const lang = this.hass.language.split("-")[0];
+            // Use config language if set, otherwise use Home Assistant language
+            const configLang = this.config?.language;
+            const lang = configLang || this.hass.language.split("-")[0];
             this.language = (0, $eb5cfe1dd9fe4e85$export$d0d68bb9ed2c643d).includes(lang) ? lang : "de";
         }
     }

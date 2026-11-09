@@ -29,6 +29,7 @@ Erstelle als nächstes ein hpsu-dashboard-card als ein Fullscreen - **Panel** mi
         cards:
           - type: custom:hpsu-dashboard-card
             layout: classic
+            language: de # Überschreibt die Sprache in Home Assistant
             entities:
               ta: sensor.hpsu_can_aussentemperatur
               ta2: sensor.hpsu_can_ta2
