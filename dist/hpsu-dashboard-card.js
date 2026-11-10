@@ -2989,7 +2989,9 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         const file = (0, $eb5cfe1dd9fe4e85$export$6fb81034e128eb0)(this.config?.layout);
         const url = this.makeURL(file);
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                cache: "no-cache"
+            }); // always revalidate, layouts are updated independently of the JS
             if (!response.ok) throw new Error(`Failed to fetch '${url}' (${response.status})`);
             const rawSvgString = await response.text();
             this.loadedLayoutFile = file;
@@ -3033,6 +3035,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             this.updateLabels();
             this.updateOpacity();
             this.updateAnimations();
+            this.updateDynamicStyle();
             if (!this.clickHandlersAdded) {
                 this.addClickHandlers();
                 this.clickHandlersAdded = true;
@@ -3325,13 +3328,6 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                             // value_item.valueBox belongs to the parsed SVG document, so look up the live element.
                             const liveBox = value_item.optional === true && value_item.value_rect_id ? this.shadowRoot.getElementById(value_item.value_rect_id) : null;
                             if (liveBox) liveBox.style.display = newState ? "" : "none";
-                            const symbolId = {
-                                kompressor_an_aus: "compressor-symbol",
-                                umwaelzpumpe_an_aus: "pump-symbol"
-                            }[value_item.id];
-                            const symbol = symbolId ? this.shadowRoot.getElementById(symbolId) : null;
-                            if (symbol) // the look of "on" / "off" is defined by the SVG (CSS on [data-state])
-                            symbol.setAttribute("data-state", newState?.state === "on" ? "on" : "off");
                             const id = `${value_item.value_rect_id}_text`;
                             const valueText = this.shadowRoot.querySelector(`#${id}`);
                             if (valueText) {
@@ -3372,12 +3368,10 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                                     }
                                 }
                                 this.layoutText(valueText, value_item.valueBox, value_item.valueBox.getAttribute("data-align") ?? svg_item.align, svg_item.offset);
-                            } else if (!symbol && value_item.value_rect_id) console.warn("Value text not found: " + value_item.entityId);
+                            } else if (value_item.value_rect_id) console.warn("Value text not found: " + value_item.entityId);
                             if (value_item.id == "pressure_equalization") {
                                 const color = newState && newState.state == "on" ? '#00ff0080' : '#7f7f7f';
                                 // layouts with an EEV graphic: the SVG decides how an active pressure equalisation looks
-                                const eevSymbol = this.shadowRoot.getElementById("eev-symbol");
-                                if (eevSymbol) eevSymbol.setAttribute("data-state", newState?.state === "on" ? "on" : "off");
                                 this.shadowRoot.getElementById("eev_arrow_left")?.setAttribute('fill', color);
                                 this.shadowRoot.getElementById("eev_arrow_right")?.setAttribute('fill', color);
                             } else if (value_item.id == "buh_power") {
@@ -3395,6 +3389,49 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
     textState(el, state, fallback) {
         el.setAttribute("data-state", state);
         if (!this.layoutStyle.ownStates || state === "normal") for (const [name, value] of Object.entries(fallback))el.setAttribute(name, value);
+    }
+    // Everything that depends on the look is described by the SVG itself:
+    //   data-run-map   {elementId: {entity, mode: "on" | "gt0"}}  -> the card sets data-state="on|off|unknown" on that element
+    //   data-temp-vars {--k-name: {entity: [ids], min, max}}      -> the card sets --k-name (0..1) on the <svg>
+    // How "on", "off" or a value looks (colours, paused animations) is defined by CSS inside the SVG.
+    updateDynamicStyle() {
+        const svg = this.shadowRoot?.querySelector("ha-card svg");
+        if (!svg || !this.config || !this.hass) return;
+        const parse = (attr)=>{
+            try {
+                return JSON.parse(svg.getAttribute(attr) ?? "{}");
+            } catch  {
+                return {};
+            }
+        };
+        const stateOf = (key)=>{
+            const entityId = this.config.entities?.[key];
+            return entityId ? this.hass.states[entityId]?.state : undefined;
+        };
+        for (const [id, rule] of Object.entries(parse("data-run-map"))){
+            const element = this.shadowRoot.getElementById(id);
+            if (!element) continue;
+            const state = stateOf(rule.entity);
+            let result = "unknown";
+            if (state !== undefined && state !== "unknown" && state !== "unavailable") result = (rule.mode === "gt0" ? parseFloat(state) > 0 : state === "on") ? "on" : "off";
+            element.setAttribute("data-state", result);
+        }
+        for (const [name, rule] of Object.entries(parse("data-temp-vars"))){
+            let value = NaN;
+            for (const key of Array.isArray(rule.entity) ? rule.entity : [
+                rule.entity
+            ]){
+                const candidate = parseFloat(stateOf(key) ?? "");
+                if (Number.isFinite(candidate)) {
+                    value = candidate;
+                    break;
+                }
+            }
+            if (Number.isFinite(value) && rule.max !== rule.min) {
+                const k = Math.min(1, Math.max(0, (value - rule.min) / (rule.max - rule.min)));
+                svg.style.setProperty(name, k.toFixed(3));
+            } else svg.style.removeProperty(name); // the SVG falls back to its own default
+        }
     }
     updateAnimations() {
         const svg = this.shadowRoot?.querySelector("ha-card svg");
@@ -3431,15 +3468,16 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             const mixer_id = this.config.entities?.['mischer'] ?? null;
             const bypass_id = this.config.entities?.['bypass'] ?? null;
             const flowRate = flow_rate_id && this.hass.states[flow_rate_id] ? parseFloat(this.hass.states[flow_rate_id].state) : 0;
+            const gate = this.layoutStyle.ownStates === true || flowRate > 0;
             const mischerState = mixer_id && this.hass.states[mixer_id] ? parseFloat(this.hass.states[mixer_id].state) : 0;
             const bpvState = bypass_id && this.hass.states[bypass_id] ? parseFloat(this.hass.states[bypass_id].state) : 0;
-            dhwOpenArrows.style.opacity = (flowRate > 0 ? mischerState / 100.0 : 0).toString();
-            dhwClosedArrows.style.opacity = (flowRate > 0 ? (100.0 - mischerState) / 100.0 : 0).toString();
-            bpvOpenArrows.style.opacity = (flowRate > 0 ? bpvState / 100.0 : 0).toString();
-            bpvClosedArrows.style.opacity = (flowRate > 0 ? (100.0 - bpvState) / 100.0 : 0).toString();
+            dhwOpenArrows.style.opacity = (gate ? mischerState / 100.0 : 0).toString();
+            dhwClosedArrows.style.opacity = (gate ? (100.0 - mischerState) / 100.0 : 0).toString();
+            bpvOpenArrows.style.opacity = (gate ? bpvState / 100.0 : 0).toString();
+            bpvClosedArrows.style.opacity = (gate ? (100.0 - bpvState) / 100.0 : 0).toString();
             for(let index = 1; index <= 8; ++index){
                 const arrow = this.shadowRoot.querySelector(`#Flow-Arrow-${index}`);
-                arrow.style.opacity = (flowRate > 0 ? 1 : 0).toString();
+                arrow.style.opacity = (gate ? 1 : 0).toString();
             }
         }
     }
