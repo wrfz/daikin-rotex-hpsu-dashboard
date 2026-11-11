@@ -1688,17 +1688,8 @@ const $eb5cfe1dd9fe4e85$export$d0d68bb9ed2c643d = [
     "en",
     "it"
 ];
-const $eb5cfe1dd9fe4e85$export$cfaf3f619f4fde4d = "classic";
+const $eb5cfe1dd9fe4e85$export$cfaf3f619f4fde4d = "glass-light";
 const $eb5cfe1dd9fe4e85$export$1ecca0613f5e56d2 = [
-    {
-        id: "classic",
-        file: "hpsu.svg",
-        labels: {
-            de: "Klassisch",
-            en: "Classic",
-            it: "Classico"
-        }
-    },
     {
         id: "glass-dark",
         file: "hpsu_glass_dark.svg",
@@ -2609,6 +2600,164 @@ const $d067581fc0d59830$var$ensureArray = (value)=>{
         value
     ];
 };
+// Sensors grouped by function. Ids that are not listed end up in "other".
+const $d067581fc0d59830$var$FUNCTION_GROUPS = [
+    {
+        key: "refrigerant",
+        ids: [
+            "kompressor_an_aus",
+            "verdichter",
+            "expansion_valve",
+            "pressure_equalization",
+            "hot_gas",
+            "hot_gas_condenser",
+            "kondensat",
+            "verdampfer",
+            "luefter",
+            "ta",
+            "ta2"
+        ]
+    },
+    {
+        key: "heating",
+        ids: [
+            "umwaelzpumpe",
+            "umwaelzpumpe_an_aus",
+            "durchfluss",
+            "vorlauf_1",
+            "vorlauf_2",
+            "vorlauf_bh_1",
+            "vorlauf_bh_2",
+            "ruecklauf",
+            "ruecklauf_2",
+            "vorlauf_soll",
+            "spread",
+            "wasserdruck",
+            "bypass"
+        ]
+    },
+    {
+        key: "hotwater",
+        ids: [
+            "speicher",
+            "speicher_soll",
+            "mischer",
+            "buh_power"
+        ]
+    },
+    {
+        key: "info",
+        ids: [
+            "fehlercode",
+            "betriebsmodus",
+            "betriebsart",
+            "thermische_leistung",
+            "el_power",
+            "cop",
+            "t_room_is",
+            "system_date",
+            "system_time"
+        ]
+    }
+];
+// Values that exist for both buses are shown side by side (CAN left, UART right)
+const $d067581fc0d59830$var$PAIRS = [
+    [
+        "ruecklauf",
+        "ruecklauf_2"
+    ],
+    [
+        "vorlauf_1",
+        "vorlauf_2"
+    ],
+    [
+        "vorlauf_bh_1",
+        "vorlauf_bh_2"
+    ]
+];
+const $d067581fc0d59830$var$CLOSE_PATH = "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z";
+const $d067581fc0d59830$var$TEXTS = {
+    de: {
+        appearance: "Darstellung",
+        devices: "Ger\xe4te",
+        sensors: "Sensoren",
+        layout: "Layout",
+        animations: "Animationen",
+        background: "Hintergrund",
+        box: "Textfelder",
+        text: "Text",
+        show: "Hintergrund anzeigen",
+        custom: "Eigene Farben verwenden",
+        color: "Farbe",
+        opacity: "Deckkraft",
+        fill: "F\xfcllung",
+        fill_opacity: "Deckkraft der F\xfcllung",
+        border: "Rahmen",
+        border_opacity: "Deckkraft des Rahmens",
+        value_color: "Textfarbe",
+        label_color: "Farbe der Beschriftung",
+        custom_help: "Aus: es gilt der Stil des Layouts.",
+        canDevice: "CAN-Ger\xe4t",
+        uartDevice: "UART-Ger\xe4t",
+        devices_help: "Die Ger\xe4te schr\xe4nken die Auswahl der Sensoren ein.",
+        assigned: "zugeordnet",
+        group_by: "Gruppieren nach",
+        by_function: "Funktion",
+        by_bus: "Bus (CAN / UART)",
+        search: "Suchen",
+        clear: "Leeren",
+        no_match: "Keine Treffer",
+        refrigerant: "K\xe4ltekreis",
+        heating: "Heizwasser",
+        hotwater: "Warmwasser und Speicher",
+        info: "Info und Betrieb",
+        other: "Weitere",
+        bus_can: "CAN",
+        bus_uart: "UART",
+        bus_other: "Extern / ohne Ger\xe4t",
+        unit_warning: "Einheit {actual}, erwartet {expected}"
+    },
+    en: {
+        appearance: "Appearance",
+        devices: "Devices",
+        sensors: "Sensors",
+        layout: "Layout",
+        animations: "Animations",
+        background: "Background",
+        box: "Text boxes",
+        text: "Text",
+        show: "Show background",
+        custom: "Use custom colours",
+        color: "Colour",
+        opacity: "Opacity",
+        fill: "Fill",
+        fill_opacity: "Fill opacity",
+        border: "Border",
+        border_opacity: "Border opacity",
+        value_color: "Text colour",
+        label_color: "Label colour",
+        custom_help: "Off: the style of the layout applies.",
+        canDevice: "CAN device",
+        uartDevice: "UART device",
+        devices_help: "The devices narrow down the sensor choices.",
+        assigned: "assigned",
+        group_by: "Group by",
+        by_function: "Function",
+        by_bus: "Bus (CAN / UART)",
+        search: "Search",
+        clear: "Clear",
+        no_match: "No matches",
+        refrigerant: "Refrigerant circuit",
+        heating: "Heating water",
+        hotwater: "Hot water and tank",
+        info: "Info and operation",
+        other: "Other",
+        bus_can: "CAN",
+        bus_uart: "UART",
+        bus_other: "External / no device",
+        unit_warning: "Unit {actual}, expected {expected}"
+    }
+};
 class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$export$3f2f9f5909897157) {
     async setConfig(config) {
         // HACK: This call is necessary to load the ha-entity-picker components.
@@ -2619,6 +2768,15 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
         });
         await entitiesCard.constructor.getConfigElement();
         // HACK end
+        // switch states are kept while the config is the one this editor just wrote; an external change (YAML) recomputes them
+        if (JSON.stringify(config) !== this.lastFired) {
+            const has = (g)=>!!g && Object.keys(g).some((k)=>k !== "show" && g[k] !== undefined);
+            this.ui = {
+                background: has(config.background),
+                box: has(config.box),
+                text: has(config.text)
+            };
+        }
         this.config = (0, $eb5cfe1dd9fe4e85$export$127f9a442b42d18)(config);
         this.svgItemConfig = (0, $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16).map((svg_item)=>({
                 ...svg_item,
@@ -2634,122 +2792,479 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             this.language = (0, $eb5cfe1dd9fe4e85$export$d0d68bb9ed2c643d).includes(lang) ? lang : "en";
         }
     }
+    tr(key) {
+        return $d067581fc0d59830$var$TEXTS[this.language]?.[key] ?? $d067581fc0d59830$var$TEXTS.en[key] ?? key;
+    }
+    allValues() {
+        return this.svgItemConfig.flatMap((item)=>item.values.map((value)=>({
+                    item: item,
+                    value: value
+                })));
+    }
+    description(value) {
+        return value.texts[this.language]?.desc || value.texts.en?.desc || value.id;
+    }
     render() {
         if (!this.config) return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)``;
-        const categories = {};
-        if (this.svgItemConfig[0].category) {
-            let lastCategory = this.svgItemConfig[0].category;
-            this.svgItemConfig.forEach((item)=>{
-                let currentCategory = item.category;
-                if (currentCategory) lastCategory = currentCategory;
-                else currentCategory = lastCategory;
-                const category = currentCategory[this.language];
-                if (!categories[category]) categories[category] = [];
-                categories[category].push(item);
-            });
-        }
-        const deviceLabel = "HPSU Devices";
-        const layoutLabel = {
-            de: "Layout",
-            en: "Layout",
-            it: "Layout"
-        }[this.language] ?? "Layout";
-        const animationsLabel = {
-            de: "Animationen",
-            en: "Animations",
-            it: "Animazioni"
-        }[this.language] ?? "Animations";
+        const tabs = [
+            "appearance",
+            "devices",
+            "sensors"
+        ];
         return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
             <div class="card-config">
+                <div class="tabs" role="tablist">
+                    ${tabs.map((id)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+                        <button class="tab ${this.tab === id ? "active" : ""}" role="tab"
+                            aria-selected=${this.tab === id}
+                            @click=${()=>{
+                this.tab = id;
+            }}>
+                            ${this.tr(id)}
+                        </button>
+                    `)}
+                </div>
+                ${this.tab === "appearance" ? this.renderAppearance() : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+                ${this.tab === "devices" ? this.renderDevices() : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+                ${this.tab === "sensors" ? this.renderSensors() : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+            </div>
+        `;
+    }
+    // ---- tab: appearance ---------------------------------------------------------------------------------
+    renderAppearance() {
+        const opacity = {
+            number: {
+                min: 0,
+                max: 100,
+                step: 1,
+                mode: "slider",
+                unit_of_measurement: "%"
+            }
+        };
+        const showBg = this.config.background?.show !== false;
+        const bgOn = showBg && this.ui.background;
+        const schema = [
+            {
+                name: "layout",
+                selector: {
+                    select: {
+                        mode: "dropdown",
+                        options: (0, $eb5cfe1dd9fe4e85$export$1ecca0613f5e56d2).map((l)=>({
+                                value: l.id,
+                                label: l.labels[this.language] ?? l.labels.en
+                            }))
+                    }
+                }
+            },
+            {
+                name: "animations",
+                selector: {
+                    boolean: {}
+                }
+            },
+            {
+                type: "expandable",
+                name: "background",
+                title: this.tr("background"),
+                schema: [
+                    {
+                        name: "show",
+                        selector: {
+                            boolean: {}
+                        }
+                    },
+                    {
+                        name: "custom",
+                        selector: {
+                            boolean: {}
+                        },
+                        disabled: !showBg
+                    },
+                    {
+                        name: "color",
+                        selector: {
+                            color_rgb: {}
+                        },
+                        disabled: !bgOn
+                    },
+                    {
+                        name: "opacity",
+                        selector: opacity,
+                        disabled: !bgOn
+                    }
+                ]
+            },
+            {
+                type: "expandable",
+                name: "box",
+                title: this.tr("box"),
+                schema: [
+                    {
+                        name: "custom",
+                        selector: {
+                            boolean: {}
+                        }
+                    },
+                    {
+                        name: "fill",
+                        selector: {
+                            color_rgb: {}
+                        },
+                        disabled: !this.ui.box
+                    },
+                    {
+                        name: "fill_opacity",
+                        selector: opacity,
+                        disabled: !this.ui.box
+                    },
+                    {
+                        name: "border",
+                        selector: {
+                            color_rgb: {}
+                        },
+                        disabled: !this.ui.box
+                    },
+                    {
+                        name: "border_opacity",
+                        selector: opacity,
+                        disabled: !this.ui.box
+                    }
+                ]
+            },
+            {
+                type: "expandable",
+                name: "text",
+                title: this.tr("text"),
+                schema: [
+                    {
+                        name: "custom",
+                        selector: {
+                            boolean: {}
+                        }
+                    },
+                    {
+                        name: "value_color",
+                        selector: {
+                            color_rgb: {}
+                        },
+                        disabled: !this.ui.text
+                    },
+                    {
+                        name: "label_color",
+                        selector: {
+                            color_rgb: {}
+                        },
+                        disabled: !this.ui.text
+                    }
+                ]
+            }
+        ];
+        const data = {
+            layout: this.config.layout ?? (0, $eb5cfe1dd9fe4e85$export$cfaf3f619f4fde4d),
+            animations: this.config.animations !== false,
+            background: {
+                show: showBg,
+                custom: this.ui.background,
+                opacity: 100,
+                ...this.config.background ?? {}
+            },
+            box: {
+                custom: this.ui.box,
+                fill_opacity: 100,
+                border_opacity: 100,
+                ...this.config.box ?? {}
+            },
+            text: {
+                custom: this.ui.text,
+                ...this.config.text ?? {}
+            }
+        };
+        return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+            <ha-form
+                .hass=${this.hass}
+                .data=${data}
+                .schema=${schema}
+                .computeLabel=${(s)=>this.labelFor(s)}
+                .computeHelper=${(s)=>s.name === "custom" ? this.tr("custom_help") : ""}
+                @value-changed=${this._appearanceChanged}>
+            </ha-form>
+        `;
+    }
+    labelFor(schema) {
+        return this.tr(schema.name);
+    }
+    // Only values that differ from the defaults are written to the card config.
+    static compact(group, defaults) {
+        const result = {};
+        for (const [key, value] of Object.entries(group ?? {})){
+            if (key === "custom" || value === undefined || value === null || value === "") continue;
+            if (JSON.stringify(value) === JSON.stringify(defaults[key])) continue;
+            result[key] = value;
+        }
+        return Object.keys(result).length ? result : undefined;
+    }
+    _appearanceChanged(event) {
+        event.stopPropagation();
+        const data = event.detail.value;
+        const compact = $d067581fc0d59830$export$70410bc798970b36.compact;
+        // switching off resets everything below it
+        const bg = {
+            ...data.background
+        };
+        const ui = {
+            ...this.ui
+        };
+        if (bg.show === false) {
+            ui.background = false;
+            delete bg.color;
+            delete bg.opacity;
+        } else {
+            ui.background = !!bg.custom;
+            if (!ui.background) {
+                delete bg.color;
+                delete bg.opacity;
+            }
+        }
+        const box = {
+            ...data.box
+        };
+        ui.box = !!box.custom;
+        if (!ui.box) for (const key of [
+            "fill",
+            "fill_opacity",
+            "border",
+            "border_opacity"
+        ])delete box[key];
+        const text = {
+            ...data.text
+        };
+        ui.text = !!text.custom;
+        if (!ui.text) {
+            delete text.value_color;
+            delete text.label_color;
+        }
+        this.ui = ui;
+        this._fire({
+            ...this.config,
+            layout: data.layout === (0, $eb5cfe1dd9fe4e85$export$cfaf3f619f4fde4d) ? undefined : data.layout,
+            animations: data.animations === false ? false : undefined,
+            background: compact(bg, {
+                show: true,
+                opacity: 100
+            }),
+            box: compact(box, {
+                fill_opacity: 100,
+                border_opacity: 100
+            }),
+            text: compact(text, {})
+        });
+    }
+    // ---- tab: devices --------------------------------------------------------------------------------------
+    renderDevices() {
+        const assigned = Object.values(this.config.entities ?? {}).filter(Boolean).length;
+        const total = this.allValues().length;
+        const schema = [
+            {
+                name: "canDevice",
+                selector: {
+                    device: {}
+                }
+            },
+            {
+                name: "uartDevice",
+                selector: {
+                    device: {}
+                }
+            }
+        ];
+        return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+            <ha-form
+                .hass=${this.hass}
+                .data=${{
+            canDevice: this.config.canDevice,
+            uartDevice: this.config.uartDevice
+        }}
+                .schema=${schema}
+                .computeLabel=${(s)=>this.tr(s.name)}
+                @value-changed=${this._devicesChanged}>
+            </ha-form>
+            <p class="hint">${this.tr("devices_help")}</p>
+            <p class="hint">${assigned} / ${total} ${this.tr("assigned")}</p>
+        `;
+    }
+    _devicesChanged(event) {
+        event.stopPropagation();
+        const data = event.detail.value;
+        this._fire({
+            ...this.config,
+            canDevice: data.canDevice,
+            uartDevice: data.uartDevice
+        });
+    }
+    // ---- tab: sensors / info ---------------------------------------------------------------------------------
+    renderSensors() {
+        const all = this.allValues();
+        let groups;
+        if (this.groupBy === "function") {
+            const used = new Set();
+            groups = $d067581fc0d59830$var$FUNCTION_GROUPS.map((g)=>{
+                const entries = g.ids.map((id)=>all.find((e)=>e.value.id === id)).filter((e)=>!!e);
+                entries.forEach((e)=>used.add(e.value.id));
+                return {
+                    title: this.tr(g.key),
+                    entries: entries
+                };
+            });
+            const rest = all.filter((e)=>!used.has(e.value.id));
+            if (rest.length) groups.push({
+                title: this.tr("other"),
+                entries: rest
+            });
+        } else groups = [
+            {
+                title: this.tr("bus_can"),
+                entries: all.filter((e)=>e.value.device === "CAN")
+            },
+            {
+                title: this.tr("bus_uart"),
+                entries: all.filter((e)=>e.value.device === "UART")
+            },
+            {
+                title: this.tr("bus_other"),
+                entries: all.filter((e)=>!e.value.device)
+            }
+        ].filter((g)=>g.entries.length);
+        const query = this.search.trim().toLowerCase();
+        const matches = (e)=>{
+            if (!query) return true;
+            const entityName = e.value.entityId ? this.hass.states[e.value.entityId]?.attributes?.friendly_name ?? "" : "";
+            return [
+                this.description(e.value),
+                e.value.id,
+                e.value.entityId ?? "",
+                entityName,
+                e.value.device ?? ""
+            ].join(" ").toLowerCase().includes(query);
+        };
+        const rendered = groups.map((group)=>this.renderGroup(group.title, group.entries, matches, query));
+        const anyMatch = groups.some((g)=>g.entries.some(matches));
+        return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+            <div class="toolbar">
                 <ha-selector
                     .hass=${this.hass}
                     .selector=${{
             select: {
                 mode: "dropdown",
-                options: (0, $eb5cfe1dd9fe4e85$export$1ecca0613f5e56d2).map((l)=>({
-                        value: l.id,
-                        label: l.labels[this.language] ?? l.labels.en
-                    }))
+                options: [
+                    {
+                        value: "function",
+                        label: this.tr("by_function")
+                    },
+                    {
+                        value: "bus",
+                        label: this.tr("by_bus")
+                    }
+                ]
             }
         }}
-                    .label=${layoutLabel}
-                    .value=${this.config.layout ?? (0, $eb5cfe1dd9fe4e85$export$cfaf3f619f4fde4d)}
-                    @value-changed=${this._layoutChanged}
-                    id="layout-selector">
+                    .label=${this.tr("group_by")}
+                    .value=${this.groupBy}
+                    @value-changed=${(e)=>{
+            e.stopPropagation();
+            this.groupBy = e.detail.value;
+        }}>
                 </ha-selector>
+                <div class="search">
+                    <ha-selector
+                        .hass=${this.hass}
+                        .selector=${{
+            text: {}
+        }}
+                        .label=${this.tr("search")}
+                        .required=${false}
+                        .value=${this.search}
+                        @value-changed=${(e)=>{
+            e.stopPropagation();
+            this.search = String(e.detail.value ?? "");
+        }}>
+                    </ha-selector>
+                    ${this.search ? (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+                        <ha-icon-button class="clear" .label=${this.tr("clear")} .path=${$d067581fc0d59830$var$CLOSE_PATH}
+                            @click=${()=>{
+            this.search = "";
+        }}></ha-icon-button>` : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+                </div>
+            </div>
+            ${rendered}
+            ${query && !anyMatch ? (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<p class="hint">${this.tr("no_match")}</p>` : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+        `;
+    }
+    renderGroup(title, entries, matches, query) {
+        const visible = entries.filter(matches);
+        if (!visible.length) return 0, $f58f44579a4747ac$export$45b790e32b2810ee;
+        const assigned = entries.filter((e)=>e.value.entityId).length;
+        // CAN / UART pairs side by side (only in the grouping by function)
+        const rows = [];
+        const done = new Set();
+        for (const e of visible){
+            if (done.has(e.value.id)) continue;
+            const pair = this.groupBy === "function" ? $d067581fc0d59830$var$PAIRS.find((p)=>p.includes(e.value.id)) : undefined;
+            const partner = pair ? visible.find((v)=>v.value.id === (pair[0] === e.value.id ? pair[1] : pair[0])) : undefined;
+            if (pair && partner) {
+                const [first, second] = pair[0] === e.value.id ? [
+                    e,
+                    partner
+                ] : [
+                    partner,
+                    e
+                ];
+                done.add(first.value.id);
+                done.add(second.value.id);
+                rows.push((0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<div class="pair">${this.renderRow(first.item, first.value)}${this.renderRow(second.item, second.value)}</div>`);
+            } else {
+                done.add(e.value.id);
+                rows.push(this.renderRow(e.item, e.value));
+            }
+        }
+        return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+            <ha-expansion-panel outlined .header=${`${title} (${assigned}/${entries.length})`} ?expanded=${query !== ""}>
+                <div class="rows">${rows}</div>
+            </ha-expansion-panel>
+        `;
+    }
+    renderRow(svg_item, value_item) {
+        const bus = value_item.device ? ` \xb7 ${value_item.device}` : "";
+        const warning = this.unitWarning(value_item);
+        return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+            <div class="row">
                 <ha-selector
                     .hass=${this.hass}
                     .selector=${{
-            boolean: {}
+            entity: {
+                include_entities: this.getRelevantEntityIds(svg_item, value_item)
+            }
         }}
-                    .label=${animationsLabel}
-                    .value=${this.config.animations !== false}
-                    @value-changed=${this._animationsChanged}
-                    id="animations-selector">
+                    .label=${this.description(value_item) + bus}
+                    .required=${false}
+                    .value=${value_item.entityId}
+                    @value-changed=${this._entityChanged}
+                    data-id=${value_item.id}>
                 </ha-selector>
-                <ha-expansion-panel
-                    .header=${deviceLabel}
-                >
-                    <ha-selector
-                        .hass=${this.hass}
-                        .selector=${{
-            device: {}
-        }}
-                        .value=${this.config.canDevice}
-                        @value-changed=${this._entityChanged}
-                        id="can-device-selector"
-                        .placeholder=${"CAN Ger\xe4t ausw\xe4hlen"}
-                        can-device-id=${this.config.canDevice}>
-                    </ha-selector>
-                    <ha-selector
-                        .hass=${this.hass}
-                        .selector=${{
-            device: {}
-        }}
-                        .value=${this.config.uartDevice}
-                        @value-changed=${this._entityChanged}
-                        id="uart-device-selector"
-                        .placeholder=${"UART Ger\xe4t ausw\xe4hlen"}
-                        can-device-id=${this.config.uartDevice}
-                        >
-                    </ha-selector>
-                </ha-expansion-panel>
-                ${Object.keys(categories).map((category)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
-                    <ha-expansion-panel
-                        .header=${category}
-                    >
-                        ${categories[category].map((svg_item)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
-                            ${svg_item.values.map((value_item, index)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
-                                <ha-selector
-                                    .hass=${this.hass}
-                                    .selector=${{
-                        entity: {
-                            include_entities: this.getRelevantEntityIds(svg_item, value_item)
-                        }
-                    }}
-                                    .placeholder=${value_item.texts[this.language]?.desc || "<missing>"}
-                                    .value=${value_item.entityId}
-                                    @value-changed=${this._entityChanged}
-                                    data-id=${value_item.id}
-                                    data-index=${index}
-                                >
-                                </ha-selector>
-                            `)}
-                        `)}
-                    </ha-expansion-panel>
-                `)}
+                ${warning ? (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<div class="warning">${warning}</div>` : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
             </div>
         `;
     }
+    // Warns when the chosen entity reports another unit than the card expects (e.g. °F instead of °C).
+    unitWarning(value_item) {
+        if (!value_item.entityId || value_item.unit === undefined) return "";
+        const state = this.hass.states[value_item.entityId];
+        const actual = state?.attributes?.unit_of_measurement;
+        const expected = $d067581fc0d59830$var$ensureArray(value_item.unit);
+        if (!state || !actual || expected.includes(actual)) return "";
+        return this.tr("unit_warning").replace("{actual}", String(actual)).replace("{expected}", expected.join(", "));
+    }
     getRelevantEntityIds(svg_item, value_item) {
         const relevantEntityIds = [];
-        const isRuecklauf = value_item.id === "ruecklauf" || value_item.id === "ruecklauf_2";
-        if (isRuecklauf) {
-            console.log("value_item.id", value_item.id);
-            console.log("device", value_item.device);
-            console.log("domain", value_item.domain);
-            console.log("unit", value_item.unit);
-        }
         const targetDeviceId = value_item.device === "UART" ? this.config.uartDevice : this.config.canDevice;
         const targetUnit = $d067581fc0d59830$var$ensureArray(value_item.unit);
         for(const entityId in this.hass.states){
@@ -2771,52 +3286,36 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
         if (value_item.entityId && this.hass.states[value_item.entityId] && !relevantEntityIds.includes(value_item.entityId)) relevantEntityIds.push(value_item.entityId);
         return relevantEntityIds;
     }
-    _animationsChanged(event) {
-        event.stopPropagation();
-        this.config = {
-            ...this.config,
-            animations: event.detail.value
-        };
-        this.dispatchEvent(new CustomEvent('config-changed', {
-            detail: {
-                config: this.config
-            },
-            bubbles: true,
-            composed: true
-        }));
-    }
-    _layoutChanged(event) {
-        event.stopPropagation();
-        this.config = {
-            ...this.config,
-            layout: event.detail.value
-        };
-        this.dispatchEvent(new CustomEvent('config-changed', {
-            detail: {
-                config: this.config
-            },
-            bubbles: true,
-            composed: true
-        }));
-    }
     _entityChanged(event) {
         event.stopPropagation();
         const picker = event.target;
         const updatedEntities = {
             ...this.config.entities
         };
-        let canDevice = this.config.canDevice;
-        if (picker.getAttribute("id") == "can-device-selector") canDevice = event.detail.value;
-        let uartDevice = this.config.uartDevice;
-        if (picker.getAttribute("id") == "uart-device-selector") uartDevice = event.detail.value;
         const entityId = picker.getAttribute("data-id");
-        if (entityId) updatedEntities[entityId] = event.detail.value;
-        this.config = {
+        if (entityId) {
+            const value = event.detail.value;
+            if (value) updatedEntities[entityId] = value;
+            else delete updatedEntities[entityId]; // cleared with the cross
+        }
+        this.svgItemConfig = this.svgItemConfig.map((item)=>({
+                ...item,
+                values: item.values.map((v)=>({
+                        ...v,
+                        entityId: updatedEntities[v.id] || null
+                    }))
+            }));
+        this._fire({
             ...this.config,
-            canDevice: canDevice,
-            uartDevice: uartDevice,
             entities: $d067581fc0d59830$export$70410bc798970b36.sortRecordBySvgOrder(updatedEntities, this.svgItemConfig)
-        };
+        });
+    }
+    _fire(config) {
+        const clean = {};
+        for (const [key, value] of Object.entries(config))if (value !== undefined && value !== null && value !== "") clean[key] = value;
+        config = clean;
+        this.lastFired = JSON.stringify(config);
+        this.config = config;
         this.dispatchEvent(new CustomEvent('config-changed', {
             detail: {
                 config: this.config
@@ -2839,20 +3338,85 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
                 display: flex;
                 flex-direction: column;
                 padding: 16px;
+                gap: 8px;
             }
-            h2 {
-                font-size: 20px;
-                margin-bottom: 16px;
-                margin-top: 24px;
+            .tabs {
+                display: flex;
+                gap: 4px;
+                border-bottom: 1px solid var(--divider-color);
+                margin-bottom: 8px;
+                overflow-x: auto;
             }
-            ha-selector, ha-device-picker, ha-entity-picker {
-                margin: 5px;
+            .tab {
+                background: none;
+                border: none;
+                border-bottom: 2px solid transparent;
+                color: var(--secondary-text-color);
+                cursor: pointer;
+                font: inherit;
+                font-weight: 500;
+                padding: 10px 14px;
+            }
+            .tab.active {
+                color: var(--primary-color);
+                border-bottom-color: var(--primary-color);
+            }
+            .toolbar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .rows {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+                gap: 8px 12px;
+                padding: 8px 0;
+            }
+            .pair {
+                grid-column: 1 / -1;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+                gap: 8px 12px;
+            }
+            .search {
+                position: relative;
+            }
+            .search ha-selector {
                 display: block;
+            }
+            .search .clear {
+                position: absolute;
+                right: 4px;
+                top: 50%;
+                transform: translateY(-50%);
+                --mdc-icon-button-size: 36px;
+                z-index: 1;
+            }
+            .row ha-selector, ha-selector, ha-form {
+                display: block;
+            }
+            ha-expansion-panel {
+                margin-top: 8px;
+            }
+            .warning {
+                color: var(--warning-color, orange);
+                font-size: 12px;
+                padding: 2px 4px;
+            }
+            .hint {
+                color: var(--secondary-text-color);
+                font-size: 13px;
+                margin: 4px 2px;
             }
         `;
     }
     constructor(...args){
-        super(...args), this.language = "en", this.svgItemConfig = [];
+        super(...args), this.language = "en", this.svgItemConfig = [], this.tab = "appearance", this.groupBy = "function", this.search = "", // UI-only switches ("use own colours"); they are not stored, the colours themselves are the setting
+        this.ui = {
+            background: false,
+            box: false,
+            text: false
+        }, this.lastFired = "";
     }
 }
 (0, $24c52f343453d62d$export$29e00dfd3077644b)([
@@ -2871,6 +3435,18 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
 (0, $24c52f343453d62d$export$29e00dfd3077644b)([
     (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
 ], $d067581fc0d59830$export$70410bc798970b36.prototype, "svgItemConfig", void 0);
+(0, $24c52f343453d62d$export$29e00dfd3077644b)([
+    (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "tab", void 0);
+(0, $24c52f343453d62d$export$29e00dfd3077644b)([
+    (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "groupBy", void 0);
+(0, $24c52f343453d62d$export$29e00dfd3077644b)([
+    (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "search", void 0);
+(0, $24c52f343453d62d$export$29e00dfd3077644b)([
+    (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "ui", void 0);
 
 
 
@@ -2967,7 +3543,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             }));
         if (this.hasUpdated && this._state === "ready") this.updateAnimations();
         // Layout switched while the card is already shown (e.g. in the card editor): reload the SVG.
-        if (this.hasUpdated && this.loadedLayoutFile !== null && (0, $eb5cfe1dd9fe4e85$export$6fb81034e128eb0)(this.config.layout) !== this.loadedLayoutFile) {
+        if (this.hasUpdated && this.loadedLayoutFile !== null && ((0, $eb5cfe1dd9fe4e85$export$6fb81034e128eb0)(this.config.layout) !== this.loadedLayoutFile || this.styleSignature() !== this.loadedStyleSignature)) {
             this.clickHandlersAdded = false;
             this._state = "loading";
             this.svgContent = null;
@@ -2995,6 +3571,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             if (!response.ok) throw new Error(`Failed to fetch '${url}' (${response.status})`);
             const rawSvgString = await response.text();
             this.loadedLayoutFile = file;
+            this.loadedStyleSignature = this.styleSignature();
             this.svgContent = this.createSvgWithLabels(rawSvgString);
             this._state = "ready";
         } catch (e) {
@@ -3025,8 +3602,6 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         setClickHandler("compressor-symbol", this.findEntityIdById(this.svg_item_config, "kompressor_an_aus"));
         setClickHandler("pump-symbol", this.findEntityIdById(this.svg_item_config, "umwaelzpumpe_an_aus"));
         setClickHandler("eev-symbol", pressureEqualizationEntityId);
-        setClickHandler("eev_arrow_left", pressureEqualizationEntityId);
-        setClickHandler("eev_arrow_right", pressureEqualizationEntityId);
     }
     updated(changedProperties) {
         if (this.isPanelView()) this.setAttribute('panel-view', '');
@@ -3125,10 +3700,80 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             // the SVG styles the states itself (CSS on [data-state]); the card only sets the state
             ownStates: svgElement.hasAttribute("data-own-state-style")
         };
+        this.applyStyleOverrides(svgElement);
         svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
         svgElement.style.display = "block";
         this.createStateLabels(svgDoc);
         return new XMLSerializer().serializeToString(svgElement);
+    }
+    // Style overrides from the card config (editor tab "appearance"). They only replace single values of the
+    // layout; the defaults and the look stay in the SVG.
+    styleSignature() {
+        const c = this.config ?? {};
+        return JSON.stringify([
+            c.background,
+            c.box,
+            c.text
+        ]);
+    }
+    parseColor(value) {
+        if (!value) return undefined;
+        const hex = value.trim().match(/^#([0-9a-f]{3,8})$/i);
+        if (hex) {
+            let h = hex[1];
+            if (h.length === 3 || h.length === 4) h = h.split("").map((x)=>x + x).join("");
+            const n = parseInt(h.slice(0, 6), 16);
+            return [
+                n >> 16 & 255,
+                n >> 8 & 255,
+                n & 255,
+                h.length === 8 ? parseInt(h.slice(6, 8), 16) / 255 : 1
+            ];
+        }
+        const m = value.match(/rgba?\(([^)]+)\)/);
+        if (m) {
+            const p = m[1].split(",").map((x)=>parseFloat(x));
+            return [
+                p[0],
+                p[1],
+                p[2],
+                p[3] ?? 1
+            ];
+        }
+        return undefined;
+    }
+    // colour from the config (or the layout's own colour if only the opacity is set) with the opacity applied
+    composeColor(color, opacity, base) {
+        if (color === undefined && opacity === undefined) return undefined;
+        const own = Array.isArray(color) && color.length >= 3 ? color.map(Number) : undefined;
+        const fallback = this.parseColor(base);
+        const rgb = own ?? fallback?.slice(0, 3);
+        if (!rgb) return undefined;
+        const alpha = opacity !== undefined ? Math.min(100, Math.max(0, Number(opacity))) / 100 : own ? 1 : fallback?.[3] ?? 1;
+        return alpha >= 1 ? `rgb(${rgb[0]},${rgb[1]},${rgb[2]})` : `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+    }
+    applyStyleOverrides(svgElement) {
+        const cfg = this.config ?? {};
+        if (cfg.box) {
+            const fill = this.composeColor(cfg.box.fill, cfg.box.fill_opacity, this.layoutStyle.fill);
+            const border = this.composeColor(cfg.box.border, cfg.box.border_opacity, this.layoutStyle.stroke);
+            if (fill) this.layoutStyle.fill = fill;
+            if (border) this.layoutStyle.stroke = border;
+        }
+        if (cfg.text) {
+            const value = this.composeColor(cfg.text.value_color, undefined, undefined);
+            const label = this.composeColor(cfg.text.label_color, undefined, undefined);
+            if (value) this.layoutStyle.text = value;
+            if (label) this.layoutStyle.label = label;
+        }
+        // background: the SVG draws it from --bg-color / --bg-opacity (with its own defaults)
+        const style = svgElement.style;
+        if (cfg.background?.show === false) svgElement.setAttribute("data-bg", "off");
+        else if (cfg.background) {
+            const color = this.composeColor(cfg.background.color, undefined, undefined);
+            if (color) style.setProperty("--bg-color", color);
+            if (cfg.background.opacity !== undefined) style.setProperty("--bg-opacity", String(Math.min(100, Math.max(0, Number(cfg.background.opacity))) / 100));
+        }
     }
     strToFloat(str) {
         if (str === "" || str === undefined || str === null || str.trim() === "") return 0;
@@ -3369,15 +4014,6 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                                 }
                                 this.layoutText(valueText, value_item.valueBox, value_item.valueBox.getAttribute("data-align") ?? svg_item.align, svg_item.offset);
                             } else if (value_item.value_rect_id) console.warn("Value text not found: " + value_item.entityId);
-                            if (value_item.id == "pressure_equalization") {
-                                const color = newState && newState.state == "on" ? '#00ff0080' : '#7f7f7f';
-                                // layouts with an EEV graphic: the SVG decides how an active pressure equalisation looks
-                                this.shadowRoot.getElementById("eev_arrow_left")?.setAttribute('fill', color);
-                                this.shadowRoot.getElementById("eev_arrow_right")?.setAttribute('fill', color);
-                            } else if (value_item.id == "buh_power") {
-                                const color = newState && this.isPositiveNumber(newState.state) ? '#d4aa00ff' : '#7f7f7f';
-                                this.shadowRoot.getElementById("buh-control")?.setAttribute('fill', color);
-                            }
                         });
                     });
                 });
@@ -3385,7 +4021,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         }
     }
     // Sets the semantic state of a value text. Layouts that style the states themselves (data-own-state-style)
-    // only get the state; all other layouts get the classic inline colours.
+    // only get the state; other (custom) SVGs get inline colours.
     textState(el, state, fallback) {
         el.setAttribute("data-state", state);
         if (!this.layoutStyle.ownStates || state === "normal") for (const [name, value] of Object.entries(fallback))el.setAttribute(name, value);
@@ -3433,13 +4069,11 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             } else svg.style.removeProperty(name); // the SVG falls back to its own default
         }
     }
+    // "animations: false" freezes everything; how is defined by the SVG (svg[data-animations="off"])
     updateAnimations() {
         const svg = this.shadowRoot?.querySelector("ha-card svg");
-        if (!svg || typeof svg.pauseAnimations !== "function") return;
-        if (this.config?.animations === false) {
-            svg.pauseAnimations();
-            svg.setCurrentTime(0);
-        } else svg.unpauseAnimations();
+        if (!svg) return;
+        svg.setAttribute("data-animations", this.config?.animations === false ? "off" : "on");
     }
     updateOpacity() {
         if (this.config) {
@@ -3447,7 +4081,6 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             const dhwClosedArrows = this.shadowRoot.querySelector(`#dhw-closed-arrows`);
             const bpvOpenArrows = this.shadowRoot.querySelector(`#bpv-open-arrows`);
             const bpvClosedArrows = this.shadowRoot.querySelector(`#bpv-closed-arrows`);
-            const flowRateId = this.config.entities?.['durchfluss'] ?? null;
             const mixerEntity = this.config.entities?.['mischer'] ?? null;
             const bypassEntity = this.config.entities?.['bypass'] ?? null;
             // valve flaps (layouts with T-piece valves): angle follows the percentage
@@ -3464,21 +4097,14 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             setFlap("dhw-flap", mixerEntity);
             setFlap("bpv-flap", bypassEntity);
             if (!dhwOpenArrows || !dhwClosedArrows || !bpvOpenArrows || !bpvClosedArrows) return;
-            const flow_rate_id = this.config.entities?.['durchfluss'] ?? null;
             const mixer_id = this.config.entities?.['mischer'] ?? null;
             const bypass_id = this.config.entities?.['bypass'] ?? null;
-            const flowRate = flow_rate_id && this.hass.states[flow_rate_id] ? parseFloat(this.hass.states[flow_rate_id].state) : 0;
-            const gate = this.layoutStyle.ownStates === true || flowRate > 0;
             const mischerState = mixer_id && this.hass.states[mixer_id] ? parseFloat(this.hass.states[mixer_id].state) : 0;
             const bpvState = bypass_id && this.hass.states[bypass_id] ? parseFloat(this.hass.states[bypass_id].state) : 0;
-            dhwOpenArrows.style.opacity = (gate ? mischerState / 100.0 : 0).toString();
-            dhwClosedArrows.style.opacity = (gate ? (100.0 - mischerState) / 100.0 : 0).toString();
-            bpvOpenArrows.style.opacity = (gate ? bpvState / 100.0 : 0).toString();
-            bpvClosedArrows.style.opacity = (gate ? (100.0 - bpvState) / 100.0 : 0).toString();
-            for(let index = 1; index <= 8; ++index){
-                const arrow = this.shadowRoot.querySelector(`#Flow-Arrow-${index}`);
-                arrow.style.opacity = (gate ? 1 : 0).toString();
-            }
+            dhwOpenArrows.style.opacity = (mischerState / 100.0).toString();
+            dhwClosedArrows.style.opacity = ((100.0 - mischerState) / 100.0).toString();
+            bpvOpenArrows.style.opacity = (bpvState / 100.0).toString();
+            bpvClosedArrows.style.opacity = ((100.0 - bpvState) / 100.0).toString();
         }
     }
     handleStateClick(entityId) {
@@ -3536,7 +4162,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         return value?.entityId ?? undefined;
     }
     constructor(...args){
-        super(...args), this._state = "loading", this.language = "de", this.svgContent = null, this.svg_item_config = [], this.clickHandlersAdded = false, this.loadedLayoutFile = null, // Optional box/text styling provided by the SVG layout itself (data-* attributes on the <svg> root).
+        super(...args), this._state = "loading", this.language = "de", this.svgContent = null, this.svg_item_config = [], this.clickHandlersAdded = false, this.loadedLayoutFile = null, this.loadedStyleSignature = null, // Optional box/text styling provided by the SVG layout itself (data-* attributes on the <svg> root).
         this.layoutStyle = {};
     }
 }

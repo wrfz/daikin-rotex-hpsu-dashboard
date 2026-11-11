@@ -1207,10 +1207,9 @@ export interface LayoutOption {
     labels: { de: string; en: string; it: string };
 }
 
-export const DEFAULT_LAYOUT = "classic";
+export const DEFAULT_LAYOUT = "glass-light";
 
 export const layouts: LayoutOption[] = [
-    { id: "classic", file: "hpsu.svg", labels: { de: "Klassisch", en: "Classic", it: "Classico" } },
     { id: "glass-dark", file: "hpsu_glass_dark.svg", labels: { de: "Glas, dunkel", en: "Glass, dark", it: "Vetro, scuro" } },
     { id: "glass-light", file: "hpsu_glass_light.svg", labels: { de: "Glas, hell", en: "Glass, light", it: "Vetro, chiaro" } },
     { id: "glass-petrol", file: "hpsu_glass_petrol.svg", labels: { de: "Glas, Petrol", en: "Glass, petrol", it: "Vetro, petrolio" } },

@@ -41,6 +41,7 @@ export class HPSUDashboardCard extends LitElement {
     private svg_item_config: SVGItem[] = [];
     private clickHandlersAdded = false;
     private loadedLayoutFile: string | null = null;
+    private loadedStyleSignature: string | null = null;
     // Optional box/text styling provided by the SVG layout itself (data-* attributes on the <svg> root).
     private layoutStyle: { radius?: string; fill?: string; stroke?: string; strokeWidth?: string; text?: string; label?: string; ownStates?: boolean } = {};
 
@@ -62,7 +63,7 @@ export class HPSUDashboardCard extends LitElement {
         }
 
         // Layout switched while the card is already shown (e.g. in the card editor): reload the SVG.
-        if (this.hasUpdated && this.loadedLayoutFile !== null && layoutFile(this.config.layout) !== this.loadedLayoutFile) {
+        if (this.hasUpdated && this.loadedLayoutFile !== null && (layoutFile(this.config.layout) !== this.loadedLayoutFile || this.styleSignature() !== this.loadedStyleSignature)) {
             this.clickHandlersAdded = false;
             this._state = DashboardState.Loading;
             this.svgContent = null;
@@ -93,6 +94,7 @@ export class HPSUDashboardCard extends LitElement {
             }
             const rawSvgString = await response.text();
             this.loadedLayoutFile = file;
+            this.loadedStyleSignature = this.styleSignature();
             this.svgContent = this.createSvgWithLabels(rawSvgString);
             this._state = DashboardState.Ready;
         } catch (e) {
@@ -126,8 +128,6 @@ export class HPSUDashboardCard extends LitElement {
         setClickHandler("compressor-symbol", this.findEntityIdById(this.svg_item_config, "kompressor_an_aus"));
         setClickHandler("pump-symbol", this.findEntityIdById(this.svg_item_config, "umwaelzpumpe_an_aus"));
         setClickHandler("eev-symbol", pressureEqualizationEntityId);
-        setClickHandler("eev_arrow_left", pressureEqualizationEntityId);
-        setClickHandler("eev_arrow_right", pressureEqualizationEntityId);
     }
 
     protected updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -242,11 +242,77 @@ export class HPSUDashboardCard extends LitElement {
             ownStates: svgElement.hasAttribute("data-own-state-style"),
         };
 
+        this.applyStyleOverrides(svgElement);
+
         svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
         svgElement.style.display = "block";
 
         this.createStateLabels(svgDoc);
         return new XMLSerializer().serializeToString(svgElement);
+    }
+
+    // Style overrides from the card config (editor tab "appearance"). They only replace single values of the
+    // layout; the defaults and the look stay in the SVG.
+    private styleSignature(): string {
+        const c = this.config ?? ({} as LovelaceCardConfig);
+        return JSON.stringify([c.background, c.box, c.text]);
+    }
+
+    private parseColor(value: string | undefined): number[] | undefined {
+        if (!value) return undefined;
+        const hex = value.trim().match(/^#([0-9a-f]{3,8})$/i);
+        if (hex) {
+            let h = hex[1];
+            if (h.length === 3 || h.length === 4) h = h.split("").map(x => x + x).join("");
+            const n = parseInt(h.slice(0, 6), 16);
+            return [(n >> 16) & 255, (n >> 8) & 255, n & 255, h.length === 8 ? parseInt(h.slice(6, 8), 16) / 255 : 1];
+        }
+        const m = value.match(/rgba?\(([^)]+)\)/);
+        if (m) {
+            const p = m[1].split(",").map(x => parseFloat(x));
+            return [p[0], p[1], p[2], p[3] ?? 1];
+        }
+        return undefined;
+    }
+
+    // colour from the config (or the layout's own colour if only the opacity is set) with the opacity applied
+    private composeColor(color: unknown, opacity: number | undefined, base: string | undefined): string | undefined {
+        if (color === undefined && opacity === undefined) return undefined;
+        const own = Array.isArray(color) && color.length >= 3 ? color.map(Number) : undefined;
+        const fallback = this.parseColor(base);
+        const rgb = own ?? fallback?.slice(0, 3);
+        if (!rgb) return undefined;
+        const alpha = opacity !== undefined ? Math.min(100, Math.max(0, Number(opacity))) / 100 : (own ? 1 : (fallback?.[3] ?? 1));
+        return alpha >= 1 ? `rgb(${rgb[0]},${rgb[1]},${rgb[2]})` : `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha})`;
+    }
+
+    private applyStyleOverrides(svgElement: Element): void {
+        const cfg = this.config ?? ({} as LovelaceCardConfig);
+
+        if (cfg.box) {
+            const fill = this.composeColor(cfg.box.fill, cfg.box.fill_opacity, this.layoutStyle.fill);
+            const border = this.composeColor(cfg.box.border, cfg.box.border_opacity, this.layoutStyle.stroke);
+            if (fill) this.layoutStyle.fill = fill;
+            if (border) this.layoutStyle.stroke = border;
+        }
+        if (cfg.text) {
+            const value = this.composeColor(cfg.text.value_color, undefined, undefined);
+            const label = this.composeColor(cfg.text.label_color, undefined, undefined);
+            if (value) this.layoutStyle.text = value;
+            if (label) this.layoutStyle.label = label;
+        }
+
+        // background: the SVG draws it from --bg-color / --bg-opacity (with its own defaults)
+        const style = (svgElement as SVGElement).style;
+        if (cfg.background?.show === false) {
+            svgElement.setAttribute("data-bg", "off");
+        } else if (cfg.background) {
+            const color = this.composeColor(cfg.background.color, undefined, undefined);
+            if (color) style.setProperty("--bg-color", color);
+            if (cfg.background.opacity !== undefined) {
+                style.setProperty("--bg-opacity", String(Math.min(100, Math.max(0, Number(cfg.background.opacity))) / 100));
+            }
+        }
     }
 
     private strToFloat(str: string): number {
@@ -586,17 +652,6 @@ export class HPSUDashboardCard extends LitElement {
                             } else if (value_item.value_rect_id) {
                                 console.warn("Value text not found: " + value_item.entityId);
                             }
-
-                            if (value_item.id == "pressure_equalization") {
-                                const color = newState && newState.state == "on" ? '#00ff0080' : '#7f7f7f';
-
-                                // layouts with an EEV graphic: the SVG decides how an active pressure equalisation looks
-                                this.shadowRoot!.getElementById("eev_arrow_left")?.setAttribute('fill', color);
-                                this.shadowRoot!.getElementById("eev_arrow_right")?.setAttribute('fill', color);
-                            } else if (value_item.id == "buh_power") {
-                                const color = newState && this.isPositiveNumber(newState.state) ? '#d4aa00ff' : '#7f7f7f';
-                                this.shadowRoot!.getElementById("buh-control")?.setAttribute('fill', color);
-                            }
                         });
                     });
                 });
@@ -606,7 +661,7 @@ export class HPSUDashboardCard extends LitElement {
     }
 
     // Sets the semantic state of a value text. Layouts that style the states themselves (data-own-state-style)
-    // only get the state; all other layouts get the classic inline colours.
+    // only get the state; other (custom) SVGs get inline colours.
     private textState(el: HTMLElement, state: string, fallback: Record<string, string>): void {
         el.setAttribute("data-state", state);
         if (!this.layoutStyle.ownStates || state === "normal") {
@@ -658,16 +713,11 @@ export class HPSUDashboardCard extends LitElement {
         }
     }
 
+    // "animations: false" freezes everything; how is defined by the SVG (svg[data-animations="off"])
     private updateAnimations(): void {
-        const svg = this.shadowRoot?.querySelector("ha-card svg") as SVGSVGElement | null;
-        if (!svg || typeof svg.pauseAnimations !== "function") return;
-
-        if (this.config?.animations === false) {
-            svg.pauseAnimations();
-            svg.setCurrentTime(0);
-        } else {
-            svg.unpauseAnimations();
-        }
+        const svg = this.shadowRoot?.querySelector("ha-card svg");
+        if (!svg) return;
+        svg.setAttribute("data-animations", this.config?.animations === false ? "off" : "on");
     }
 
     private updateOpacity(): void {
@@ -677,7 +727,6 @@ export class HPSUDashboardCard extends LitElement {
             const bpvOpenArrows = this.shadowRoot!.querySelector(`#bpv-open-arrows`) as HTMLElement;
             const bpvClosedArrows = this.shadowRoot!.querySelector(`#bpv-closed-arrows`) as HTMLElement;
 
-            const flowRateId = this.config.entities?.['durchfluss'] ?? null;
             const mixerEntity = this.config.entities?.['mischer'] ?? null;
             const bypassEntity = this.config.entities?.['bypass'] ?? null;
             // valve flaps (layouts with T-piece valves): angle follows the percentage
@@ -693,28 +742,19 @@ export class HPSUDashboardCard extends LitElement {
             };
             setFlap("dhw-flap", mixerEntity);
             setFlap("bpv-flap", bypassEntity);
-            void flowRateId;
 
             if (!dhwOpenArrows || !dhwClosedArrows || !bpvOpenArrows || !bpvClosedArrows) return;
 
-            const flow_rate_id = this.config.entities?.['durchfluss'] ?? null;
             const mixer_id = this.config.entities?.['mischer'] ?? null;
             const bypass_id = this.config.entities?.['bypass'] ?? null;
 
-            const flowRate: number = flow_rate_id && this.hass.states[flow_rate_id] ? parseFloat(this.hass.states[flow_rate_id].state) : 0;
-            const gate = this.layoutStyle.ownStates === true || flowRate > 0;
             const mischerState = mixer_id && this.hass.states[mixer_id] ? parseFloat(this.hass.states[mixer_id].state) : 0;
             const bpvState = bypass_id && this.hass.states[bypass_id] ? parseFloat(this.hass.states[bypass_id].state) : 0;
 
-            dhwOpenArrows.style.opacity = (gate ? (mischerState / 100.0) : 0).toString();
-            dhwClosedArrows.style.opacity = (gate ? ((100.0 - mischerState) / 100.0) : 0).toString();
-            bpvOpenArrows.style.opacity = (gate ? (bpvState / 100.0) : 0).toString();
-            bpvClosedArrows.style.opacity = (gate ? ((100.0 - bpvState) / 100.0) : 0).toString();
-
-            for (let index = 1; index <= 8; ++index) {
-                const arrow = this.shadowRoot!.querySelector(`#Flow-Arrow-${index}`) as HTMLElement;
-                arrow.style.opacity = (gate ? 1 : 0).toString();
-            }
+            dhwOpenArrows.style.opacity = (mischerState / 100.0).toString();
+            dhwClosedArrows.style.opacity = ((100.0 - mischerState) / 100.0).toString();
+            bpvOpenArrows.style.opacity = (bpvState / 100.0).toString();
+            bpvClosedArrows.style.opacity = ((100.0 - bpvState) / 100.0).toString();
         }
     }
 
