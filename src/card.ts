@@ -4,6 +4,7 @@ import {
     languages,
     text_map,
     validateConfig,
+    configRowOrder,
     layoutFile,
 } from "./svg_item_config";
 import { HpsuDashboardCardEditor } from "./editor";
@@ -441,12 +442,13 @@ export class HPSUDashboardCard extends LitElement {
                     //svg_item.valueBox.setAttribute("rx", borderRadius);
                     //svg_item.valueBox.setAttribute("ry", borderRadius);
 
-                    if (group && ownFrame && !value_item.optional && (hadLabel || svg_item.values.indexOf(value_item) > 0)) {
+                    if (group && ownFrame && (hadLabel || svg_item.reorderable || svg_item.values.indexOf(value_item) > 0)) {
                         const box = value_item.valueBox;
                         const bx = this.strToFloat(box.getAttribute("x") ?? "");
                         const by = this.strToFloat(box.getAttribute("y") ?? "");
                         const bw = this.strToFloat(box.getAttribute("width") ?? "");
                         const divider = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        divider.setAttribute("id", `${value_item.value_rect_id}_divider`);
                         divider.setAttribute("x1", bx.toString());
                         divider.setAttribute("x2", (bx + bw).toString());
                         divider.setAttribute("y1", by.toString());
@@ -601,6 +603,10 @@ export class HPSUDashboardCard extends LitElement {
                                 : null;
                             if (liveBox) {
                                 liveBox.style.display = newState ? "" : "none";
+                                const liveDivider = this.shadowRoot!.getElementById(`${value_item.value_rect_id}_divider`);
+                                if (liveDivider) {
+                                    liveDivider.style.display = newState ? "" : "none";
+                                }
                             }
 
                             const id = `${value_item.value_rect_id}_text`;
@@ -654,9 +660,46 @@ export class HPSUDashboardCard extends LitElement {
                             }
                         });
                     });
+                    if (svg_item.reorderable) {
+                        this.layoutRows(svg_item);
+                    }
                 });
 
             }
+        }
+    }
+
+    // Rows of a reorderable box (info box): configured order, only the shown rows, packed from the top at their normal height.
+    // The container shrinks to the shown rows.
+    private layoutRows(svg_item: SVGItem): void {
+        const root = this.shadowRoot!;
+        const slots = svg_item.values.filter(v => v.valueBox).map(v => ({
+            y: parseFloat(v.valueBox.getAttribute("y")),
+            h: parseFloat(v.valueBox.getAttribute("height")),
+        })).sort((a, b) => a.y - b.y);
+        const byId = new Map(svg_item.values.map(v => [v.id, v]));
+        let k = 0;
+        for (const id of configRowOrder(this.config)) {
+            const v = byId.get(id);
+            if (!v || !v.value_rect_id) continue;
+            const rect = root.getElementById(v.value_rect_id) as SVGElement | null;
+            const text = root.getElementById(`${v.value_rect_id}_text`) as SVGElement | null;
+            const divider = root.getElementById(`${v.value_rect_id}_divider`) as SVGElement | null;
+            const shown = !v.optional || (!!v.entityId && !!this.hass.states[v.entityId]);
+            if (rect) rect.style.display = shown ? "" : "none";
+            if (text) text.setAttribute("display", shown ? "block" : "none");
+            if (divider) divider.style.display = shown && k > 0 ? "" : "none";
+            if (!shown) continue;
+            const slot = slots[k++];
+            if (rect) { rect.setAttribute("y", String(slot.y)); rect.setAttribute("height", String(slot.h)); }
+            if (text) text.setAttribute("y", String(slot.y + slot.h / 2 + (svg_item.offset ?? 0)));
+            if (divider) { divider.setAttribute("y1", String(slot.y)); divider.setAttribute("y2", String(slot.y)); }
+        }
+        const container = root.getElementById(`${svg_item.group_id}_rect`) as SVGElement | null;
+        if (container) {
+            const top = parseFloat(container.getAttribute("y") ?? "0");
+            container.style.display = k > 0 ? "" : "none";
+            if (k > 0) container.setAttribute("height", String(Math.max(0, slots[k - 1].y + slots[k - 1].h - top)));
         }
     }
 

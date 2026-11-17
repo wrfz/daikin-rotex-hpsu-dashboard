@@ -1,5 +1,7 @@
 import {
     svg_item_config,
+    configRowOrder,
+    serializeConfig,
     SVGItem,
     SVGValue,
     languages,
@@ -32,7 +34,7 @@ const FUNCTION_GROUPS: { key: string; ids: string[] }[] = [
     { key: "refrigerant", ids: ["kompressor_an_aus", "verdichter", "expansion_valve", "pressure_equalization", "hot_gas", "hot_gas_condenser", "kondensat", "verdampfer", "luefter", "ta", "ta2"] },
     { key: "heating", ids: ["umwaelzpumpe", "umwaelzpumpe_an_aus", "durchfluss", "vorlauf_1", "vorlauf_2", "vorlauf_bh_1", "vorlauf_bh_2", "ruecklauf", "ruecklauf_2", "vorlauf_soll", "spread", "wasserdruck", "bypass"] },
     { key: "hotwater", ids: ["speicher", "speicher_soll", "mischer", "buh_power"] },
-    { key: "info", ids: ["fehlercode", "betriebsmodus", "betriebsart", "thermische_leistung", "el_power", "cop", "t_room_is", "system_date", "system_time"] },
+    { key: "info", ids: ["fehlercode", "betriebsmodus", "betriebsart", "thermische_leistung", "el_power", "cop", "t_room_is", "room_setpoint"] },
 ];
 
 // Values that exist for both buses are shown side by side (CAN left, UART right)
@@ -58,6 +60,7 @@ const TEXTS: Record<string, Record<string, string>> = {
         refrigerant: "Kältekreis", heating: "Heizwasser", hotwater: "Warmwasser und Speicher", info: "Info und Betrieb", other: "Weitere",
         bus_can: "CAN", bus_uart: "UART", bus_other: "Extern / ohne Gerät",
         unit_warning: "Einheit {actual}, erwartet {expected}",
+        drag_hint: "Ziehen zum Sortieren",
     },
     en: {
         appearance: "Appearance", devices: "Devices", sensors: "Sensors",
@@ -76,6 +79,7 @@ const TEXTS: Record<string, Record<string, string>> = {
         refrigerant: "Refrigerant circuit", heating: "Heating water", hotwater: "Hot water and tank", info: "Info and operation", other: "Other",
         bus_can: "CAN", bus_uart: "UART", bus_other: "External / no device",
         unit_warning: "Unit {actual}, expected {expected}",
+        drag_hint: "Drag to reorder",
     },
 };
 
@@ -306,13 +310,14 @@ export class HpsuDashboardCardEditor extends LitElement {
     private renderSensors() {
         const all = this.allValues();
 
-        let groups: { title: string; entries: { item: SVGItem; value: SVGValue }[] }[];
+        let groups: { key?: string; title: string; entries: { item: SVGItem; value: SVGValue }[] }[];
         if (this.groupBy === "function") {
             const used = new Set<string>();
             groups = FUNCTION_GROUPS.map(g => {
                 const entries = g.ids.map(id => all.find(e => e.value.id === id)).filter((e): e is { item: SVGItem; value: SVGValue } => !!e);
                 entries.forEach(e => used.add(e.value.id));
-                return { title: this.tr(g.key), entries };
+                if (g.key === "info") entries.sort((a, b) => this.infoOrder().indexOf(a.value.id) - this.infoOrder().indexOf(b.value.id));
+                return { key: g.key, title: this.tr(g.key), entries };
             });
             const rest = all.filter(e => !used.has(e.value.id));
             if (rest.length) groups.push({ title: this.tr("other"), entries: rest });
@@ -330,7 +335,7 @@ export class HpsuDashboardCardEditor extends LitElement {
             const entityName = e.value.entityId ? (this.hass.states[e.value.entityId]?.attributes?.friendly_name ?? "") : "";
             return [this.description(e.value), e.value.id, e.value.entityId ?? "", entityName, e.value.device ?? ""].join(" ").toLowerCase().includes(query);
         };
-        const rendered = groups.map(group => this.renderGroup(group.title, group.entries, matches, query));
+        const rendered = groups.map(group => this.renderGroup(group.title, group.entries, matches, query, group.key === "info" && this.groupBy === "function"));
         const anyMatch = groups.some(g => g.entries.some(matches));
 
         return html`
@@ -361,7 +366,7 @@ export class HpsuDashboardCardEditor extends LitElement {
         `;
     }
 
-    private renderGroup(title: string, entries: { item: SVGItem; value: SVGValue }[], matches: (e: { item: SVGItem; value: SVGValue }) => boolean, query: string) {
+    private renderGroup(title: string, entries: { item: SVGItem; value: SVGValue }[], matches: (e: { item: SVGItem; value: SVGValue }) => boolean, query: string, sortable = false) {
         const visible = entries.filter(matches);
         if (!visible.length) return nothing;
         const assigned = entries.filter(e => e.value.entityId).length;
@@ -371,6 +376,11 @@ export class HpsuDashboardCardEditor extends LitElement {
         const done = new Set<string>();
         for (const e of visible) {
             if (done.has(e.value.id)) continue;
+            if (sortable && !query) {
+                done.add(e.value.id);
+                rows.push(this.renderSortableRow(e.item, e.value));
+                continue;
+            }
             const pair = this.groupBy === "function" ? PAIRS.find(p => p.includes(e.value.id)) : undefined;
             const partner = pair ? visible.find(v => v.value.id === (pair[0] === e.value.id ? pair[1] : pair[0])) : undefined;
             if (pair && partner) {
@@ -389,6 +399,45 @@ export class HpsuDashboardCardEditor extends LitElement {
                 <div class="rows">${rows}</div>
             </ha-expansion-panel>
         `;
+    }
+
+    // ---- order of the info box (drag and drop, stored as the order of info_entities) ------------------------------------------
+
+    private dragId: string | null = null;
+
+    private infoOrder(): string[] {
+        return configRowOrder(this.config);
+    }
+
+    private renderSortableRow(svg_item: SVGItem, value_item: SVGValue) {
+        return html`
+            <div class="sortable"
+                @dragover=${(ev: DragEvent) => { if (this.dragId) ev.preventDefault(); }}
+                @drop=${(ev: DragEvent) => this._dropInfo(ev, value_item.id)}>
+                <span class="handle" draggable="true" title=${this.tr("drag_hint")}
+                    @dragstart=${(ev: DragEvent) => {
+                        this.dragId = value_item.id;
+                        ev.dataTransfer?.setData("text/plain", value_item.id);
+                        const row = (ev.target as HTMLElement).closest(".sortable");
+                        if (row) ev.dataTransfer?.setDragImage(row, 0, 0);
+                    }}
+                    @dragend=${() => { this.dragId = null; }}>⠿</span>
+                <div class="grow">${this.renderRow(svg_item, value_item)}</div>
+            </div>`;
+    }
+
+    private _dropInfo(ev: DragEvent, targetId: string): void {
+        ev.preventDefault();
+        const from = this.dragId;
+        this.dragId = null;
+        if (!from || from === targetId) return;
+        const old = this.infoOrder();
+        const order = old.filter(id => id !== from);
+        const at = order.indexOf(targetId);
+        order.splice(old.indexOf(from) < old.indexOf(targetId) ? at + 1 : at, 0, from);
+        const ids = svg_item_config.filter(i => i.reorderable).flatMap(i => i.values.map(v => v.id));
+        const isDefault = order.every((id, n) => id === ids[n]);
+        this._fire({ ...this.config, info_entities: isDefault ? undefined : order.map(key => ({ key })) });
     }
 
     private renderRow(svg_item: SVGItem, value_item: SVGValue) {
@@ -446,7 +495,7 @@ export class HpsuDashboardCardEditor extends LitElement {
                 continue;
             }
 
-            if (domain !== "select") {
+            if (domain !== "select" && domain !== "input_number") {
                 const unitOfMeasurement = entity.attributes.unit_of_measurement;
 
                 if (!targetUnit.includes(unitOfMeasurement)) {
@@ -490,16 +539,20 @@ export class HpsuDashboardCardEditor extends LitElement {
     }
 
     private _fire(config: LovelaceCardConfig): void {
-        const clean: Record<string, any> = {};
-        for (const [key, value] of Object.entries(config)) {
-            if (value !== undefined && value !== null && value !== "") clean[key] = value;
-        }
-        config = clean as LovelaceCardConfig;
-        this.lastFired = JSON.stringify(config);
-        this.config = config;
+        const clean = (c: Record<string, any>) => {
+            const out: Record<string, any> = {};
+            for (const [key, value] of Object.entries(c)) {
+                if (value !== undefined && value !== null && value !== "") out[key] = value;
+            }
+            return out;
+        };
+        // this.config stays in the flat working form; what is stored (and shown in YAML) is the three-section form
+        this.config = clean(config) as LovelaceCardConfig;
+        const stored = clean(serializeConfig(this.config));
+        this.lastFired = JSON.stringify(stored);
         this.dispatchEvent(
             new CustomEvent('config-changed', {
-                detail: { config: this.config },
+                detail: { config: stored },
                 bubbles: true,
                 composed: true,
             })
@@ -517,6 +570,9 @@ export class HpsuDashboardCardEditor extends LitElement {
 
     static get styles() {
         return css`
+            .sortable { display: flex; align-items: center; gap: 4px; }
+            .sortable .grow { flex: 1; min-width: 0; }
+            .handle { cursor: grab; user-select: none; padding: 0 6px; font-size: 20px; color: var(--secondary-text-color); }
             .card-config {
                 display: flex;
                 flex-direction: column;

@@ -35,6 +35,7 @@ export interface SVGItem {
     group_id: string;
     label_rect_id?: string;
     visual_container?: boolean;
+    reorderable?: boolean;
     offset?: number;
     category?: Category;
     digits?: number;
@@ -999,6 +1000,7 @@ export const svg_item_config: SVGItem[] = [
     {
         group_id: "Info",
         visual_container: true,
+        reorderable: true,
         offset: 6,
         fontSize: "40px",
         align: "left",
@@ -1142,6 +1144,26 @@ export const svg_item_config: SVGItem[] = [
                         desc: "Raum-Ist"
                     },
                     en: {
+                        suffix: "Room actual: ",
+                        desc: "Room actual"
+                    },
+                    it: {
+                        suffix: "Temperatura ambiente attuale: ",
+                        desc: "Temperatura ambiente attuale"
+                    }
+                }
+            },
+            {
+                id: "room_setpoint",
+                domain: "input_number",
+                optional: true,
+                value_rect_id: "t_room_set_value",
+                texts: {
+                    de: {
+                        suffix: "Raum-Soll: ",
+                        desc: "Raum-Soll"
+                    },
+                    en: {
                         suffix: "Room setpoint: ",
                         desc: "Room setpoint"
                     },
@@ -1151,50 +1173,6 @@ export const svg_item_config: SVGItem[] = [
                     }
                 }
             },
-        ],
-    },
-    {
-        group_id: "DateTime",
-        parent: "date_value",
-        offset: 6,
-        fontSize: "40px",
-        values: [
-            {
-                id: "system_date",
-                device: "CAN",
-                domain: "sensor",
-                optional: true,
-                value_rect_id: "date_value",
-                texts: {
-                    de: {
-                        desc: "Datum"
-                    },
-                    en: {
-                        desc: "Date"
-                    },
-                    it: {
-                        desc: "Ora"
-                    }
-                }
-            },
-            {
-                id: "system_time",
-                device: "CAN",
-                domain: "sensor",
-                optional: true,
-                value_rect_id: "time_value",
-                texts: {
-                    de: {
-                        desc: "Zeit"
-                    },
-                    en: {
-                        desc: "Time"
-                    },
-                    it: {
-                        desc: "Ora"
-                    }
-                }
-            }
         ],
     }
 ];
@@ -1232,17 +1210,59 @@ export const text_map = {
     }
 };
 
-export const validateConfig = function(config) {
-    const validEntities = Object.fromEntries(
-        Object.entries(config.entities ?? {}).filter(([key]) =>
-            svg_item_config.some(item =>
-                item.values.some(value => value.id === key)
-            )
-        )
-    );
+// Row order from the config: the order of the keys in info_entities.
+export const configRowOrder = function(config: any): string[] {
+    return rowOrder((Array.isArray(config?.info_entities) ? config.info_entities : []).map((e: any) => e?.key));
+};
 
+// Order of the rows in a reorderable box: the saved ids (keys of info_entities) first, then the rest in default order.
+export const rowOrder = function(saved: unknown): string[] {
+    const ids = svg_item_config.filter(i => i.reorderable).flatMap(i => i.values.map(v => v.id));
+    const given = (Array.isArray(saved) ? saved : []).filter((id: string, n: number, a: string[]) => ids.includes(id) && a.indexOf(id) === n);
+    return [...given, ...ids.filter(id => !given.includes(id))];
+};
+
+// Loads the stored config into the flat form the card works with (entities: {id: entityId}, canDevice, uartDevice).
+// Accepted: can_entities / uart_entities / info_entities (list, order = row order) / can_device / uart_device,
+// and the older form (entities, canDevice, uartDevice). The new keys win.
+export const validateConfig = function(config) {
+    const ids = new Set(svg_item_config.flatMap(item => item.values.map(v => v.id)));
+    const flat: Record<string, string> = { ...(config.entities ?? {}), ...(config.can_entities ?? {}), ...(config.uart_entities ?? {}) };
+    for (const e of Array.isArray(config.info_entities) ? config.info_entities : []) {
+        if (e && typeof e.key === "string" && e.entity) flat[e.key] = e.entity;
+    }
+    const entities = Object.fromEntries(Object.entries(flat).filter(([key, value]) => ids.has(key) && value));
     return {
         ...config,
-        entities: validEntities
+        entities,
+        canDevice: config.can_device ?? config.canDevice,
+        uartDevice: config.uart_device ?? config.uartDevice,
+    };
+};
+
+// Inverse of validateConfig: the form that is stored (three sections, info rows as ordered list).
+export const serializeConfig = function(config) {
+    const { entities, canDevice, uartDevice, can_entities, uart_entities, info_entities, can_device, uart_device, ...rest } = config;
+    const infoIds = rowOrder(undefined);
+    const can: Record<string, string> = {};
+    const uart: Record<string, string> = {};
+    for (const item of svg_item_config) {
+        for (const v of item.values) {
+            const e = entities?.[v.id];
+            if (!e || infoIds.includes(v.id)) continue;
+            (v.device === "UART" ? uart : can)[v.id] = e;
+        }
+    }
+    const order = configRowOrder(config);
+    const isDefault = order.every((id, n) => id === infoIds[n]);
+    const anyInfo = infoIds.some(id => entities?.[id]);
+    const none = (o: Record<string, string>) => (Object.keys(o).length ? o : undefined);
+    return {
+        ...rest,
+        can_device: canDevice,
+        uart_device: uartDevice,
+        can_entities: none(can),
+        uart_entities: none(uart),
+        info_entities: anyInfo || !isDefault ? order.map(key => (entities?.[key] ? { key, entity: entities[key] } : { key })) : undefined,
     };
 };

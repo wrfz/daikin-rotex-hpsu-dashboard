@@ -1484,6 +1484,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
     {
         group_id: "Info",
         visual_container: true,
+        reorderable: true,
         offset: 6,
         fontSize: "40px",
         align: "left",
@@ -1627,56 +1628,32 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                         desc: "Raum-Ist"
                     },
                     en: {
+                        suffix: "Room actual: ",
+                        desc: "Room actual"
+                    },
+                    it: {
+                        suffix: "Temperatura ambiente attuale: ",
+                        desc: "Temperatura ambiente attuale"
+                    }
+                }
+            },
+            {
+                id: "room_setpoint",
+                domain: "input_number",
+                optional: true,
+                value_rect_id: "t_room_set_value",
+                texts: {
+                    de: {
+                        suffix: "Raum-Soll: ",
+                        desc: "Raum-Soll"
+                    },
+                    en: {
                         suffix: "Room setpoint: ",
                         desc: "Room setpoint"
                     },
                     it: {
                         suffix: "Temperatura ambiente impostata: ",
                         desc: "Temperatura ambiente impostata"
-                    }
-                }
-            }
-        ]
-    },
-    {
-        group_id: "DateTime",
-        parent: "date_value",
-        offset: 6,
-        fontSize: "40px",
-        values: [
-            {
-                id: "system_date",
-                device: "CAN",
-                domain: "sensor",
-                optional: true,
-                value_rect_id: "date_value",
-                texts: {
-                    de: {
-                        desc: "Datum"
-                    },
-                    en: {
-                        desc: "Date"
-                    },
-                    it: {
-                        desc: "Ora"
-                    }
-                }
-            },
-            {
-                id: "system_time",
-                device: "CAN",
-                domain: "sensor",
-                optional: true,
-                value_rect_id: "time_value",
-                texts: {
-                    de: {
-                        desc: "Zeit"
-                    },
-                    en: {
-                        desc: "Time"
-                    },
-                    it: {
-                        desc: "Ora"
                     }
                 }
             }
@@ -1733,11 +1710,59 @@ const $eb5cfe1dd9fe4e85$export$f8cda7abf1aa048 = {
         "off": "Off"
     }
 };
+const $eb5cfe1dd9fe4e85$export$e92e609e56507ea0 = function(config) {
+    return $eb5cfe1dd9fe4e85$export$c3b47695b093ece9((Array.isArray(config?.info_entities) ? config.info_entities : []).map((e)=>e?.key));
+};
+const $eb5cfe1dd9fe4e85$export$c3b47695b093ece9 = function(saved) {
+    const ids = $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16.filter((i)=>i.reorderable).flatMap((i)=>i.values.map((v)=>v.id));
+    const given = (Array.isArray(saved) ? saved : []).filter((id, n, a)=>ids.includes(id) && a.indexOf(id) === n);
+    return [
+        ...given,
+        ...ids.filter((id)=>!given.includes(id))
+    ];
+};
 const $eb5cfe1dd9fe4e85$export$127f9a442b42d18 = function(config) {
-    const validEntities = Object.fromEntries(Object.entries(config.entities ?? {}).filter(([key])=>$eb5cfe1dd9fe4e85$export$9b06e6104ce35b16.some((item)=>item.values.some((value)=>value.id === key))));
+    const ids = new Set($eb5cfe1dd9fe4e85$export$9b06e6104ce35b16.flatMap((item)=>item.values.map((v)=>v.id)));
+    const flat = {
+        ...config.entities ?? {},
+        ...config.can_entities ?? {},
+        ...config.uart_entities ?? {}
+    };
+    for (const e of Array.isArray(config.info_entities) ? config.info_entities : [])if (e && typeof e.key === "string" && e.entity) flat[e.key] = e.entity;
+    const entities = Object.fromEntries(Object.entries(flat).filter(([key, value])=>ids.has(key) && value));
     return {
         ...config,
-        entities: validEntities
+        entities: entities,
+        canDevice: config.can_device ?? config.canDevice,
+        uartDevice: config.uart_device ?? config.uartDevice
+    };
+};
+const $eb5cfe1dd9fe4e85$export$fa8157df3262779b = function(config) {
+    const { entities: entities, canDevice: canDevice, uartDevice: uartDevice, can_entities: can_entities, uart_entities: uart_entities, info_entities: info_entities, can_device: can_device, uart_device: uart_device, ...rest } = config;
+    const infoIds = $eb5cfe1dd9fe4e85$export$c3b47695b093ece9(undefined);
+    const can = {};
+    const uart = {};
+    for (const item of $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16)for (const v of item.values){
+        const e = entities?.[v.id];
+        if (!e || infoIds.includes(v.id)) continue;
+        (v.device === "UART" ? uart : can)[v.id] = e;
+    }
+    const order = $eb5cfe1dd9fe4e85$export$e92e609e56507ea0(config);
+    const isDefault = order.every((id, n)=>id === infoIds[n]);
+    const anyInfo = infoIds.some((id)=>entities?.[id]);
+    const none = (o)=>Object.keys(o).length ? o : undefined;
+    return {
+        ...rest,
+        can_device: canDevice,
+        uart_device: uartDevice,
+        can_entities: none(can),
+        uart_entities: none(uart),
+        info_entities: anyInfo || !isDefault ? order.map((key)=>entities?.[key] ? {
+                key: key,
+                entity: entities[key]
+            } : {
+                key: key
+            }) : undefined
     };
 };
 
@@ -2655,8 +2680,7 @@ const $d067581fc0d59830$var$FUNCTION_GROUPS = [
             "el_power",
             "cop",
             "t_room_is",
-            "system_date",
-            "system_time"
+            "room_setpoint"
         ]
     }
 ];
@@ -2715,7 +2739,8 @@ const $d067581fc0d59830$var$TEXTS = {
         bus_can: "CAN",
         bus_uart: "UART",
         bus_other: "Extern / ohne Ger\xe4t",
-        unit_warning: "Einheit {actual}, erwartet {expected}"
+        unit_warning: "Einheit {actual}, erwartet {expected}",
+        drag_hint: "Ziehen zum Sortieren"
     },
     en: {
         appearance: "Appearance",
@@ -2755,7 +2780,8 @@ const $d067581fc0d59830$var$TEXTS = {
         bus_can: "CAN",
         bus_uart: "UART",
         bus_other: "External / no device",
-        unit_warning: "Unit {actual}, expected {expected}"
+        unit_warning: "Unit {actual}, expected {expected}",
+        drag_hint: "Drag to reorder"
     }
 };
 class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$export$3f2f9f5909897157) {
@@ -3110,7 +3136,9 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             groups = $d067581fc0d59830$var$FUNCTION_GROUPS.map((g)=>{
                 const entries = g.ids.map((id)=>all.find((e)=>e.value.id === id)).filter((e)=>!!e);
                 entries.forEach((e)=>used.add(e.value.id));
+                if (g.key === "info") entries.sort((a, b)=>this.infoOrder().indexOf(a.value.id) - this.infoOrder().indexOf(b.value.id));
                 return {
+                    key: g.key,
                     title: this.tr(g.key),
                     entries: entries
                 };
@@ -3146,7 +3174,7 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
                 e.value.device ?? ""
             ].join(" ").toLowerCase().includes(query);
         };
-        const rendered = groups.map((group)=>this.renderGroup(group.title, group.entries, matches, query));
+        const rendered = groups.map((group)=>this.renderGroup(group.title, group.entries, matches, query, group.key === "info" && this.groupBy === "function"));
         const anyMatch = groups.some((g)=>g.entries.some(matches));
         return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
             <div class="toolbar">
@@ -3199,7 +3227,7 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             ${query && !anyMatch ? (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<p class="hint">${this.tr("no_match")}</p>` : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
         `;
     }
-    renderGroup(title, entries, matches, query) {
+    renderGroup(title, entries, matches, query, sortable = false) {
         const visible = entries.filter(matches);
         if (!visible.length) return 0, $f58f44579a4747ac$export$45b790e32b2810ee;
         const assigned = entries.filter((e)=>e.value.entityId).length;
@@ -3208,6 +3236,11 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
         const done = new Set();
         for (const e of visible){
             if (done.has(e.value.id)) continue;
+            if (sortable && !query) {
+                done.add(e.value.id);
+                rows.push(this.renderSortableRow(e.item, e.value));
+                continue;
+            }
             const pair = this.groupBy === "function" ? $d067581fc0d59830$var$PAIRS.find((p)=>p.includes(e.value.id)) : undefined;
             const partner = pair ? visible.find((v)=>v.value.id === (pair[0] === e.value.id ? pair[1] : pair[0])) : undefined;
             if (pair && partner) {
@@ -3231,6 +3264,47 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
                 <div class="rows">${rows}</div>
             </ha-expansion-panel>
         `;
+    }
+    infoOrder() {
+        return (0, $eb5cfe1dd9fe4e85$export$e92e609e56507ea0)(this.config);
+    }
+    renderSortableRow(svg_item, value_item) {
+        return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+            <div class="sortable"
+                @dragover=${(ev)=>{
+            if (this.dragId) ev.preventDefault();
+        }}
+                @drop=${(ev)=>this._dropInfo(ev, value_item.id)}>
+                <span class="handle" draggable="true" title=${this.tr("drag_hint")}
+                    @dragstart=${(ev)=>{
+            this.dragId = value_item.id;
+            ev.dataTransfer?.setData("text/plain", value_item.id);
+            const row = ev.target.closest(".sortable");
+            if (row) ev.dataTransfer?.setDragImage(row, 0, 0);
+        }}
+                    @dragend=${()=>{
+            this.dragId = null;
+        }}>⠿</span>
+                <div class="grow">${this.renderRow(svg_item, value_item)}</div>
+            </div>`;
+    }
+    _dropInfo(ev, targetId) {
+        ev.preventDefault();
+        const from = this.dragId;
+        this.dragId = null;
+        if (!from || from === targetId) return;
+        const old = this.infoOrder();
+        const order = old.filter((id)=>id !== from);
+        const at = order.indexOf(targetId);
+        order.splice(old.indexOf(from) < old.indexOf(targetId) ? at + 1 : at, 0, from);
+        const ids = (0, $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16).filter((i)=>i.reorderable).flatMap((i)=>i.values.map((v)=>v.id));
+        const isDefault = order.every((id, n)=>id === ids[n]);
+        this._fire({
+            ...this.config,
+            info_entities: isDefault ? undefined : order.map((key)=>({
+                    key: key
+                }))
+        });
     }
     renderRow(svg_item, value_item) {
         const bus = value_item.device ? ` \xb7 ${value_item.device}` : "";
@@ -3276,7 +3350,7 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
                 if (!entityRegistryEntry || entityRegistryEntry.device_id !== targetDeviceId) continue;
             }
             if (value_item.domain !== undefined && value_item.domain !== domain) continue;
-            if (domain !== "select") {
+            if (domain !== "select" && domain !== "input_number") {
                 const unitOfMeasurement = entity.attributes.unit_of_measurement;
                 if (!targetUnit.includes(unitOfMeasurement)) continue;
             }
@@ -3311,14 +3385,18 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
         });
     }
     _fire(config) {
-        const clean = {};
-        for (const [key, value] of Object.entries(config))if (value !== undefined && value !== null && value !== "") clean[key] = value;
-        config = clean;
-        this.lastFired = JSON.stringify(config);
-        this.config = config;
+        const clean = (c)=>{
+            const out = {};
+            for (const [key, value] of Object.entries(c))if (value !== undefined && value !== null && value !== "") out[key] = value;
+            return out;
+        };
+        // this.config stays in the flat working form; what is stored (and shown in YAML) is the three-section form
+        this.config = clean(config);
+        const stored = clean((0, $eb5cfe1dd9fe4e85$export$fa8157df3262779b)(this.config));
+        this.lastFired = JSON.stringify(stored);
         this.dispatchEvent(new CustomEvent('config-changed', {
             detail: {
-                config: this.config
+                config: stored
             },
             bubbles: true,
             composed: true
@@ -3334,6 +3412,9 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
     }
     static get styles() {
         return (0, $def2de46b9306e8a$export$dbf350e5966cf602)`
+            .sortable { display: flex; align-items: center; gap: 4px; }
+            .sortable .grow { flex: 1; min-width: 0; }
+            .handle { cursor: grab; user-select: none; padding: 0 6px; font-size: 20px; color: var(--secondary-text-color); }
             .card-config {
                 display: flex;
                 flex-direction: column;
@@ -3416,7 +3497,8 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             background: false,
             box: false,
             text: false
-        }, this.lastFired = "";
+        }, this.lastFired = "", // ---- order of the info box (drag and drop, stored as the order of info_entities) ------------------------------------------
+        this.dragId = null;
     }
 }
 (0, $24c52f343453d62d$export$29e00dfd3077644b)([
@@ -3859,12 +3941,13 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                     value_item.valueBox.setAttribute("stroke-width", borderWidth);
                     //svg_item.valueBox.setAttribute("rx", borderRadius);
                     //svg_item.valueBox.setAttribute("ry", borderRadius);
-                    if (group && ownFrame && !value_item.optional && (hadLabel || svg_item.values.indexOf(value_item) > 0)) {
+                    if (group && ownFrame && (hadLabel || svg_item.reorderable || svg_item.values.indexOf(value_item) > 0)) {
                         const box = value_item.valueBox;
                         const bx = this.strToFloat(box.getAttribute("x") ?? "");
                         const by = this.strToFloat(box.getAttribute("y") ?? "");
                         const bw = this.strToFloat(box.getAttribute("width") ?? "");
                         const divider = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        divider.setAttribute("id", `${value_item.value_rect_id}_divider`);
                         divider.setAttribute("x1", bx.toString());
                         divider.setAttribute("x2", (bx + bw).toString());
                         divider.setAttribute("y1", by.toString());
@@ -3972,7 +4055,11 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                             // optional value without entity: do not leave an empty box behind.
                             // value_item.valueBox belongs to the parsed SVG document, so look up the live element.
                             const liveBox = value_item.optional === true && value_item.value_rect_id ? this.shadowRoot.getElementById(value_item.value_rect_id) : null;
-                            if (liveBox) liveBox.style.display = newState ? "" : "none";
+                            if (liveBox) {
+                                liveBox.style.display = newState ? "" : "none";
+                                const liveDivider = this.shadowRoot.getElementById(`${value_item.value_rect_id}_divider`);
+                                if (liveDivider) liveDivider.style.display = newState ? "" : "none";
+                            }
                             const id = `${value_item.value_rect_id}_text`;
                             const valueText = this.shadowRoot.querySelector(`#${id}`);
                             if (valueText) {
@@ -4016,8 +4103,51 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                             } else if (value_item.value_rect_id) console.warn("Value text not found: " + value_item.entityId);
                         });
                     });
+                    if (svg_item.reorderable) this.layoutRows(svg_item);
                 });
             }
+        }
+    }
+    // Rows of a reorderable box (info box): configured order, only the shown rows, packed from the top at their normal height.
+    // The container shrinks to the shown rows.
+    layoutRows(svg_item) {
+        const root = this.shadowRoot;
+        const slots = svg_item.values.filter((v)=>v.valueBox).map((v)=>({
+                y: parseFloat(v.valueBox.getAttribute("y")),
+                h: parseFloat(v.valueBox.getAttribute("height"))
+            })).sort((a, b)=>a.y - b.y);
+        const byId = new Map(svg_item.values.map((v)=>[
+                v.id,
+                v
+            ]));
+        let k = 0;
+        for (const id of (0, $eb5cfe1dd9fe4e85$export$e92e609e56507ea0)(this.config)){
+            const v = byId.get(id);
+            if (!v || !v.value_rect_id) continue;
+            const rect = root.getElementById(v.value_rect_id);
+            const text = root.getElementById(`${v.value_rect_id}_text`);
+            const divider = root.getElementById(`${v.value_rect_id}_divider`);
+            const shown = !v.optional || !!v.entityId && !!this.hass.states[v.entityId];
+            if (rect) rect.style.display = shown ? "" : "none";
+            if (text) text.setAttribute("display", shown ? "block" : "none");
+            if (divider) divider.style.display = shown && k > 0 ? "" : "none";
+            if (!shown) continue;
+            const slot = slots[k++];
+            if (rect) {
+                rect.setAttribute("y", String(slot.y));
+                rect.setAttribute("height", String(slot.h));
+            }
+            if (text) text.setAttribute("y", String(slot.y + slot.h / 2 + (svg_item.offset ?? 0)));
+            if (divider) {
+                divider.setAttribute("y1", String(slot.y));
+                divider.setAttribute("y2", String(slot.y));
+            }
+        }
+        const container = root.getElementById(`${svg_item.group_id}_rect`);
+        if (container) {
+            const top = parseFloat(container.getAttribute("y") ?? "0");
+            container.style.display = k > 0 ? "" : "none";
+            if (k > 0) container.setAttribute("height", String(Math.max(0, slots[k - 1].y + slots[k - 1].h - top)));
         }
     }
     // Sets the semantic state of a value text. Layouts that style the states themselves (data-own-state-style)
