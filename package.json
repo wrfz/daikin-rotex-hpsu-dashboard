@@ -12,12 +12,13 @@
     "serve": "http-server ."
   },
   "devDependencies": {
-    "@parcel/transformer-inline-string": "^2.8.3",
+    "@parcel/transformer-inline-string": "^2.16.4",
+    "@parcel/watcher": "^2.6.0",
     "http-server": "^14.1.1",
-    "parcel": "^2.16.0"
+    "parcel": "^2.16.4"
   },
   "dependencies": {
-    "home-assistant-js-websocket": "^9.5.0",
-    "lit": "^2.7.4"
+    "home-assistant-js-websocket": "^9.8.1",
+    "lit": "^3.3.3"
   }
 }
