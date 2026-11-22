@@ -3655,12 +3655,22 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             if (!dhwOpenArrows || !dhwClosedArrows || !bpvOpenArrows || !bpvClosedArrows) return;
             const mixer_id = this.config.entities?.['mischer'] ?? null;
             const bypass_id = this.config.entities?.['bypass'] ?? null;
+            const flow_rate_id = this.config.entities?.['durchfluss'] ?? null;
             const mischerState = mixer_id && this.hass.states[mixer_id] ? parseFloat(this.hass.states[mixer_id].state) : 0;
             const bpvState = bypass_id && this.hass.states[bypass_id] ? parseFloat(this.hass.states[bypass_id].state) : 0;
-            dhwOpenArrows.style.opacity = (mischerState / 100.0).toString();
-            dhwClosedArrows.style.opacity = ((100.0 - mischerState) / 100.0).toString();
-            bpvOpenArrows.style.opacity = (bpvState / 100.0).toString();
-            bpvClosedArrows.style.opacity = ((100.0 - bpvState) / 100.0).toString();
+            // Hide flow arrows when no water is flowing, so the card does not
+            // suggest circulation while the pump is idle (e.g. between cycles).
+            const flowRate = flow_rate_id && this.hass.states[flow_rate_id] ? parseFloat(this.hass.states[flow_rate_id].state) : 0;
+            const flowing = flowRate > 0 ? 1 : 0;
+            dhwOpenArrows.style.opacity = (flowing * mischerState / 100.0).toString();
+            dhwClosedArrows.style.opacity = (flowing * (100.0 - mischerState) / 100.0).toString();
+            bpvOpenArrows.style.opacity = (flowing * bpvState / 100.0).toString();
+            bpvClosedArrows.style.opacity = (flowing * (100.0 - bpvState) / 100.0).toString();
+            // Optional Flow-Arrow-1..8 elements (custom layouts): toggle with flow
+            for(let index = 1; index <= 8; ++index){
+                const arrow = this.shadowRoot.getElementById(`Flow-Arrow-${index}`);
+                if (arrow) arrow.style.opacity = flowing.toString();
+            }
         }
     }
     handleStateClick(entityId) {
