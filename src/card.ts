@@ -588,8 +588,7 @@ export class HPSUDashboardCard extends LitElement {
 
                 this.svg_item_config.forEach(svg_item => {
                     svg_item.values.forEach(value_item => {
-                        svg_item.values.forEach(value_item => {
-                            const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
+                        const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
 
                             const parentBox = svg_item.parent ? this.shadowRoot!.getElementById(svg_item.parent) : null;
                             if (parentBox) {
@@ -658,7 +657,6 @@ export class HPSUDashboardCard extends LitElement {
                             } else if (value_item.value_rect_id) {
                                 console.warn("Value text not found: " + value_item.entityId);
                             }
-                        });
                     });
                     if (svg_item.reorderable) {
                         this.layoutRows(svg_item);
