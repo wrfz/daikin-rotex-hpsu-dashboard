@@ -581,6 +581,14 @@ export class HPSUDashboardCard extends LitElement {
         }
 
         if (this.config) {
+            // Kamin layer (classic layout): only show when chimney sensors are configured
+            const kaminParent = this.shadowRoot!.getElementById("kamin");
+            if (kaminParent) {
+                const kaminVl = this.config.entities?.['kamin_vl'];
+                const kaminRl = this.config.entities?.['kamin_rl'];
+                kaminParent.style.display = (kaminVl || kaminRl) ? "block" : "none";
+            }
+
             if (this.svg_item_config) {
                 let style = getComputedStyle(haCard);
 
@@ -592,7 +600,7 @@ export class HPSUDashboardCard extends LitElement {
                             const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
 
                             const parentBox = svg_item.parent ? this.shadowRoot!.getElementById(svg_item.parent) : null;
-                            if (parentBox) {
+                            if (parentBox && svg_item.parent !== "kamin") {
                                 parentBox.style.display = newState ? "block" : "none";
                             }
 

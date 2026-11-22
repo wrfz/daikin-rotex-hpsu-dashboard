@@ -906,6 +906,191 @@ export const svg_item_config: SVGItem[] = [
             }
         }
     },
+{
+        group_id: "g6",
+        label_rect_id: "kamin_rl_label",
+        parent: "kamin",
+        offset: 6,
+        values: [
+            {
+                id: "kamin_rl",
+                domain: "select",
+                unit: "°C",
+                optional: true,
+                value_rect_id: "kamin_rl_value",
+                texts: {
+                    de: {
+                        desc: "Kamin Rücklauf"
+                    },
+                    en: {
+                        desc: "Chimney return flow"
+                    },
+                    it: {
+                        desc: "Ritorno camino"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Rücklauf"
+            },
+            en: {
+                label: "Return"
+            },
+            it: {
+                label: "Ritorno"
+            }
+        }
+    },
+    {
+        group_id: "TA2-3",
+        label_rect_id: "kamin_vl_label",
+        parent: "kamin",
+        offset: 6,
+        values: [
+            {
+                id: "kamin_vl",
+                domain: "select",
+                unit: "°C",
+                optional: true,
+                value_rect_id: "kamin_vl_value",
+                texts: {
+                    de: {
+                        desc: "Kamin Vorlauf"
+                    },
+                    en: {
+                        desc: "Chimney flow"
+                    },
+                    it: {
+                        desc: "Mandata camino"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Vorlauf"
+            },
+            en: {
+                label: "Flow"
+            },
+            it: {
+                label: "Mandata"
+            }
+        }
+    },
+    {
+        group_id: "g10",
+        label_rect_id: "kamin_spr_label",
+        parent: "kamin",
+        offset: 6,
+        values: [
+            {
+                id: "kamin_spr",
+                domain: "select",
+                unit: "°C",
+                optional: true,
+                value_rect_id: "kamin_spr_value",
+                texts: {
+                    de: {
+                        desc: "Kamin Spreizung"
+                    },
+                    en: {
+                        desc: "Chimney spread"
+                    },
+                    it: {
+                        desc: "Differenza camino"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Spreizung"
+            },
+            en: {
+                label: "Spread"
+            },
+            it: {
+                label: "ΔT"
+            }
+        }
+    },
+    {
+        group_id: "g11",
+        label_rect_id: "domestic_vl_label",
+        parent: "g11",
+        offset: 6,
+        values: [
+            {
+                id: "domestic_vl",
+                domain: "select",
+                unit: "°C",
+                optional: true,
+                value_rect_id: "domestic_vl_value",
+                texts: {
+                    de: {
+                        desc: "Brauchwasser Vorlauf"
+                    },
+                    en: {
+                        desc: "Domestic hot water flow"
+                    },
+                    it: {
+                        desc: "Mandata acqua calda"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Vorlauf"
+            },
+            en: {
+                label: "Flow"
+            },
+            it: {
+                label: "Mandata"
+            }
+        }
+    },
+    {
+        group_id: "g11-6",
+        label_rect_id: "domestic_rl_label",
+        parent: "g11-6",
+        offset: 6,
+        values: [
+            {
+                id: "domstic_rl",
+                domain: "select",
+                unit: "°C",
+                optional: true,
+                value_rect_id: "domestic_rl_value",
+                texts: {
+                    de: {
+                        desc: "Brauchwasser Rücklauf"
+                    },
+                    en: {
+                        desc: "Domestic hot water return"
+                    },
+                    it: {
+                        desc: "Ritorno acqua calda"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Rücklauf"
+            },
+            en: {
+                label: "Return"
+            },
+            it: {
+                label: "Ritorno"
+            }
+        }
+    },
     {
         group_id: "buh",
         label_rect_id: "buh_info_label",
@@ -1191,6 +1376,7 @@ export const layouts: LayoutOption[] = [
     { id: "glass-dark", file: "hpsu_glass_dark.svg", labels: { de: "Glas, dunkel", en: "Glass, dark", it: "Vetro, scuro" } },
     { id: "glass-light", file: "hpsu_glass_light.svg", labels: { de: "Glas, hell", en: "Glass, light", it: "Vetro, chiaro" } },
     { id: "glass-petrol", file: "hpsu_glass_petrol.svg", labels: { de: "Glas, Petrol", en: "Glass, petrol", it: "Vetro, petrolio" } },
+    { id: "classic", file: "hpsu.svg", labels: { de: "Klassisch (Kamin)", en: "Classic (chimney)", it: "Classico (camino)" } },
 ];
 
 export const layoutFile = (id?: string): string =>

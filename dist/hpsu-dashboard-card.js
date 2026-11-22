@@ -859,6 +859,191 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
         }
     },
     {
+        group_id: "g6",
+        label_rect_id: "kamin_rl_label",
+        parent: "kamin",
+        offset: 6,
+        values: [
+            {
+                id: "kamin_rl",
+                domain: "select",
+                unit: "\xb0C",
+                optional: true,
+                value_rect_id: "kamin_rl_value",
+                texts: {
+                    de: {
+                        desc: "Kamin R\xfccklauf"
+                    },
+                    en: {
+                        desc: "Chimney return flow"
+                    },
+                    it: {
+                        desc: "Ritorno camino"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "R\xfccklauf"
+            },
+            en: {
+                label: "Return"
+            },
+            it: {
+                label: "Ritorno"
+            }
+        }
+    },
+    {
+        group_id: "TA2-3",
+        label_rect_id: "kamin_vl_label",
+        parent: "kamin",
+        offset: 6,
+        values: [
+            {
+                id: "kamin_vl",
+                domain: "select",
+                unit: "\xb0C",
+                optional: true,
+                value_rect_id: "kamin_vl_value",
+                texts: {
+                    de: {
+                        desc: "Kamin Vorlauf"
+                    },
+                    en: {
+                        desc: "Chimney flow"
+                    },
+                    it: {
+                        desc: "Mandata camino"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Vorlauf"
+            },
+            en: {
+                label: "Flow"
+            },
+            it: {
+                label: "Mandata"
+            }
+        }
+    },
+    {
+        group_id: "g10",
+        label_rect_id: "kamin_spr_label",
+        parent: "kamin",
+        offset: 6,
+        values: [
+            {
+                id: "kamin_spr",
+                domain: "select",
+                unit: "\xb0C",
+                optional: true,
+                value_rect_id: "kamin_spr_value",
+                texts: {
+                    de: {
+                        desc: "Kamin Spreizung"
+                    },
+                    en: {
+                        desc: "Chimney spread"
+                    },
+                    it: {
+                        desc: "Differenza camino"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Spreizung"
+            },
+            en: {
+                label: "Spread"
+            },
+            it: {
+                label: "\u0394T"
+            }
+        }
+    },
+    {
+        group_id: "g11",
+        label_rect_id: "domestic_vl_label",
+        parent: "g11",
+        offset: 6,
+        values: [
+            {
+                id: "domestic_vl",
+                domain: "select",
+                unit: "\xb0C",
+                optional: true,
+                value_rect_id: "domestic_vl_value",
+                texts: {
+                    de: {
+                        desc: "Brauchwasser Vorlauf"
+                    },
+                    en: {
+                        desc: "Domestic hot water flow"
+                    },
+                    it: {
+                        desc: "Mandata acqua calda"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Vorlauf"
+            },
+            en: {
+                label: "Flow"
+            },
+            it: {
+                label: "Mandata"
+            }
+        }
+    },
+    {
+        group_id: "g11-6",
+        label_rect_id: "domestic_rl_label",
+        parent: "g11-6",
+        offset: 6,
+        values: [
+            {
+                id: "domstic_rl",
+                domain: "select",
+                unit: "\xb0C",
+                optional: true,
+                value_rect_id: "domestic_rl_value",
+                texts: {
+                    de: {
+                        desc: "Brauchwasser R\xfccklauf"
+                    },
+                    en: {
+                        desc: "Domestic hot water return"
+                    },
+                    it: {
+                        desc: "Ritorno acqua calda"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "R\xfccklauf"
+            },
+            en: {
+                label: "Return"
+            },
+            it: {
+                label: "Ritorno"
+            }
+        }
+    },
+    {
         group_id: "buh",
         label_rect_id: "buh_info_label",
         visual_container: true,
@@ -1163,6 +1348,15 @@ const $eb5cfe1dd9fe4e85$export$1ecca0613f5e56d2 = [
             de: "Glas, Petrol",
             en: "Glass, petrol",
             it: "Vetro, petrolio"
+        }
+    },
+    {
+        id: "classic",
+        file: "hpsu.svg",
+        labels: {
+            de: "Klassisch (Kamin)",
+            en: "Classic (chimney)",
+            it: "Classico (camino)"
         }
     }
 ];
@@ -3469,6 +3663,13 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         const haCard = this.haCardElement;
         if (!haCard) return;
         if (this.config) {
+            // Kamin layer (classic layout): only show when chimney sensors are configured
+            const kaminParent = this.shadowRoot.getElementById("kamin");
+            if (kaminParent) {
+                const kaminVl = this.config.entities?.['kamin_vl'];
+                const kaminRl = this.config.entities?.['kamin_rl'];
+                kaminParent.style.display = kaminVl || kaminRl ? "block" : "none";
+            }
             if (this.svg_item_config) {
                 let style = getComputedStyle(haCard);
                 const primaryTextColor = this.layoutStyle.text ?? (style.getPropertyValue('--primary-text-color').trim() || 'black');
@@ -3477,7 +3678,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                         svg_item.values.forEach((value_item)=>{
                             const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
                             const parentBox = svg_item.parent ? this.shadowRoot.getElementById(svg_item.parent) : null;
-                            if (parentBox) parentBox.style.display = newState ? "block" : "none";
+                            if (parentBox && svg_item.parent !== "kamin") parentBox.style.display = newState ? "block" : "none";
                             // optional value without entity: do not leave an empty box behind.
                             // value_item.valueBox belongs to the parsed SVG document, so look up the live element.
                             const liveBox = value_item.optional === true && value_item.value_rect_id ? this.shadowRoot.getElementById(value_item.value_rect_id) : null;
