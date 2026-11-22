@@ -43,6 +43,19 @@ export class HPSUDashboardCard extends LitElement {
     private clickHandlersAdded = false;
     private loadedLayoutFile: string | null = null;
     private loadedStyleSignature: string | null = null;
+    // LRU cache for fetched layout SVGs: re-renders and layout switches stay
+    // instant, while the cache stays bounded (max SVG_CACHE_MAX entries).
+    private static svgCache: Map<string, string> = new Map();
+    private static readonly SVG_CACHE_MAX = 20;
+    private static addToSvgCache(key: string, value: string): void {
+        if (HPSUDashboardCard.svgCache.size >= HPSUDashboardCard.SVG_CACHE_MAX) {
+            const oldestKey = HPSUDashboardCard.svgCache.keys().next().value;
+            if (oldestKey !== undefined) {
+                HPSUDashboardCard.svgCache.delete(oldestKey);
+            }
+        }
+        HPSUDashboardCard.svgCache.set(key, value);
+    }
     // Optional box/text styling provided by the SVG layout itself (data-* attributes on the <svg> root).
     private layoutStyle: { radius?: string; fill?: string; stroke?: string; strokeWidth?: string; text?: string; label?: string; ownStates?: boolean } = {};
 
@@ -88,12 +101,31 @@ export class HPSUDashboardCard extends LitElement {
     private async createDashboard(): Promise<void> {
         const file = layoutFile(this.config?.layout);
         const url = this.makeURL(file);
+        // Guard against cross-origin SVG injection: the layout must come from
+        // the same HA instance that serves this card's script.
         try {
-            const response = await fetch(url, { cache: "no-cache" }); // always revalidate, layouts are updated independently of the JS
-            if (!response.ok) {
-                throw new Error(`Failed to fetch '${url}' (${response.status})`);
+            const resolved = new URL(url, document.baseURI);
+            if (resolved.origin !== new URL(document.baseURI).origin) {
+                throw new Error(`Invalid SVG URL (cross-origin): ${url}`);
             }
-            const rawSvgString = await response.text();
+        } catch (e) {
+            console.error(e);
+            this.svgContent = null;
+            this._state = DashboardState.Error;
+            return;
+        }
+        try {
+            let rawSvgString: string;
+            if (HPSUDashboardCard.svgCache.has(url)) {
+                rawSvgString = HPSUDashboardCard.svgCache.get(url)!;
+            } else {
+                const response = await this.fetchWithTimeout(url, 10000);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch '${url}' (${response.status})`);
+                }
+                rawSvgString = await response.text();
+                HPSUDashboardCard.addToSvgCache(url, rawSvgString);
+            }
             this.loadedLayoutFile = file;
             this.loadedStyleSignature = this.styleSignature();
             this.svgContent = this.createSvgWithLabels(rawSvgString);
@@ -101,6 +133,22 @@ export class HPSUDashboardCard extends LitElement {
         } catch (e) {
             console.error(e);
             this.svgContent = null;
+            this._state = DashboardState.Error;
+        }
+    }
+
+    /**
+     * Fetch with timeout using AbortController, so a stalled request cannot
+     * leave the card in the loading state forever.
+     */
+    private async fetchWithTimeout(resource: string, timeoutMs: number): Promise<Response> {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+            const response = await fetch(resource, { signal: controller.signal });
+            return response;
+        } finally {
+            clearTimeout(id);
         }
     }
 
