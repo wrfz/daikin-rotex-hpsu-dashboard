@@ -3040,6 +3040,21 @@ var $a399cc6bbb0eb26a$export$4661a56c3a27d933 = /*#__PURE__*/ function(Dashboard
     return DashboardState;
 }({});
 class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$export$3f2f9f5909897157) {
+    static{
+        // LRU cache for fetched layout SVGs: re-renders and layout switches stay
+        // instant, while the cache stays bounded (max SVG_CACHE_MAX entries).
+        this.svgCache = new Map();
+    }
+    static{
+        this.SVG_CACHE_MAX = 20;
+    }
+    static addToSvgCache(key, value) {
+        if ($a399cc6bbb0eb26a$export$9de59f1af66e4f03.svgCache.size >= $a399cc6bbb0eb26a$export$9de59f1af66e4f03.SVG_CACHE_MAX) {
+            const oldestKey = $a399cc6bbb0eb26a$export$9de59f1af66e4f03.svgCache.keys().next().value;
+            if (oldestKey !== undefined) $a399cc6bbb0eb26a$export$9de59f1af66e4f03.svgCache.delete(oldestKey);
+        }
+        $a399cc6bbb0eb26a$export$9de59f1af66e4f03.svgCache.set(key, value);
+    }
     setConfig(config) {
         this.config = (0, $eb5cfe1dd9fe4e85$export$127f9a442b42d18)(config);
         this.svg_item_config = (0, $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16).map((svg_item)=>({
@@ -3072,12 +3087,26 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
     async createDashboard() {
         const file = (0, $eb5cfe1dd9fe4e85$export$6fb81034e128eb0)(this.config?.layout);
         const url = this.makeURL(file);
+        // Guard against cross-origin SVG injection: the layout must come from
+        // the same HA instance that serves this card's script.
         try {
-            const response = await fetch(url, {
-                cache: "no-cache"
-            }); // always revalidate, layouts are updated independently of the JS
-            if (!response.ok) throw new Error(`Failed to fetch '${url}' (${response.status})`);
-            const rawSvgString = await response.text();
+            const resolved = new URL(url, document.baseURI);
+            if (resolved.origin !== new URL(document.baseURI).origin) throw new Error(`Invalid SVG URL (cross-origin): ${url}`);
+        } catch (e) {
+            console.error(e);
+            this.svgContent = null;
+            this._state = "error";
+            return;
+        }
+        try {
+            let rawSvgString;
+            if ($a399cc6bbb0eb26a$export$9de59f1af66e4f03.svgCache.has(url)) rawSvgString = $a399cc6bbb0eb26a$export$9de59f1af66e4f03.svgCache.get(url);
+            else {
+                const response = await this.fetchWithTimeout(url, 10000);
+                if (!response.ok) throw new Error(`Failed to fetch '${url}' (${response.status})`);
+                rawSvgString = await response.text();
+                $a399cc6bbb0eb26a$export$9de59f1af66e4f03.addToSvgCache(url, rawSvgString);
+            }
             this.loadedLayoutFile = file;
             this.loadedStyleSignature = this.styleSignature();
             this.svgContent = this.createSvgWithLabels(rawSvgString);
@@ -3085,6 +3114,22 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         } catch (e) {
             console.error(e);
             this.svgContent = null;
+            this._state = "error";
+        }
+    }
+    /**
+     * Fetch with timeout using AbortController, so a stalled request cannot
+     * leave the card in the loading state forever.
+     */ async fetchWithTimeout(resource, timeoutMs) {
+        const controller = new AbortController();
+        const id = setTimeout(()=>controller.abort(), timeoutMs);
+        try {
+            const response = await fetch(resource, {
+                signal: controller.signal
+            });
+            return response;
+        } finally{
+            clearTimeout(id);
         }
     }
     addClickHandlers() {
