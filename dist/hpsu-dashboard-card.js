@@ -3474,60 +3474,58 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                 const primaryTextColor = this.layoutStyle.text ?? (style.getPropertyValue('--primary-text-color').trim() || 'black');
                 this.svg_item_config.forEach((svg_item)=>{
                     svg_item.values.forEach((value_item)=>{
-                        svg_item.values.forEach((value_item)=>{
-                            const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
-                            const parentBox = svg_item.parent ? this.shadowRoot.getElementById(svg_item.parent) : null;
-                            if (parentBox) parentBox.style.display = newState ? "block" : "none";
-                            // optional value without entity: do not leave an empty box behind.
-                            // value_item.valueBox belongs to the parsed SVG document, so look up the live element.
-                            const liveBox = value_item.optional === true && value_item.value_rect_id ? this.shadowRoot.getElementById(value_item.value_rect_id) : null;
-                            if (liveBox) {
-                                liveBox.style.display = newState ? "" : "none";
-                                const liveDivider = this.shadowRoot.getElementById(`${value_item.value_rect_id}_divider`);
-                                if (liveDivider) liveDivider.style.display = newState ? "" : "none";
-                            }
-                            const id = `${value_item.value_rect_id}_text`;
-                            const valueText = this.shadowRoot.querySelector(`#${id}`);
-                            if (valueText) {
-                                const fontSize = svg_item.fontSize || "56";
-                                if (!newState) {
-                                    valueText.textContent = "N/D";
-                                    this.textState(valueText, "na", {
-                                        "fill": "orange",
-                                        "font-size": "30px"
-                                    });
-                                    valueText.setAttribute("display", value_item.optional === true ? "none" : "block");
-                                } else if (newState.state == "unknown" || newState.state == "unavailable") {
-                                    valueText.textContent = "N/A";
-                                    this.textState(valueText, "unavailable", {
-                                        "fill": "orange",
-                                        "font-size": "30px"
+                        const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
+                        const parentBox = svg_item.parent ? this.shadowRoot.getElementById(svg_item.parent) : null;
+                        if (parentBox) parentBox.style.display = newState ? "block" : "none";
+                        // optional value without entity: do not leave an empty box behind.
+                        // value_item.valueBox belongs to the parsed SVG document, so look up the live element.
+                        const liveBox = value_item.optional === true && value_item.value_rect_id ? this.shadowRoot.getElementById(value_item.value_rect_id) : null;
+                        if (liveBox) {
+                            liveBox.style.display = newState ? "" : "none";
+                            const liveDivider = this.shadowRoot.getElementById(`${value_item.value_rect_id}_divider`);
+                            if (liveDivider) liveDivider.style.display = newState ? "" : "none";
+                        }
+                        const id = `${value_item.value_rect_id}_text`;
+                        const valueText = this.shadowRoot.querySelector(`#${id}`);
+                        if (valueText) {
+                            const fontSize = svg_item.fontSize || "56";
+                            if (!newState) {
+                                valueText.textContent = "N/D";
+                                this.textState(valueText, "na", {
+                                    "fill": "orange",
+                                    "font-size": "30px"
+                                });
+                                valueText.setAttribute("display", value_item.optional === true ? "none" : "block");
+                            } else if (newState.state == "unknown" || newState.state == "unavailable") {
+                                valueText.textContent = "N/A";
+                                this.textState(valueText, "unavailable", {
+                                    "fill": "orange",
+                                    "font-size": "30px"
+                                });
+                            } else {
+                                let entityState = newState.state || "--";
+                                valueText.setAttribute("font-size", fontSize);
+                                if (this.isBooleanSensor(value_item.entityId)) {
+                                    const lang_map = (0, $eb5cfe1dd9fe4e85$export$f8cda7abf1aa048)[this.language];
+                                    valueText.textContent = entityState === "on" ? lang_map.on : entityState === "off" ? lang_map.off : "<invalid>";
+                                    this.textState(valueText, entityState === "on" ? "on" : "off", {
+                                        "fill": entityState === "on" ? "yellow" : "silver"
                                     });
                                 } else {
-                                    let entityState = newState.state || "--";
-                                    valueText.setAttribute("font-size", fontSize);
-                                    if (this.isBooleanSensor(value_item.entityId)) {
-                                        const lang_map = (0, $eb5cfe1dd9fe4e85$export$f8cda7abf1aa048)[this.language];
-                                        valueText.textContent = entityState === "on" ? lang_map.on : entityState === "off" ? lang_map.off : "<invalid>";
-                                        this.textState(valueText, entityState === "on" ? "on" : "off", {
-                                            "fill": entityState === "on" ? "yellow" : "silver"
-                                        });
-                                    } else {
-                                        entityState = this.formatNumber(newState, svg_item.digits ?? 1);
-                                        if (entityState == "Warmwasserbereitung") entityState = "Warmwasser";
-                                        if (value_item.texts[this.language].suffix) entityState = value_item.texts[this.language].suffix + entityState;
-                                        valueText.textContent = entityState;
-                                        if (value_item.id != "fehlercode" || value_item.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" || value_item.texts[this.language].suffix == "Error code: " && "No Error" || value_item.texts[this.language].suffix == "Codice errore: " && "Nessun errore") this.textState(valueText, "normal", {
-                                            "fill": primaryTextColor
-                                        });
-                                        else this.textState(valueText, "error", {
-                                            "fill": "red"
-                                        });
-                                    }
+                                    entityState = this.formatNumber(newState, svg_item.digits ?? 1);
+                                    if (entityState == "Warmwasserbereitung") entityState = "Warmwasser";
+                                    if (value_item.texts[this.language].suffix) entityState = value_item.texts[this.language].suffix + entityState;
+                                    valueText.textContent = entityState;
+                                    if (value_item.id != "fehlercode" || value_item.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" || value_item.texts[this.language].suffix == "Error code: " && "No Error" || value_item.texts[this.language].suffix == "Codice errore: " && "Nessun errore") this.textState(valueText, "normal", {
+                                        "fill": primaryTextColor
+                                    });
+                                    else this.textState(valueText, "error", {
+                                        "fill": "red"
+                                    });
                                 }
-                                this.layoutText(valueText, value_item.valueBox, value_item.valueBox.getAttribute("data-align") ?? svg_item.align, svg_item.offset);
-                            } else if (value_item.value_rect_id) console.warn("Value text not found: " + value_item.entityId);
-                        });
+                            }
+                            this.layoutText(valueText, value_item.valueBox, value_item.valueBox.getAttribute("data-align") ?? svg_item.align, svg_item.offset);
+                        } else if (value_item.value_rect_id) console.warn("Value text not found: " + value_item.entityId);
                     });
                     if (svg_item.reorderable) this.layoutRows(svg_item);
                 });
