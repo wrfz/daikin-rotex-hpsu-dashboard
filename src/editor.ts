@@ -31,7 +31,7 @@ type GroupBy = "function" | "bus";
 
 // Sensors grouped by function. Ids that are not listed end up in "other".
 const FUNCTION_GROUPS: { key: string; ids: string[] }[] = [
-    { key: "refrigerant", ids: ["kompressor_an_aus", "verdichter", "four_way_valve", "abtauvorgang", "expansion_valve", "pressure_equalization", "hot_gas", "discharge_superheat", "hot_gas_condenser", "condensing_temp", "refrigerant_pressure", "kondensat", "subcooling", "verdampfer", "luefter", "ta", "ta2"] },
+    { key: "refrigerant", ids: ["kompressor_an_aus", "verdichter", "four_way_valve", "abtauvorgang", "expansion_valve", "pressure_equalization", "hot_gas", "discharge_superheat", "hot_gas_condenser", "saturation_temp", "refrigerant_pressure", "kondensat", "subcooling", "verdampfer", "luefter", "ta", "ta2"] },
     { key: "heating", ids: ["umwaelzpumpe", "umwaelzpumpe_an_aus", "durchfluss", "vorlauf_1", "vorlauf_2", "vorlauf_bh_1", "vorlauf_bh_2", "ruecklauf", "ruecklauf_2", "vorlauf_soll", "spread", "wasserdruck", "bypass"] },
     { key: "hotwater", ids: ["speicher", "speicher_soll", "mischer", "buh_power"] },
     { key: "info", ids: ["fehlercode", "betriebsmodus", "betriebsart", "thermische_leistung", "el_power", "cop", "t_room_is", "room_setpoint"] },

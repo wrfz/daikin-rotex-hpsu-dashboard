@@ -525,17 +525,17 @@ export const svg_item_config: SVGItem[] = [
         offset: 6,
         values: [
             {
-                id: "condensing_temp",
+                id: "saturation_temp",
                 device: "UART",
                 domain: "sensor",
                 unit: "°C",
-                value_rect_id: "condensing_temp_value",
+                value_rect_id: "saturation_temp_value",
                 optional: true,
                 dash_unknown: true,
                 texts: {
-                    de: { desc: "Kondensationstemperatur (S1NPH)" },
-                    en: { desc: "Condensing temperature (S1NPH)" },
-                    it: { desc: "Temperatura di condensazione (S1NPH)" }
+                    de: { desc: "Sättigungstemperatur (S1NPH)" },
+                    en: { desc: "Saturation temperature (S1NPH)" },
+                    it: { desc: "Temperatura di saturazione (S1NPH)" }
                 }
             }
         ],

@@ -513,22 +513,22 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
         offset: 6,
         values: [
             {
-                id: "condensing_temp",
+                id: "saturation_temp",
                 device: "UART",
                 domain: "sensor",
                 unit: "\xb0C",
-                value_rect_id: "condensing_temp_value",
+                value_rect_id: "saturation_temp_value",
                 optional: true,
                 dash_unknown: true,
                 texts: {
                     de: {
-                        desc: "Kondensationstemperatur (S1NPH)"
+                        desc: "S\xe4ttigungstemperatur (S1NPH)"
                     },
                     en: {
-                        desc: "Condensing temperature (S1NPH)"
+                        desc: "Saturation temperature (S1NPH)"
                     },
                     it: {
-                        desc: "Temperatura di condensazione (S1NPH)"
+                        desc: "Temperatura di saturazione (S1NPH)"
                     }
                 }
             }
@@ -2210,7 +2210,7 @@ const $d067581fc0d59830$var$FUNCTION_GROUPS = [
             "hot_gas",
             "discharge_superheat",
             "hot_gas_condenser",
-            "condensing_temp",
+            "saturation_temp",
             "refrigerant_pressure",
             "kondensat",
             "subcooling",
