@@ -31,7 +31,7 @@ type GroupBy = "function" | "bus";
 
 // Sensors grouped by function. Ids that are not listed end up in "other".
 const FUNCTION_GROUPS: { key: string; ids: string[] }[] = [
-    { key: "refrigerant", ids: ["kompressor_an_aus", "verdichter", "expansion_valve", "pressure_equalization", "hot_gas", "hot_gas_condenser", "kondensat", "verdampfer", "luefter", "ta", "ta2"] },
+    { key: "refrigerant", ids: ["kompressor_an_aus", "verdichter", "four_way_valve", "abtauvorgang", "expansion_valve", "pressure_equalization", "hot_gas", "discharge_superheat", "hot_gas_condenser", "condensing_temp", "refrigerant_pressure", "kondensat", "subcooling", "verdampfer", "luefter", "ta", "ta2"] },
     { key: "heating", ids: ["umwaelzpumpe", "umwaelzpumpe_an_aus", "durchfluss", "vorlauf_1", "vorlauf_2", "vorlauf_bh_1", "vorlauf_bh_2", "ruecklauf", "ruecklauf_2", "vorlauf_soll", "spread", "wasserdruck", "bypass"] },
     { key: "hotwater", ids: ["speicher", "speicher_soll", "mischer", "buh_power"] },
     { key: "info", ids: ["fehlercode", "betriebsmodus", "betriebsart", "thermische_leistung", "el_power", "cop", "t_room_is", "room_setpoint"] },
@@ -483,7 +483,10 @@ export class HpsuDashboardCardEditor extends LitElement {
             const entity = this.hass.states[entityId];
             const domain = entityId.substring(0, entityId.indexOf('.'));
 
-            if (value_item.device && targetDeviceId) {
+            // a sensor value may also come from an input_number helper with the same unit (helpers have no device)
+            const helper = value_item.domain === "sensor" && domain === "input_number";
+
+            if (value_item.device && targetDeviceId && !helper) {
                 const entityRegistryEntry = this.hass.entities[entityId];
 
                 if (!entityRegistryEntry || entityRegistryEntry.device_id !== targetDeviceId) {
@@ -491,11 +494,11 @@ export class HpsuDashboardCardEditor extends LitElement {
                 }
             }
 
-            if (value_item.domain !== undefined && value_item.domain !== domain) {
+            if (value_item.domain !== undefined && value_item.domain !== domain && !helper) {
                 continue;
             }
 
-            if (domain !== "select" && domain !== "input_number") {
+            if (domain !== "select" && (domain !== "input_number" || helper)) {
                 const unitOfMeasurement = entity.attributes.unit_of_measurement;
 
                 if (!targetUnit.includes(unitOfMeasurement)) {

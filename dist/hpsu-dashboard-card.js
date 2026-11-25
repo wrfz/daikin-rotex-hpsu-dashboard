@@ -129,6 +129,43 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
         }
     },
     {
+        group_id: "fourway-schema",
+        values: [
+            {
+                id: "four_way_valve",
+                device: "UART",
+                domain: "sensor",
+                texts: {
+                    de: {
+                        desc: "4-Wege-Ventil"
+                    },
+                    en: {
+                        desc: "4-way valve"
+                    },
+                    it: {
+                        desc: "Valvola a 4 vie"
+                    }
+                }
+            },
+            {
+                id: "abtauvorgang",
+                device: "UART",
+                domain: "binary_sensor",
+                texts: {
+                    de: {
+                        desc: "Abtauvorgang"
+                    },
+                    en: {
+                        desc: "Defrost"
+                    },
+                    it: {
+                        desc: "Sbrinamento"
+                    }
+                }
+            }
+        ]
+    },
+    {
         group_id: "eev-schema",
         values: [
             {
@@ -170,6 +207,30 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                     },
                     it: {
                         desc: "Condensato"
+                    }
+                }
+            },
+            {
+                id: "subcooling",
+                device: "UART",
+                domain: "sensor",
+                unit: "K",
+                value_rect_id: "subcooling_value",
+                optional: true,
+                dash_unknown: true,
+                prefix_label: true,
+                texts: {
+                    de: {
+                        desc: "Unterk\xfchlung",
+                        suffix: "UK "
+                    },
+                    en: {
+                        desc: "Subcooling",
+                        suffix: "SC "
+                    },
+                    it: {
+                        desc: "Sottoraffreddamento",
+                        suffix: "SR "
                     }
                 }
             }
@@ -406,6 +467,30 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                         desc: "Gas caldo"
                     }
                 }
+            },
+            {
+                id: "discharge_superheat",
+                device: "UART",
+                domain: "sensor",
+                unit: "K",
+                value_rect_id: "discharge_superheat_value",
+                optional: true,
+                dash_unknown: true,
+                prefix_label: true,
+                texts: {
+                    de: {
+                        desc: "\xdcberhitzung Hei\xdfgas",
+                        suffix: "\xdcH "
+                    },
+                    en: {
+                        desc: "Discharge superheat",
+                        suffix: "SH "
+                    },
+                    it: {
+                        desc: "Surriscaldamento mandata",
+                        suffix: "SR "
+                    }
+                }
             }
         ],
         texts: {
@@ -417,6 +502,46 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             },
             it: {
                 label: "Gas caldo"
+            }
+        }
+    },
+    {
+        group_id: "Kondensation",
+        parent: "Kondensation",
+        label_rect_id: "condensing_label",
+        visual_container: true,
+        offset: 6,
+        values: [
+            {
+                id: "condensing_temp",
+                device: "UART",
+                domain: "sensor",
+                unit: "\xb0C",
+                value_rect_id: "condensing_temp_value",
+                optional: true,
+                dash_unknown: true,
+                texts: {
+                    de: {
+                        desc: "Kondensationstemperatur (S1NPH)"
+                    },
+                    en: {
+                        desc: "Condensing temperature (S1NPH)"
+                    },
+                    it: {
+                        desc: "Temperatura di condensazione (S1NPH)"
+                    }
+                }
+            }
+        ],
+        texts: {
+            de: {
+                label: "Kondensation"
+            },
+            en: {
+                label: "Condensing"
+            },
+            it: {
+                label: "Condensazione"
             }
         }
     },
@@ -442,6 +567,26 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                     },
                     it: {
                         desc: "Gas caldo al condensatore"
+                    }
+                }
+            },
+            {
+                id: "refrigerant_pressure",
+                device: "UART",
+                domain: "sensor",
+                unit: "bar",
+                value_rect_id: "refrigerant_pressure_value",
+                optional: true,
+                dash_unknown: true,
+                texts: {
+                    de: {
+                        desc: "K\xe4ltemitteldruck (S1NPH)"
+                    },
+                    en: {
+                        desc: "Refrigerant pressure (S1NPH)"
+                    },
+                    it: {
+                        desc: "Pressione refrigerante (S1NPH)"
                     }
                 }
             }
@@ -1033,7 +1178,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                 value_rect_id: "therm_leistung_value",
                 texts: {
                     de: {
-                        suffix: "Thermische Leistung: ",
+                        suffix: "Therm. Leistung: ",
                         desc: "Thermische Leistung"
                     },
                     en: {
@@ -1054,7 +1199,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                 value_rect_id: "el_power_value",
                 texts: {
                     de: {
-                        suffix: "Elektrische Leistung: ",
+                        suffix: "El. Leistung: ",
                         desc: "Elektrische Leistung"
                     },
                     en: {
@@ -2058,11 +2203,17 @@ const $d067581fc0d59830$var$FUNCTION_GROUPS = [
         ids: [
             "kompressor_an_aus",
             "verdichter",
+            "four_way_valve",
+            "abtauvorgang",
             "expansion_valve",
             "pressure_equalization",
             "hot_gas",
+            "discharge_superheat",
             "hot_gas_condenser",
+            "condensing_temp",
+            "refrigerant_pressure",
             "kondensat",
+            "subcooling",
             "verdampfer",
             "luefter",
             "ta",
@@ -2771,12 +2922,14 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             if (!Object.prototype.hasOwnProperty.call(this.hass.states, entityId)) continue;
             const entity = this.hass.states[entityId];
             const domain = entityId.substring(0, entityId.indexOf('.'));
-            if (value_item.device && targetDeviceId) {
+            // a sensor value may also come from an input_number helper with the same unit (helpers have no device)
+            const helper = value_item.domain === "sensor" && domain === "input_number";
+            if (value_item.device && targetDeviceId && !helper) {
                 const entityRegistryEntry = this.hass.entities[entityId];
                 if (!entityRegistryEntry || entityRegistryEntry.device_id !== targetDeviceId) continue;
             }
-            if (value_item.domain !== undefined && value_item.domain !== domain) continue;
-            if (domain !== "select" && domain !== "input_number") {
+            if (value_item.domain !== undefined && value_item.domain !== domain && !helper) continue;
+            if (domain !== "select" && (domain !== "input_number" || helper)) {
                 const unitOfMeasurement = entity.attributes.unit_of_measurement;
                 if (!targetUnit.includes(unitOfMeasurement)) continue;
             }
@@ -3039,6 +3192,8 @@ var $a399cc6bbb0eb26a$export$4661a56c3a27d933 = /*#__PURE__*/ function(Dashboard
     DashboardState["Error"] = "error";
     return DashboardState;
 }({});
+// width of a space at the label size (35) in box units; the gap after a value prefix is three of them
+const $a399cc6bbb0eb26a$var$PREFIX_SPACE = 8.75;
 class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$export$3f2f9f5909897157) {
     setConfig(config) {
         this.config = (0, $eb5cfe1dd9fe4e85$export$127f9a442b42d18)(config);
@@ -3110,6 +3265,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         setClickHandler("compressor-symbol", this.findEntityIdById(this.svg_item_config, "kompressor_an_aus"));
         setClickHandler("pump-symbol", this.findEntityIdById(this.svg_item_config, "umwaelzpumpe_an_aus"));
         setClickHandler("eev-symbol", pressureEqualizationEntityId);
+        setClickHandler("fourway-symbol", this.findEntityIdById(this.svg_item_config, "four_way_valve"));
     }
     updated(changedProperties) {
         if (this.isPanelView()) this.setAttribute('panel-view', '');
@@ -3465,6 +3621,96 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
         }
         if (yOffset != undefined) text.setAttribute("y", (yPos + height / 2 + yOffset).toString());
     }
+    // Value text. With prefix_label the prefix (e.g. "UK") is drawn like the box label (size and colour).
+    // A group with data-sep (x of the decimal separator, from the layout) gets its rows aligned at the separator:
+    // the part before it ends at data-sep, the rest starts there (two text chunks, no measuring).
+    setValueText(valueText, value_item, text) {
+        const NS = "http://www.w3.org/2000/svg";
+        const prefix = value_item.prefix_label === true ? value_item.texts[this.language]?.suffix?.trim() : undefined;
+        const sep = parseFloat(valueText.parentNode?.getAttribute?.("data-sep") ?? "");
+        const idx = Number.isFinite(sep) ? text.search(/[,.]\d/) : -1;
+        const span = (parent, content, attrs = {})=>{
+            const tspan = document.createElementNS(NS, "tspan");
+            for (const [name, value] of Object.entries(attrs))tspan.setAttribute(name, value);
+            tspan.textContent = content;
+            parent.appendChild(tspan);
+            return tspan;
+        };
+        valueText.textContent = "";
+        if (!prefix && idx < 0) {
+            valueText.textContent = text;
+            return;
+        }
+        const haCard = this.haCardElement;
+        const labelColor = this.layoutStyle.label ?? ((haCard ? getComputedStyle(haCard).getPropertyValue('--secondary-text-color').trim() : "") || '#808080');
+        const head = idx >= 0 ? span(valueText, "", {
+            x: String(sep),
+            "text-anchor": "end"
+        }) : valueText;
+        if (prefix) span(head, prefix, {
+            "font-size": "35",
+            fill: labelColor
+        });
+        span(head, idx >= 0 ? text.slice(0, idx) : text, prefix ? {
+            dx: String(3 * $a399cc6bbb0eb26a$var$PREFIX_SPACE)
+        } : {});
+        if (idx >= 0) span(valueText, text.slice(idx), {
+            x: String(sep),
+            "text-anchor": "start"
+        });
+    }
+    // A box hidden for lack of an entity hides its leaders (data-box). Optional rows without entity are hidden: the
+    // visible rows move up into the free slots, the frame ends at the last one and leaders from the bottom edge
+    // (data-edge) start there. Slots come from the parsed layout (valueBox), so repeated updates give the same result.
+    adjustBox(svg_item) {
+        const root = this.shadowRoot;
+        const svg = root?.querySelector("ha-card svg");
+        const group = root?.getElementById(svg_item.group_id);
+        if (!root || !svg || !group) return;
+        const leaders = Array.from(svg.querySelectorAll(`path[data-box="${svg_item.group_id}"]`));
+        const hidden = group.style.display === "none";
+        for (const path of leaders)path.style.display = hidden ? "none" : "";
+        const frame = root.getElementById(`${svg_item.group_id}_rect`);
+        if (hidden || !frame || svg_item.reorderable) return;
+        const items = svg_item.values.filter((v)=>v.value_rect_id && v.valueBox && !v.valueBox.getAttribute("transform")).map((v)=>({
+                y: parseFloat(v.valueBox.getAttribute("y") ?? "0"),
+                h: parseFloat(v.valueBox.getAttribute("height") ?? "0"),
+                rect: root.getElementById(v.value_rect_id),
+                text: root.getElementById(`${v.value_rect_id}_text`),
+                divider: root.getElementById(`${v.value_rect_id}_divider`)
+            })).sort((a, b)=>a.y - b.y);
+        const slots = items.map((i)=>i.y);
+        let k = 0;
+        let bottom;
+        for (const item of items){
+            if (!item.rect || item.rect.style.display === "none") continue;
+            const y = slots[k++];
+            item.rect.setAttribute("y", String(y));
+            item.text?.setAttribute("y", String(y + item.h / 2 + (svg_item.offset ?? 0)));
+            item.divider?.setAttribute("y1", String(y));
+            item.divider?.setAttribute("y2", String(y));
+            bottom = y + item.h;
+        }
+        if (bottom === undefined) return;
+        const frameY = parseFloat(frame.getAttribute("y") ?? "0");
+        const oldBottom = frameY + parseFloat(frame.getAttribute("height") ?? "0");
+        if (Math.abs(bottom - oldBottom) < 0.01) return;
+        frame.setAttribute("height", String(bottom - frameY));
+        const parseD = (d)=>(d.match(/-?[\d.]+/g) ?? []).map(Number);
+        for (const path of Array.from(group.querySelectorAll('path.leader[data-edge="bottom"]'))){
+            const [x1, , x2, y2] = parseD(path.getAttribute("d") ?? "");
+            path.setAttribute("d", `M${x1} ${bottom} L${x2} ${y2}`);
+        }
+        const groupCTM = group.getScreenCTM();
+        for (const path of leaders.filter((p)=>p.getAttribute("data-edge") === "bottom")){
+            const parentCTM = path.parentNode.getScreenCTM();
+            if (!groupCTM || !parentCTM) continue;
+            const [x1, y1, x2, y2] = parseD(path.getAttribute("d") ?? "");
+            const local = new DOMPoint(x1, y1).matrixTransform(groupCTM.inverse().multiply(parentCTM));
+            const moved = new DOMPoint(local.x, bottom).matrixTransform(parentCTM.inverse().multiply(groupCTM));
+            path.setAttribute("d", `M${moved.x.toFixed(2)} ${moved.y.toFixed(2)} L${x2} ${y2}`);
+        }
+    }
     updateLabels() {
         const haCard = this.haCardElement;
         if (!haCard) return;
@@ -3476,8 +3722,12 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                     svg_item.values.forEach((value_item)=>{
                         svg_item.values.forEach((value_item)=>{
                             const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
+                            // a box with a parent is shown when any of its values has an entity
                             const parentBox = svg_item.parent ? this.shadowRoot.getElementById(svg_item.parent) : null;
-                            if (parentBox) parentBox.style.display = newState ? "block" : "none";
+                            if (parentBox) {
+                                const anyState = svg_item.values.some((v)=>v.entityId && this.hass.states[v.entityId]);
+                                parentBox.style.display = anyState ? "block" : "none";
+                            }
                             // optional value without entity: do not leave an empty box behind.
                             // value_item.valueBox belongs to the parsed SVG document, so look up the live element.
                             const liveBox = value_item.optional === true && value_item.value_rect_id ? this.shadowRoot.getElementById(value_item.value_rect_id) : null;
@@ -3497,6 +3747,13 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                                         "font-size": "30px"
                                     });
                                     valueText.setAttribute("display", value_item.optional === true ? "none" : "block");
+                                } else if ((newState.state == "unknown" || newState.state == "unavailable") && value_item.dash_unknown === true) {
+                                    // values that only exist in some operating states (e.g. subcooling while heating)
+                                    this.setValueText(valueText, value_item, "---");
+                                    valueText.setAttribute("font-size", fontSize);
+                                    this.textState(valueText, "normal", {
+                                        "fill": primaryTextColor
+                                    });
                                 } else if (newState.state == "unknown" || newState.state == "unavailable") {
                                     valueText.textContent = "N/A";
                                     this.textState(valueText, "unavailable", {
@@ -3515,8 +3772,8 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                                     } else {
                                         entityState = this.formatNumber(newState, svg_item.digits ?? 1);
                                         if (entityState == "Warmwasserbereitung") entityState = "Warmwasser";
-                                        if (value_item.texts[this.language].suffix) entityState = value_item.texts[this.language].suffix + entityState;
-                                        valueText.textContent = entityState;
+                                        if (value_item.texts[this.language].suffix && value_item.prefix_label !== true) entityState = value_item.texts[this.language].suffix + entityState;
+                                        this.setValueText(valueText, value_item, entityState);
                                         if (value_item.id != "fehlercode" || value_item.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" || value_item.texts[this.language].suffix == "Error code: " && "No Error" || value_item.texts[this.language].suffix == "Codice errore: " && "Nessun errore") this.textState(valueText, "normal", {
                                             "fill": primaryTextColor
                                         });
@@ -3530,6 +3787,7 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
                         });
                     });
                     if (svg_item.reorderable) this.layoutRows(svg_item);
+                    this.adjustBox(svg_item);
                 });
             }
         }
@@ -3605,7 +3863,13 @@ class $a399cc6bbb0eb26a$export$9de59f1af66e4f03 extends (0, $ab210b2da7b39b9d$ex
             if (!element) continue;
             const state = stateOf(rule.entity);
             let result = "unknown";
-            if (state !== undefined && state !== "unknown" && state !== "unavailable") result = (rule.mode === "gt0" ? parseFloat(state) > 0 : state === "on") ? "on" : "off";
+            if (state !== undefined && state !== "unknown" && state !== "unavailable") {
+                const values = Array.isArray(rule.value) ? rule.value : [
+                    rule.value
+                ];
+                const hit = rule.mode === "gt0" ? parseFloat(state) > 0 : rule.mode === "eq" ? values.includes(state) : state === "on";
+                result = hit ? "on" : "off";
+            }
             element.setAttribute("data-state", result);
         }
         for (const [name, rule] of Object.entries(parse("data-temp-vars"))){

@@ -11,6 +11,8 @@ export interface SVGValue {
     domain: string;
     unit?: string | string[];
     optional?: boolean;
+    dash_unknown?: boolean;
+    prefix_label?: boolean;
     value_rect_id?: string;
     valueBox?: any;
     texts: {
@@ -177,6 +179,23 @@ export const svg_item_config: SVGItem[] = [
         }
     },
     {
+        group_id: "fourway-schema",
+        values: [
+            {
+                id: "four_way_valve",
+                device: "UART",
+                domain: "sensor",
+                texts: { de: { desc: "4-Wege-Ventil" }, en: { desc: "4-way valve" }, it: { desc: "Valvola a 4 vie" } }
+            },
+            {
+                id: "abtauvorgang",
+                device: "UART",
+                domain: "binary_sensor",
+                texts: { de: { desc: "Abtauvorgang" }, en: { desc: "Defrost" }, it: { desc: "Sbrinamento" } }
+            }
+        ],
+    },
+    {
         group_id: "eev-schema",
         values: [
             {
@@ -219,6 +238,21 @@ export const svg_item_config: SVGItem[] = [
                     it: {
                         desc: "Condensato"
                     }
+                }
+            },
+            {
+                id: "subcooling",
+                device: "UART",
+                domain: "sensor",
+                unit: "K",
+                value_rect_id: "subcooling_value",
+                optional: true,
+                dash_unknown: true,
+                prefix_label: true,
+                texts: {
+                    de: { desc: "Unterkühlung", suffix: "UK " },
+                    en: { desc: "Subcooling", suffix: "SC " },
+                    it: { desc: "Sottoraffreddamento", suffix: "SR " }
                 }
             }
         ],
@@ -454,6 +488,21 @@ export const svg_item_config: SVGItem[] = [
                         desc: "Gas caldo"
                     }
                 }
+            },
+            {
+                id: "discharge_superheat",
+                device: "UART",
+                domain: "sensor",
+                unit: "K",
+                value_rect_id: "discharge_superheat_value",
+                optional: true,
+                dash_unknown: true,
+                prefix_label: true,
+                texts: {
+                    de: { desc: "Überhitzung Heißgas", suffix: "ÜH " },
+                    en: { desc: "Discharge superheat", suffix: "SH " },
+                    it: { desc: "Surriscaldamento mandata", suffix: "SR " }
+                }
             }
         ],
         texts: {
@@ -466,6 +515,34 @@ export const svg_item_config: SVGItem[] = [
             it: {
                 label: "Gas caldo"
             }
+        }
+    },
+    {
+        group_id: "Kondensation",
+        parent: "Kondensation",
+        label_rect_id: "condensing_label",
+        visual_container: true,
+        offset: 6,
+        values: [
+            {
+                id: "condensing_temp",
+                device: "UART",
+                domain: "sensor",
+                unit: "°C",
+                value_rect_id: "condensing_temp_value",
+                optional: true,
+                dash_unknown: true,
+                texts: {
+                    de: { desc: "Kondensationstemperatur (S1NPH)" },
+                    en: { desc: "Condensing temperature (S1NPH)" },
+                    it: { desc: "Temperatura di condensazione (S1NPH)" }
+                }
+            }
+        ],
+        texts: {
+            de: { label: "Kondensation" },
+            en: { label: "Condensing" },
+            it: { label: "Condensazione" }
         }
     },
     {
@@ -491,6 +568,20 @@ export const svg_item_config: SVGItem[] = [
                     it: {
                         desc: "Gas caldo al condensatore"
                     }
+                }
+            },
+            {
+                id: "refrigerant_pressure",
+                device: "UART",
+                domain: "sensor",
+                unit: "bar",
+                value_rect_id: "refrigerant_pressure_value",
+                optional: true,
+                dash_unknown: true,
+                texts: {
+                    de: { desc: "Kältemitteldruck (S1NPH)" },
+                    en: { desc: "Refrigerant pressure (S1NPH)" },
+                    it: { desc: "Pressione refrigerante (S1NPH)" }
                 }
             }
         ],
@@ -1078,7 +1169,7 @@ export const svg_item_config: SVGItem[] = [
                 value_rect_id: "therm_leistung_value",
                 texts: {
                     de: {
-                        suffix: "Thermische Leistung: ",
+                        suffix: "Therm. Leistung: ",
                         desc: "Thermische Leistung"
                     },
                     en: {
@@ -1099,7 +1190,7 @@ export const svg_item_config: SVGItem[] = [
                 value_rect_id: "el_power_value",
                 texts: {
                     de: {
-                        suffix: "Elektrische Leistung: ",
+                        suffix: "El. Leistung: ",
                         desc: "Elektrische Leistung"
                     },
                     en: {

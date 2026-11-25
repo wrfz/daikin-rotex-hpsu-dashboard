@@ -31,6 +31,9 @@ export enum DashboardState {
 
 type NodeProcessor = (child: Element, parent: SVGGElement | SVGSVGElement) => boolean;
 
+// width of a space at the label size (35) in box units; the gap after a value prefix is three of them
+const PREFIX_SPACE = 8.75;
+
 export class HPSUDashboardCard extends LitElement {
     @property({ attribute: false }) public hass!: HomeAssistant;
     private config!: LovelaceCardConfig;
@@ -129,6 +132,7 @@ export class HPSUDashboardCard extends LitElement {
         setClickHandler("compressor-symbol", this.findEntityIdById(this.svg_item_config, "kompressor_an_aus"));
         setClickHandler("pump-symbol", this.findEntityIdById(this.svg_item_config, "umwaelzpumpe_an_aus"));
         setClickHandler("eev-symbol", pressureEqualizationEntityId);
+        setClickHandler("fourway-symbol", this.findEntityIdById(this.svg_item_config, "four_way_valve"));
     }
 
     protected updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -574,6 +578,91 @@ export class HPSUDashboardCard extends LitElement {
         }
     }
 
+    // Value text. With prefix_label the prefix (e.g. "UK") is drawn like the box label (size and colour).
+    // A group with data-sep (x of the decimal separator, from the layout) gets its rows aligned at the separator:
+    // the part before it ends at data-sep, the rest starts there (two text chunks, no measuring).
+    private setValueText(valueText: SVGTextElement, value_item: any, text: string): void {
+        const NS = "http://www.w3.org/2000/svg";
+        const prefix = value_item.prefix_label === true ? value_item.texts[this.language]?.suffix?.trim() : undefined;
+        const sep = parseFloat((valueText.parentNode as Element | null)?.getAttribute?.("data-sep") ?? "");
+        const idx = Number.isFinite(sep) ? text.search(/[,.]\d/) : -1;
+        const span = (parent: Element, content: string, attrs: Record<string, string> = {}): SVGTSpanElement => {
+            const tspan = document.createElementNS(NS, "tspan") as SVGTSpanElement;
+            for (const [name, value] of Object.entries(attrs)) tspan.setAttribute(name, value);
+            tspan.textContent = content;
+            parent.appendChild(tspan);
+            return tspan;
+        };
+        valueText.textContent = "";
+        if (!prefix && idx < 0) {
+            valueText.textContent = text;
+            return;
+        }
+        const haCard = this.haCardElement;
+        const labelColor = this.layoutStyle.label
+            ?? ((haCard ? getComputedStyle(haCard).getPropertyValue('--secondary-text-color').trim() : "") || '#808080');
+        const head = idx >= 0 ? span(valueText, "", { x: String(sep), "text-anchor": "end" }) : valueText;
+        if (prefix) span(head, prefix, { "font-size": "35", fill: labelColor });
+        span(head, idx >= 0 ? text.slice(0, idx) : text, prefix ? { dx: String(3 * PREFIX_SPACE) } : {});
+        if (idx >= 0) span(valueText, text.slice(idx), { x: String(sep), "text-anchor": "start" });
+    }
+
+    // A box hidden for lack of an entity hides its leaders (data-box). Optional rows without entity are hidden: the
+    // visible rows move up into the free slots, the frame ends at the last one and leaders from the bottom edge
+    // (data-edge) start there. Slots come from the parsed layout (valueBox), so repeated updates give the same result.
+    private adjustBox(svg_item: SVGItem): void {
+        const root = this.shadowRoot;
+        const svg = root?.querySelector("ha-card svg") as SVGSVGElement | null;
+        const group = root?.getElementById(svg_item.group_id) as SVGGElement | null;
+        if (!root || !svg || !group) return;
+        const leaders = Array.from(svg.querySelectorAll(`path[data-box="${svg_item.group_id}"]`)) as SVGPathElement[];
+        const hidden = group.style.display === "none";
+        for (const path of leaders) path.style.display = hidden ? "none" : "";
+        const frame = root.getElementById(`${svg_item.group_id}_rect`) as SVGRectElement | null;
+        if (hidden || !frame || svg_item.reorderable) return;
+        const items = svg_item.values
+            .filter((v) => v.value_rect_id && v.valueBox && !v.valueBox.getAttribute("transform"))
+            .map((v) => ({
+                y: parseFloat(v.valueBox.getAttribute("y") ?? "0"),
+                h: parseFloat(v.valueBox.getAttribute("height") ?? "0"),
+                rect: root.getElementById(v.value_rect_id!) as SVGRectElement | null,
+                text: root.getElementById(`${v.value_rect_id}_text`) as SVGTextElement | null,
+                divider: root.getElementById(`${v.value_rect_id}_divider`) as SVGLineElement | null,
+            }))
+            .sort((a, b) => a.y - b.y);
+        const slots = items.map((i) => i.y);
+        let k = 0;
+        let bottom: number | undefined;
+        for (const item of items) {
+            if (!item.rect || item.rect.style.display === "none") continue;
+            const y = slots[k++];
+            item.rect.setAttribute("y", String(y));
+            item.text?.setAttribute("y", String(y + item.h / 2 + (svg_item.offset ?? 0)));
+            item.divider?.setAttribute("y1", String(y));
+            item.divider?.setAttribute("y2", String(y));
+            bottom = y + item.h;
+        }
+        if (bottom === undefined) return;
+        const frameY = parseFloat(frame.getAttribute("y") ?? "0");
+        const oldBottom = frameY + parseFloat(frame.getAttribute("height") ?? "0");
+        if (Math.abs(bottom - oldBottom) < 0.01) return;
+        frame.setAttribute("height", String(bottom - frameY));
+        const parseD = (d: string) => (d.match(/-?[\d.]+/g) ?? []).map(Number);
+        for (const path of Array.from(group.querySelectorAll('path.leader[data-edge="bottom"]'))) {
+            const [x1, , x2, y2] = parseD(path.getAttribute("d") ?? "");
+            path.setAttribute("d", `M${x1} ${bottom} L${x2} ${y2}`);
+        }
+        const groupCTM = group.getScreenCTM();
+        for (const path of leaders.filter((p) => p.getAttribute("data-edge") === "bottom")) {
+            const parentCTM = (path.parentNode as SVGGraphicsElement).getScreenCTM();
+            if (!groupCTM || !parentCTM) continue;
+            const [x1, y1, x2, y2] = parseD(path.getAttribute("d") ?? "");
+            const local = new DOMPoint(x1, y1).matrixTransform(groupCTM.inverse().multiply(parentCTM));
+            const moved = new DOMPoint(local.x, bottom).matrixTransform(parentCTM.inverse().multiply(groupCTM));
+            path.setAttribute("d", `M${moved.x.toFixed(2)} ${moved.y.toFixed(2)} L${x2} ${y2}`);
+        }
+    }
+
     private updateLabels(): void {
         const haCard = this.haCardElement;
         if (!haCard) {
@@ -591,9 +680,11 @@ export class HPSUDashboardCard extends LitElement {
                         svg_item.values.forEach(value_item => {
                             const newState = value_item.entityId ? this.hass.states[value_item.entityId] : null;
 
+                            // a box with a parent is shown when any of its values has an entity
                             const parentBox = svg_item.parent ? this.shadowRoot!.getElementById(svg_item.parent) : null;
                             if (parentBox) {
-                                parentBox.style.display = newState ? "block" : "none";
+                                const anyState = svg_item.values.some(v => v.entityId && this.hass.states[v.entityId]);
+                                parentBox.style.display = anyState ? "block" : "none";
                             }
 
                             // optional value without entity: do not leave an empty box behind.
@@ -619,6 +710,11 @@ export class HPSUDashboardCard extends LitElement {
                                     valueText.textContent = "N/D";
                                     this.textState(valueText, "na", { "fill": "orange", "font-size": "30px" });
                                     valueText.setAttribute("display", value_item.optional === true ? "none" : "block");
+                                } else if ((newState.state == "unknown" || newState.state == "unavailable") && value_item.dash_unknown === true) {
+                                    // values that only exist in some operating states (e.g. subcooling while heating)
+                                    this.setValueText(valueText, value_item, "---");
+                                    valueText.setAttribute("font-size", fontSize);
+                                    this.textState(valueText, "normal", { "fill": primaryTextColor });
                                 } else if (newState.state == "unknown" || newState.state == "unavailable") {
                                     valueText.textContent = "N/A";
                                     this.textState(valueText, "unavailable", { "fill": "orange", "font-size": "30px" });
@@ -637,11 +733,11 @@ export class HPSUDashboardCard extends LitElement {
                                         if (entityState == "Warmwasserbereitung") {
                                             entityState = "Warmwasser";
                                         }
-                                        if (value_item.texts[this.language].suffix) {
+                                        if (value_item.texts[this.language].suffix && value_item.prefix_label !== true) {
                                             entityState = value_item.texts[this.language].suffix + entityState;
                                         }
 
-                                        valueText.textContent = entityState;
+                                        this.setValueText(valueText, value_item, entityState);
                                         if (value_item.id != "fehlercode" ||
                                             value_item.texts[this.language].suffix == "Fehlercode: " && "Kein Fehler" ||
                                             value_item.texts[this.language].suffix == "Error code: " && "No Error" ||
@@ -663,6 +759,7 @@ export class HPSUDashboardCard extends LitElement {
                     if (svg_item.reorderable) {
                         this.layoutRows(svg_item);
                     }
+                    this.adjustBox(svg_item);
                 });
 
             }
@@ -736,7 +833,9 @@ export class HPSUDashboardCard extends LitElement {
             const state = stateOf(rule.entity);
             let result = "unknown";
             if (state !== undefined && state !== "unknown" && state !== "unavailable") {
-                result = (rule.mode === "gt0" ? parseFloat(state) > 0 : state === "on") ? "on" : "off";
+                const values = Array.isArray(rule.value) ? rule.value : [rule.value];
+                const hit = rule.mode === "gt0" ? parseFloat(state) > 0 : rule.mode === "eq" ? values.includes(state) : state === "on";
+                result = hit ? "on" : "off";
             }
             element.setAttribute("data-state", result);
         }
