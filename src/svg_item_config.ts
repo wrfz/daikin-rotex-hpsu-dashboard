@@ -191,13 +191,6 @@ export const svg_item_config: SVGItem[] = [
                 key: "4_way_valve",
                 domain: "sensor",
                 texts: { de: { desc: "4-Wege-Ventil" }, en: { desc: "4-way valve" }, it: { desc: "Valvola a 4 vie" } }
-            },
-            {
-                id: "abtauvorgang",
-                device: "UART",
-                key: "defrost_operation",
-                domain: "binary_sensor",
-                texts: { de: { desc: "Abtauvorgang" }, en: { desc: "Defrost" }, it: { desc: "Sbrinamento" } }
             }
         ],
     },

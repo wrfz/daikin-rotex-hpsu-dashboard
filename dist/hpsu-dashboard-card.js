@@ -150,23 +150,6 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
                         desc: "Valvola a 4 vie"
                     }
                 }
-            },
-            {
-                id: "abtauvorgang",
-                device: "UART",
-                key: "defrost_operation",
-                domain: "binary_sensor",
-                texts: {
-                    de: {
-                        desc: "Abtauvorgang"
-                    },
-                    en: {
-                        desc: "Defrost"
-                    },
-                    it: {
-                        desc: "Sbrinamento"
-                    }
-                }
             }
         ]
     },
@@ -2432,7 +2415,6 @@ const $d067581fc0d59830$var$FUNCTION_GROUPS = [
             "kompressor_an_aus",
             "verdichter",
             "four_way_valve",
-            "abtauvorgang",
             "expansion_valve",
             "pressure_equalization",
             "hot_gas",
