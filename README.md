@@ -92,3 +92,24 @@ Entity dazu, auch wenn ihre entity_id in Home Assistant umbenannt wurde.
   des Geräts nicht hat (z. B. in der YAML nicht konfiguriert), und Werte aus anderen Quellen (COP,
   elektrische Leistung, Raum-Soll, …) bleiben unverändert.
 - Vor dem Übernehmen zeigt der Editor jede Änderung (alt → neu) zur Bestätigung.
+
+# Entwicklung
+
+Die Karte (`dist/hpsu-dashboard-card.js`) wird nicht eingecheckt, sondern gebaut:
+
+    npm ci
+    npx parcel build        # oder: npx parcel watch
+
+Die Layouts (`dist/*.svg`) sind Quellen und liegen im Repository.
+
+Bei jedem Push und jedem Pull Request baut die Pipeline die Karte (`.github/workflows/build.yml`).
+Ein Release entsteht über einen Tag:
+
+    git tag 2026.11.10
+    git push origin 2026.11.10
+
+Die Pipeline (`.github/workflows/release.yml`) baut die Karte und legt einen Entwurf des Releases an,
+mit `hpsu-dashboard-card.js` und den Layouts als Assets. Dort die Release-Notes eintragen und
+veröffentlichen. HACS bzw. der Marketplace installiert aus diesen Assets; einen Entwurf sieht er
+nicht. Gibt es das Release schon, ersetzt die Pipeline seine Assets (auch manuell über
+„Run workflow“ mit dem Tag).

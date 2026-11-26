@@ -1,0 +1,47 @@
+name: Release
+
+# Pushing a tag (e.g. 2026.11.10) builds the card and creates a draft release with the card and the
+# layouts as assets. Write the release notes there and publish it. The Marketplace / HACS installs
+# from the assets of a release; a draft is not visible to it, so it never sees a release without them.
+# For a release that exists already, the assets are replaced.
+
+on:
+  push:
+    tags: ['*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to build and attach
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ env.TAG }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx parcel build
+
+      - name: Attach to release
+        run: |
+          files=(dist/hpsu-dashboard-card.js dist/*.svg)
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" "${files[@]}" --clobber
+          else
+            gh release create "$TAG" "${files[@]}" --draft --title "$TAG" --verify-tag
+          fi

@@ -1,3 +1,5 @@
 .parcel-cache/
 node_modules/
-package-lock.json
+# built by the pipeline and attached to the release (see .github/workflows/release.yml)
+dist/*.js
+dist/*.js.map
