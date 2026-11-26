@@ -75,3 +75,20 @@ Mit `layout` wählst du die Darstellung (auch im Karten-Editor ganz oben auswäh
 | `glass-dark` | modernes Glas-Layout, dunkel |
 | `glass-light` | modernes Glas-Layout, hell (Standard) |
 | `glass-petrol` | modernes Glas-Layout, Petrol |
+
+## Sensoren aus den Geräten übernehmen
+
+Im Karten-Editor, Reiter **Geräte**, setzt der Knopf **Sensoren aus Geräten übernehmen** die
+Sensoren der Karte auf die Entities der CAN- und UART-Geräte. Dafür liest die Karte die Manifeste
+der ESPHome-Komponenten ([CAN](https://github.com/Trunks1982/Daikin-Rotex-HPSU-CAN),
+[UART](https://github.com/wrfz/esphome-components); Firmware mit ESPHome 2026.1 oder neuer): Dienste
+`esphome.<knoten>_rotex_can_manifest` und `esphome.<knoten>_rotex_uart_manifest`. Das Manifest nennt
+zu jedem Wert der Komponente den Namen aus der YAML; über die Entity-Registry findet die Karte die
+Entity dazu, auch wenn ihre entity_id in Home Assistant umbenannt wurde.
+
+- Ist kein Gerät gewählt, ermittelt die Karte es: das Gerät, bei dem alle Entities des Manifests
+  vorkommen (bei mehreren gleichen Geräten das, dessen Name zum Knotennamen passt).
+- Jeder Wert, den das Manifest kennt, wird ersetzt, auch von Hand gewählte. Werte, die das Manifest
+  des Geräts nicht hat (z. B. in der YAML nicht konfiguriert), und Werte aus anderen Quellen (COP,
+  elektrische Leistung, Raum-Soll, …) bleiben unverändert.
+- Vor dem Übernehmen zeigt der Editor jede Änderung (alt → neu) zur Bestätigung.

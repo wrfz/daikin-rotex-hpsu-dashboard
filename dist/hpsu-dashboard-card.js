@@ -23,6 +23,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "ta",
                 device: "CAN",
+                key: "temperature_outside",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "ta_val",
@@ -61,6 +62,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "ta2",
                 device: "CAN",
+                key: "ta2",
                 domain: "sensor",
                 unit: "\xb0C",
                 optional: true,
@@ -100,6 +102,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "expansion_valve",
                 device: "UART",
+                key: "exv",
                 domain: "sensor",
                 unit: "pls",
                 value_rect_id: "eev_val",
@@ -134,6 +137,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "four_way_valve",
                 device: "UART",
+                key: "4_way_valve",
                 domain: "sensor",
                 texts: {
                     de: {
@@ -150,6 +154,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "abtauvorgang",
                 device: "UART",
+                key: "defrost_operation",
                 domain: "binary_sensor",
                 texts: {
                     de: {
@@ -171,6 +176,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "pressure_equalization",
                 device: "UART",
+                key: "press_eq",
                 domain: "binary_sensor",
                 texts: {
                     de: {
@@ -195,6 +201,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "kondensat",
                 device: "UART",
+                key: "t_liq",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "kondensat_value",
@@ -213,6 +220,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "subcooling",
                 device: "UART",
+                key: "subcooling",
                 domain: "sensor",
                 unit: "K",
                 value_rect_id: "subcooling_value",
@@ -257,6 +265,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "umwaelzpumpe",
                 device: "CAN",
+                key: "circulation_pump",
                 domain: "sensor",
                 unit: "%",
                 value_rect_id: "uwp_value",
@@ -293,6 +302,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "umwaelzpumpe_an_aus",
                 device: "CAN",
+                key: "status_kesselpumpe",
                 domain: "binary_sensor",
                 value_rect_id: "circ_pump_rect",
                 texts: {
@@ -319,6 +329,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "durchfluss",
                 device: "CAN",
+                key: "flow_rate",
                 domain: "sensor",
                 unit: "L/h",
                 value_rect_id: "flow_rate_value",
@@ -356,6 +367,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "ruecklauf",
                 device: "CAN",
+                key: "tr",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "return_flow_can_value",
@@ -374,6 +386,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "ruecklauf_2",
                 device: "UART",
+                key: "tr",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "return_flow_uart_value",
@@ -416,6 +429,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "verdampfer",
                 device: "UART",
+                key: "exch_temp",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "evaporator_value",
@@ -453,6 +467,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "hot_gas",
                 device: "UART",
+                key: "temp_after_compr",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "hot_gas_value",
@@ -471,6 +486,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "discharge_superheat",
                 device: "UART",
+                key: "discharge_superheat",
                 domain: "sensor",
                 unit: "K",
                 value_rect_id: "discharge_superheat_value",
@@ -515,6 +531,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "saturation_temp",
                 device: "UART",
+                key: "saturation_temp",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "saturation_temp_value",
@@ -573,6 +590,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "refrigerant_pressure",
                 device: "UART",
+                key: "refrigerant_pressure",
                 domain: "sensor",
                 unit: "bar",
                 value_rect_id: "refrigerant_pressure_value",
@@ -612,6 +630,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "spread",
                 device: "CAN",
+                key: "temperature_spread_raw",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "spread_value",
@@ -649,6 +668,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "vorlauf_1",
                 device: "CAN",
+                key: "tv",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "flow_can_value",
@@ -667,6 +687,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "vorlauf_2",
                 device: "UART",
+                key: "tv",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "flow_uart_value",
@@ -704,6 +725,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "vorlauf_soll",
                 device: "CAN",
+                key: "target_supply_temperature",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "flow_setpoint_value",
@@ -741,6 +763,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "wasserdruck",
                 device: "CAN",
+                key: "water_pressure",
                 domain: "sensor",
                 unit: "bar",
                 value_rect_id: "pressure_value",
@@ -778,6 +801,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "vorlauf_bh_1",
                 device: "CAN",
+                key: "tvbh",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "flow_bh_can_value",
@@ -796,6 +820,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "vorlauf_bh_2",
                 device: "UART",
+                key: "tv_bh",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "flow_bh_uart_value",
@@ -832,6 +857,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "kompressor_an_aus",
                 device: "CAN",
+                key: "status_kompressor",
                 domain: "binary_sensor",
                 value_rect_id: "comp_rect",
                 texts: {
@@ -863,6 +889,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "luefter",
                 device: "UART",
+                key: "fan_speed",
                 domain: "sensor",
                 unit: "RPM",
                 value_rect_id: "fan_value",
@@ -901,6 +928,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "verdichter",
                 device: "UART",
+                key: "inv_freq",
                 domain: "sensor",
                 unit: "RPM",
                 value_rect_id: "compressor_value",
@@ -938,6 +966,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "speicher",
                 device: "CAN",
+                key: "tdhw1",
                 domain: "sensor",
                 unit: "\xb0C",
                 value_rect_id: "storage_value",
@@ -975,6 +1004,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "speicher_soll",
                 device: "CAN",
+                key: "target_hot_water_temperature_1",
                 domain: "select",
                 unit: "\xb0C",
                 value_rect_id: "storage_setpoint_value",
@@ -1054,6 +1084,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "mischer",
                 device: "CAN",
+                key: "dhw_mixer_position",
                 domain: "sensor",
                 unit: "%",
                 value_rect_id: "dhw_mixer_value",
@@ -1080,6 +1111,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "bypass",
                 device: "CAN",
+                key: "bypass_valve",
                 domain: "sensor",
                 unit: "%",
                 value_rect_id: "bypass_value",
@@ -1113,6 +1145,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "fehlercode",
                 device: "CAN",
+                key: "error_code",
                 domain: "sensor",
                 value_rect_id: "fehlercode_value",
                 texts: {
@@ -1133,6 +1166,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "betriebsmodus",
                 device: "CAN",
+                key: "operating_mode",
                 domain: "sensor",
                 value_rect_id: "betriebsmodus_value",
                 texts: {
@@ -1153,6 +1187,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "betriebsart",
                 device: "CAN",
+                key: "mode_of_operating",
                 domain: "sensor",
                 value_rect_id: "betriebsart_value",
                 texts: {
@@ -1173,6 +1208,7 @@ const $eb5cfe1dd9fe4e85$export$9b06e6104ce35b16 = [
             {
                 id: "thermische_leistung",
                 device: "CAN",
+                key: "thermal_power",
                 domain: "sensor",
                 unit: "kW",
                 value_rect_id: "therm_leistung_value",
@@ -1383,6 +1419,194 @@ const $eb5cfe1dd9fe4e85$export$fa8157df3262779b = function(config) {
 };
 
 
+
+
+// Assigning the card's sensors from the manifests of the ESPHome components (CAN and UART).
+//
+// Each component offers a native API action with a response, in Home Assistant the service
+// esphome.<node>_rotex_can_manifest or esphome.<node>_rotex_uart_manifest (argument "page"). The
+// manifest lists every entity of the component with its stable key, its ESPHome domain and the name
+// the user gave it in the YAML. An ESPHome entity's unique_id ends with "/<domain>/<name>", so the
+// entity registry gives the entity_id, whatever the user renamed it to in Home Assistant.
+const $ea8a5734489a8e6c$export$96ee81397c6e9cf9 = {
+    CAN: {
+        id: "rotex_hpsu_can",
+        suffix: "_rotex_can_manifest"
+    },
+    UART: {
+        id: "rotex_hpsu_uart",
+        suffix: "_rotex_uart_manifest"
+    }
+};
+function $ea8a5734489a8e6c$export$1917e1db593980c0(hass, bus) {
+    return Object.keys(hass.services?.esphome ?? {}).filter((s)=>s.endsWith($ea8a5734489a8e6c$export$96ee81397c6e9cf9[bus].suffix)).sort();
+}
+async function $ea8a5734489a8e6c$export$b98ddd902b3f525(hass, service) {
+    const call = async (page)=>{
+        const result = await hass.callWS({
+            type: "call_service",
+            domain: "esphome",
+            service: service,
+            service_data: {
+                page: page
+            },
+            return_response: true
+        });
+        return result?.response ?? {};
+    };
+    const first = await call(0);
+    const pages = Math.max(1, Number(first.pages) || 1);
+    const entities = [
+        ...first.entities ?? []
+    ];
+    for(let page = 1; page < pages; page++)entities.push(...(await call(page)).entities ?? []);
+    return {
+        id: String(first.id ?? ""),
+        pages: pages,
+        entities: entities
+    };
+}
+function $ea8a5734489a8e6c$export$94d92a7462c01a85(entity, entries, deviceId) {
+    const own = entries.filter((e)=>e.device_id === deviceId && e.platform === "esphome");
+    const suffix = `/${entity.domain}/${entity.name}`;
+    const byId = own.find((e)=>e.unique_id?.endsWith(suffix));
+    if (byId) return byId;
+    const haDomain = entity.domain === "text_sensor" ? "sensor" : entity.domain;
+    return own.find((e)=>e.original_name === entity.name && e.entity_id.startsWith(`${haDomain}.`));
+}
+const $ea8a5734489a8e6c$var$visible = (manifest)=>manifest.entities.filter((e)=>!e.internal);
+// Number of manifest entities found per device
+function $ea8a5734489a8e6c$var$counts(manifest, entries) {
+    const devices = new Set(entries.filter((e)=>e.platform === "esphome" && e.device_id).map((e)=>e.device_id));
+    const result = new Map();
+    for (const deviceId of devices){
+        const n = $ea8a5734489a8e6c$var$visible(manifest).filter((entity)=>$ea8a5734489a8e6c$export$94d92a7462c01a85(entity, entries, deviceId)).length;
+        if (n > 0) result.set(deviceId, n);
+    }
+    return result;
+}
+function $ea8a5734489a8e6c$export$74643d1fe038be1a(text) {
+    return text.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+}
+// The node name in the service name: "hpsu_can_rotex_can_manifest" -> "hpsu_can"
+const $ea8a5734489a8e6c$var$nodeOf = (service, bus)=>service.slice(0, -$ea8a5734489a8e6c$export$96ee81397c6e9cf9[bus].suffix.length);
+function $ea8a5734489a8e6c$export$301ee832472fe228(manifest, entries, node, devices) {
+    const total = $ea8a5734489a8e6c$var$visible(manifest).length;
+    const full = [
+        ...$ea8a5734489a8e6c$var$counts(manifest, entries)
+    ].filter(([, n])=>n === total).map(([id])=>id);
+    if (full.length <= 1) return full;
+    const named = full.filter((id)=>{
+        const device = devices?.[id];
+        const name = device?.name || device?.name_by_user || "";
+        return $ea8a5734489a8e6c$export$74643d1fe038be1a(name) === node;
+    });
+    return named.length === 1 ? named : full;
+}
+async function $ea8a5734489a8e6c$export$a3bd2c27ea9b7b23(hass, bus, deviceId, entries) {
+    const result = {
+        bus: bus,
+        entities: {}
+    };
+    const services = $ea8a5734489a8e6c$export$1917e1db593980c0(hass, bus);
+    if (!services.length) return {
+        ...result,
+        error: "no_service"
+    };
+    const loaded = [];
+    for (const service of services)try {
+        const manifest = await $ea8a5734489a8e6c$export$b98ddd902b3f525(hass, service);
+        if (manifest.id === $ea8a5734489a8e6c$export$96ee81397c6e9cf9[bus].id) loaded.push({
+            service: service,
+            manifest: manifest
+        });
+    } catch (err) {
+        return {
+            ...result,
+            service: service,
+            error: "failed",
+            message: String(err?.message ?? err)
+        };
+    }
+    if (!loaded.length) return {
+        ...result,
+        error: "no_service"
+    };
+    let chosen;
+    if (deviceId) {
+        // the manifest with the most entities on the chosen device
+        let best = 0;
+        for (const entry of loaded){
+            const n = $ea8a5734489a8e6c$var$counts(entry.manifest, entries).get(deviceId) ?? 0;
+            if (n > best) {
+                best = n;
+                chosen = {
+                    ...entry,
+                    deviceId: deviceId
+                };
+            }
+        }
+        if (!chosen) return {
+            ...result,
+            deviceId: deviceId,
+            error: "no_device"
+        };
+    } else {
+        const found = loaded.flatMap((entry)=>$ea8a5734489a8e6c$export$301ee832472fe228(entry.manifest, entries, $ea8a5734489a8e6c$var$nodeOf(entry.service, bus), hass.devices).map((id)=>({
+                    ...entry,
+                    deviceId: id
+                })));
+        if (found.length === 0) return {
+            ...result,
+            error: "no_device"
+        };
+        if (found.length > 1) return {
+            ...result,
+            error: "ambiguous"
+        };
+        chosen = found[0];
+    }
+    for (const entity of $ea8a5734489a8e6c$var$visible(chosen.manifest)){
+        const entry = $ea8a5734489a8e6c$export$94d92a7462c01a85(entity, entries, chosen.deviceId);
+        if (entry) result.entities[entity.key] = entry.entity_id;
+    }
+    return {
+        ...result,
+        service: chosen.service,
+        deviceId: chosen.deviceId
+    };
+}
+function $ea8a5734489a8e6c$export$3c7172b0b56389d(values, current, devices, results) {
+    const out = {
+        changes: [],
+        unchanged: [],
+        missing: [],
+        devices: {},
+        results: results
+    };
+    for (const result of results)if (result.deviceId && !result.error && devices[result.bus] !== result.deviceId) out.devices[result.bus] = result.deviceId;
+    for (const value of values){
+        if (!value.key || !value.device) continue;
+        const result = results.find((r)=>r.bus === value.device);
+        if (!result || result.error) continue;
+        const entityId = result.entities[value.key];
+        if (!entityId) out.missing.push(value.id);
+        else if (current[value.id] === entityId) out.unchanged.push(value.id);
+        else out.changes.push({
+            id: value.id,
+            from: current[value.id],
+            to: entityId
+        });
+    }
+    return out;
+}
+function $ea8a5734489a8e6c$export$5635d7ef4b8fee1c(current, p) {
+    const next = {
+        ...current
+    };
+    for (const change of p.changes)next[change.id] = change.to;
+    return next;
+}
 
 
 /**
@@ -2196,6 +2420,10 @@ const $d067581fc0d59830$var$ensureArray = (value)=>{
         value
     ];
 };
+const $d067581fc0d59830$var$BUSES = [
+    "CAN",
+    "UART"
+];
 // Sensors grouped by function. Ids that are not listed end up in "other".
 const $d067581fc0d59830$var$FUNCTION_GROUPS = [
     {
@@ -2317,7 +2545,27 @@ const $d067581fc0d59830$var$TEXTS = {
         bus_uart: "UART",
         bus_other: "Extern / ohne Ger\xe4t",
         unit_warning: "Einheit {actual}, erwartet {expected}",
-        drag_hint: "Ziehen zum Sortieren"
+        drag_hint: "Ziehen zum Sortieren",
+        load_entities: "Sensoren aus Ger\xe4ten \xfcbernehmen",
+        load_entities_help: "Liest die Manifeste der CAN- und UART-Komponente und setzt die Sensoren der Karte auf die Entities der Ger\xe4te. Ohne gew\xe4hltes Ger\xe4t wird es ermittelt. Sensoren aus anderen Quellen (z. B. COP, Raum-Soll) bleiben unver\xe4ndert.",
+        no_manifest: "Keine CAN- oder UART-Komponente mit Manifest gefunden (Firmware mit ESPHome 2026.1 oder neuer n\xf6tig).",
+        loading: "Manifeste werden gelesen \u2026",
+        will_change: "{n} Eintr\xe4ge werden ge\xe4ndert",
+        unchanged: "{n} Sensoren bleiben unver\xe4ndert (bereits richtig)",
+        missing_count: "{n} Sensoren nicht im Manifest, bleiben unver\xe4ndert",
+        value: "Sensor",
+        old: "Alt",
+        new: "Neu",
+        nothing_to_change: "Nichts zu \xe4ndern: {n} Sensoren sind bereits richtig zugeordnet.",
+        applied: "{n} Sensoren \xfcbernommen.",
+        missing: "Nicht im Manifest, unver\xe4ndert",
+        apply: "\xdcbernehmen",
+        cancel: "Abbrechen",
+        err_no_service: "{bus}: keine Komponente mit Manifest gefunden.",
+        err_no_device: "{bus}: kein passendes Ger\xe4t gefunden \u2013 bitte das Ger\xe4t w\xe4hlen.",
+        err_ambiguous: "{bus}: mehrere Ger\xe4te passen \u2013 bitte das Ger\xe4t w\xe4hlen.",
+        err_failed: "{bus}: Manifest konnte nicht gelesen werden: {message}",
+        err_general: "Fehler: {message}"
     },
     en: {
         appearance: "Appearance",
@@ -2358,7 +2606,27 @@ const $d067581fc0d59830$var$TEXTS = {
         bus_uart: "UART",
         bus_other: "External / no device",
         unit_warning: "Unit {actual}, expected {expected}",
-        drag_hint: "Drag to reorder"
+        drag_hint: "Drag to reorder",
+        load_entities: "Load entities from devices",
+        load_entities_help: "Reads the manifests of the CAN and UART component and sets the card's sensors to the entities of the devices. A device that is not chosen is determined. Sensors from other sources (e.g. COP, room setpoint) stay as they are.",
+        no_manifest: "No CAN or UART component with a manifest found (needs firmware built with ESPHome 2026.1 or newer).",
+        loading: "Reading the manifests \u2026",
+        will_change: "{n} entries will be changed",
+        unchanged: "{n} sensors stay as they are (already correct)",
+        missing_count: "{n} sensors not in the manifest, stay as they are",
+        value: "Sensor",
+        old: "Old",
+        new: "New",
+        nothing_to_change: "Nothing to change: {n} sensors are already assigned correctly.",
+        applied: "{n} sensors applied.",
+        missing: "Not in the manifest, unchanged",
+        apply: "Apply",
+        cancel: "Cancel",
+        err_no_service: "{bus}: no component with a manifest found.",
+        err_no_device: "{bus}: no matching device found \u2013 please choose the device.",
+        err_ambiguous: "{bus}: several devices match \u2013 please choose the device.",
+        err_failed: "{bus}: the manifest could not be read: {message}",
+        err_general: "Error: {message}"
     }
 };
 class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$export$3f2f9f5909897157) {
@@ -2693,7 +2961,142 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             </ha-form>
             <p class="hint">${this.tr("devices_help")}</p>
             <p class="hint">${assigned} / ${total} ${this.tr("assigned")}</p>
+            ${this.renderManifest()}
         `;
+    }
+    // ---- loading the sensors from the manifests of the components ------------------------------------------------
+    hasManifest() {
+        const hass = this.hass;
+        return $d067581fc0d59830$var$BUSES.some((bus)=>(0, $ea8a5734489a8e6c$export$1917e1db593980c0)(hass, bus).length > 0);
+    }
+    renderManifest() {
+        const available = this.hasManifest();
+        return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+            <div class="manifest">
+                <ha-button @click=${this._loadFromDevices} .disabled=${!available || this.manifestBusy}>
+                    ${this.tr("load_entities")}
+                </ha-button>
+                <p class="hint">${available ? this.tr("load_entities_help") : this.tr("no_manifest")}</p>
+                ${this.manifestBusy ? (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<p class="hint">${this.tr("loading")}</p>` : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+                ${this.pending ? this.renderPlan(this.pending) : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+                ${!this.pending && this.manifestNotes.length ? (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<div class="notes">${this.manifestNotes.map((n)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<p class="hint">${n}</p>`)}</div>` : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+            </div>
+        `;
+    }
+    valueName(id) {
+        const value = this.allValues().find((e)=>e.value.id === id)?.value;
+        return value ? this.description(value) + (value.device ? ` \xb7 ${value.device}` : "") : id;
+    }
+    deviceName(id) {
+        const device = this.hass.devices?.[id];
+        return device?.name_by_user || device?.name || id;
+    }
+    // Notes on the result: errors per bus and values the manifest does not have
+    planNotes(p) {
+        const notes = p.results.filter((r)=>r.error).map((r)=>this.tr(`err_${r.error}`).replace("{bus}", r.bus).replace("{message}", r.message ?? ""));
+        if (p.missing.length) notes.push(`${this.tr("missing")}: ${p.missing.map((id)=>this.valueName(id)).join(", ")}`);
+        return notes;
+    }
+    renderPlan(p) {
+        const devices = Object.entries(p.devices);
+        const errors = p.results.filter((r)=>r.error).map((r)=>this.tr(`err_${r.error}`).replace("{bus}", r.bus).replace("{message}", r.message ?? ""));
+        const count = (key, n)=>this.tr(key).replace("{n}", String(n));
+        const busName = (bus)=>this.tr(bus === "CAN" ? "canDevice" : "uartDevice");
+        const current = (bus)=>bus === "CAN" ? this.config.canDevice : this.config.uartDevice;
+        return (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+            <div class="plan">
+                <p><b>${count("will_change", p.changes.length + devices.length)}</b></p>
+                <div class="table">
+                    <table>
+                        <tr><th>${this.tr("value")}</th><th>${this.tr("old")}</th><th>${this.tr("new")}</th></tr>
+                        ${devices.map(([bus, id])=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+                            <tr><td>${busName(bus)}</td><td class="from">${current(bus) ? this.deviceName(current(bus)) : "\u2013"}</td><td>${this.deviceName(id)}</td></tr>`)}
+                        ${p.changes.map((c)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+                            <tr><td>${this.valueName(c.id)}</td><td class="from">${c.from ?? "\u2013"}</td><td>${c.to}</td></tr>`)}
+                    </table>
+                </div>
+                ${p.unchanged.length ? (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+                    <ha-expansion-panel outlined .header=${count("unchanged", p.unchanged.length)}>
+                        <div class="table">
+                            <table>
+                                ${p.unchanged.map((id)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<tr><td>${this.valueName(id)}</td><td>${this.config.entities?.[id]}</td></tr>`)}
+                            </table>
+                        </div>
+                    </ha-expansion-panel>` : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+                ${p.missing.length ? (0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`
+                    <ha-expansion-panel outlined .header=${count("missing_count", p.missing.length)}>
+                        <div class="table">
+                            <table>
+                                ${p.missing.map((id)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<tr><td>${this.valueName(id)}</td><td class="from">${this.config.entities?.[id] ?? "\u2013"}</td></tr>`)}
+                            </table>
+                        </div>
+                    </ha-expansion-panel>` : (0, $f58f44579a4747ac$export$45b790e32b2810ee)}
+                ${errors.map((n)=>(0, $f58f44579a4747ac$export$c0bb0b647f701bb5)`<p class="hint">${n}</p>`)}
+                <div class="buttons">
+                    <ha-button @click=${this._applyPlan}>${this.tr("apply")}</ha-button>
+                    <ha-button @click=${()=>{
+            this.pending = null;
+        }}>${this.tr("cancel")}</ha-button>
+                </div>
+            </div>
+        `;
+    }
+    async _loadFromDevices() {
+        const hass = this.hass;
+        this.manifestBusy = true;
+        this.pending = null;
+        this.manifestNotes = [];
+        try {
+            const entries = await hass.callWS({
+                type: "config/entity_registry/list"
+            });
+            const devices = {
+                CAN: this.config.canDevice,
+                UART: this.config.uartDevice
+            };
+            const results = [];
+            for (const bus of $d067581fc0d59830$var$BUSES)results.push(await (0, $ea8a5734489a8e6c$export$a3bd2c27ea9b7b23)(hass, bus, devices[bus], entries));
+            const values = this.allValues().map((e)=>({
+                    id: e.value.id,
+                    device: e.value.device,
+                    key: e.value.key
+                }));
+            const p = (0, $ea8a5734489a8e6c$export$3c7172b0b56389d)(values, this.config.entities ?? {}, devices, results);
+            if (p.changes.length || Object.keys(p.devices).length) this.pending = p;
+            else this.manifestNotes = [
+                this.tr("nothing_to_change").replace("{n}", String(p.unchanged.length)),
+                ...this.planNotes(p)
+            ];
+        } catch (err) {
+            this.manifestNotes = [
+                this.tr("err_general").replace("{message}", String(err?.message ?? err))
+            ];
+        } finally{
+            this.manifestBusy = false;
+        }
+    }
+    _applyPlan() {
+        const p = this.pending;
+        if (!p) return;
+        const entities = (0, $ea8a5734489a8e6c$export$5635d7ef4b8fee1c)(this.config.entities ?? {}, p);
+        this.svgItemConfig = this.svgItemConfig.map((item)=>({
+                ...item,
+                values: item.values.map((v)=>({
+                        ...v,
+                        entityId: entities[v.id] || null
+                    }))
+            }));
+        this.pending = null;
+        this.manifestNotes = [
+            this.tr("applied").replace("{n}", String(p.changes.length)),
+            ...this.planNotes(p)
+        ];
+        this._fire({
+            ...this.config,
+            canDevice: p.devices.CAN ?? this.config.canDevice,
+            uartDevice: p.devices.UART ?? this.config.uartDevice,
+            entities: $d067581fc0d59830$export$70410bc798970b36.sortRecordBySvgOrder(entities, this.svgItemConfig)
+        });
     }
     _devicesChanged(event) {
         event.stopPropagation();
@@ -3063,6 +3466,53 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
                 font-size: 12px;
                 padding: 2px 4px;
             }
+            .manifest {
+                margin-top: 8px;
+            }
+            .plan {
+                border: 1px solid var(--divider-color);
+                border-radius: 8px;
+                padding: 8px 12px;
+                margin-top: 8px;
+            }
+            .plan p {
+                margin: 4px 0;
+            }
+            .table {
+                overflow: auto;
+            }
+            .table table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 13px;
+                text-align: var(--float-start, left);
+            }
+            .table th {
+                font-weight: 500;
+                border-bottom: 1px solid var(--divider-color);
+            }
+            .table th, .table td {
+                padding: 4px 8px 4px 0;
+                vertical-align: top;
+                overflow-wrap: anywhere;
+            }
+            .table tr + tr td {
+                border-top: 1px solid var(--divider-color);
+            }
+            .from {
+                color: var(--secondary-text-color);
+            }
+            .plan ha-expansion-panel {
+                margin-top: 8px;
+            }
+            .plan ha-expansion-panel .table {
+                padding: 0 8px 8px;
+            }
+            .buttons {
+                display: flex;
+                gap: 8px;
+                margin-top: 8px;
+            }
             .hint {
                 color: var(--secondary-text-color);
                 font-size: 13px;
@@ -3076,7 +3526,8 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
             background: false,
             box: false,
             text: false
-        }, this.lastFired = "", // ---- order of the info box (drag and drop, stored as the order of info_entities) ------------------------------------------
+        }, this.lastFired = "", this.manifestBusy = false, this.pending = null // changes waiting for confirmation
+        , this.manifestNotes = [], // ---- order of the info box (drag and drop, stored as the order of info_entities) ------------------------------------------
         this.dragId = null;
     }
 }
@@ -3108,6 +3559,15 @@ class $d067581fc0d59830$export$70410bc798970b36 extends (0, $ab210b2da7b39b9d$ex
 (0, $656ade2323340eda$export$71511d61b312f219)([
     (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
 ], $d067581fc0d59830$export$70410bc798970b36.prototype, "ui", void 0);
+(0, $656ade2323340eda$export$71511d61b312f219)([
+    (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "manifestBusy", void 0);
+(0, $656ade2323340eda$export$71511d61b312f219)([
+    (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "pending", void 0);
+(0, $656ade2323340eda$export$71511d61b312f219)([
+    (0, $04c21ea1ce1f6057$export$ca000e230c0caa3e)()
+], $d067581fc0d59830$export$70410bc798970b36.prototype, "manifestNotes", void 0);
 
 
 

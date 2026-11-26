@@ -10,6 +10,9 @@ import {
     DEFAULT_LAYOUT,
 } from "./svg_item_config";
 
+import { apply, manifestServices, plan, resolveBus } from "./manifest";
+import type { Bus, BusResult, HassLike, Plan, RegistryEntry } from "./manifest";
+
 import type { LovelaceCardConfig } from "@ha/data/lovelace/config/card";
 import type { HomeAssistant } from "@ha/types";
 
@@ -27,6 +30,8 @@ const ensureArray = <T>(value: T | T[]): T[] => {
 };
 
 type TabId = "appearance" | "devices" | "sensors";
+
+const BUSES: Bus[] = ["CAN", "UART"];
 type GroupBy = "function" | "bus";
 
 // Sensors grouped by function. Ids that are not listed end up in "other".
@@ -61,6 +66,23 @@ const TEXTS: Record<string, Record<string, string>> = {
         bus_can: "CAN", bus_uart: "UART", bus_other: "Extern / ohne Gerät",
         unit_warning: "Einheit {actual}, erwartet {expected}",
         drag_hint: "Ziehen zum Sortieren",
+        load_entities: "Sensoren aus Geräten übernehmen",
+        load_entities_help: "Liest die Manifeste der CAN- und UART-Komponente und setzt die Sensoren der Karte auf die Entities der Geräte. Ohne gewähltes Gerät wird es ermittelt. Sensoren aus anderen Quellen (z. B. COP, Raum-Soll) bleiben unverändert.",
+        no_manifest: "Keine CAN- oder UART-Komponente mit Manifest gefunden (Firmware mit ESPHome 2026.1 oder neuer nötig).",
+        loading: "Manifeste werden gelesen …",
+        will_change: "{n} Einträge werden geändert",
+        unchanged: "{n} Sensoren bleiben unverändert (bereits richtig)",
+        missing_count: "{n} Sensoren nicht im Manifest, bleiben unverändert",
+        value: "Sensor", old: "Alt", new: "Neu",
+        nothing_to_change: "Nichts zu ändern: {n} Sensoren sind bereits richtig zugeordnet.",
+        applied: "{n} Sensoren übernommen.",
+        missing: "Nicht im Manifest, unverändert",
+        apply: "Übernehmen", cancel: "Abbrechen",
+        err_no_service: "{bus}: keine Komponente mit Manifest gefunden.",
+        err_no_device: "{bus}: kein passendes Gerät gefunden – bitte das Gerät wählen.",
+        err_ambiguous: "{bus}: mehrere Geräte passen – bitte das Gerät wählen.",
+        err_failed: "{bus}: Manifest konnte nicht gelesen werden: {message}",
+        err_general: "Fehler: {message}",
     },
     en: {
         appearance: "Appearance", devices: "Devices", sensors: "Sensors",
@@ -80,6 +102,23 @@ const TEXTS: Record<string, Record<string, string>> = {
         bus_can: "CAN", bus_uart: "UART", bus_other: "External / no device",
         unit_warning: "Unit {actual}, expected {expected}",
         drag_hint: "Drag to reorder",
+        load_entities: "Load entities from devices",
+        load_entities_help: "Reads the manifests of the CAN and UART component and sets the card's sensors to the entities of the devices. A device that is not chosen is determined. Sensors from other sources (e.g. COP, room setpoint) stay as they are.",
+        no_manifest: "No CAN or UART component with a manifest found (needs firmware built with ESPHome 2026.1 or newer).",
+        loading: "Reading the manifests …",
+        will_change: "{n} entries will be changed",
+        unchanged: "{n} sensors stay as they are (already correct)",
+        missing_count: "{n} sensors not in the manifest, stay as they are",
+        value: "Sensor", old: "Old", new: "New",
+        nothing_to_change: "Nothing to change: {n} sensors are already assigned correctly.",
+        applied: "{n} sensors applied.",
+        missing: "Not in the manifest, unchanged",
+        apply: "Apply", cancel: "Cancel",
+        err_no_service: "{bus}: no component with a manifest found.",
+        err_no_device: "{bus}: no matching device found – please choose the device.",
+        err_ambiguous: "{bus}: several devices match – please choose the device.",
+        err_failed: "{bus}: the manifest could not be read: {message}",
+        err_general: "Error: {message}",
     },
 };
 
@@ -95,6 +134,9 @@ export class HpsuDashboardCardEditor extends LitElement {
     // UI-only switches ("use own colours"); they are not stored, the colours themselves are the setting
     @state() private ui = { background: false, box: false, text: false };
     private lastFired = "";
+    @state() private manifestBusy = false;
+    @state() private pending: Plan | null = null;   // changes waiting for confirmation
+    @state() private manifestNotes: string[] = [];
 
     async setConfig(config: LovelaceCardConfig) {
 
@@ -296,7 +338,138 @@ export class HpsuDashboardCardEditor extends LitElement {
             </ha-form>
             <p class="hint">${this.tr("devices_help")}</p>
             <p class="hint">${assigned} / ${total} ${this.tr("assigned")}</p>
+            ${this.renderManifest()}
         `;
+    }
+
+    // ---- loading the sensors from the manifests of the components ------------------------------------------------
+
+    private hasManifest(): boolean {
+        const hass = this.hass as unknown as HassLike;
+        return BUSES.some(bus => manifestServices(hass, bus).length > 0);
+    }
+
+    private renderManifest() {
+        const available = this.hasManifest();
+        return html`
+            <div class="manifest">
+                <ha-button @click=${this._loadFromDevices} .disabled=${!available || this.manifestBusy}>
+                    ${this.tr("load_entities")}
+                </ha-button>
+                <p class="hint">${available ? this.tr("load_entities_help") : this.tr("no_manifest")}</p>
+                ${this.manifestBusy ? html`<p class="hint">${this.tr("loading")}</p>` : nothing}
+                ${this.pending ? this.renderPlan(this.pending) : nothing}
+                ${!this.pending && this.manifestNotes.length ? html`<div class="notes">${this.manifestNotes.map(n => html`<p class="hint">${n}</p>`)}</div>` : nothing}
+            </div>
+        `;
+    }
+
+    private valueName(id: string): string {
+        const value = this.allValues().find(e => e.value.id === id)?.value;
+        return value ? this.description(value) + (value.device ? ` · ${value.device}` : "") : id;
+    }
+
+    private deviceName(id: string): string {
+        const device = (this.hass as any).devices?.[id];
+        return device?.name_by_user || device?.name || id;
+    }
+
+    // Notes on the result: errors per bus and values the manifest does not have
+    private planNotes(p: Plan): string[] {
+        const notes = p.results.filter(r => r.error).map(r =>
+            this.tr(`err_${r.error}`).replace("{bus}", r.bus).replace("{message}", r.message ?? ""));
+        if (p.missing.length) {
+            notes.push(`${this.tr("missing")}: ${p.missing.map(id => this.valueName(id)).join(", ")}`);
+        }
+        return notes;
+    }
+
+    private renderPlan(p: Plan) {
+        const devices = Object.entries(p.devices) as [Bus, string][];
+        const errors = p.results.filter(r => r.error).map(r =>
+            this.tr(`err_${r.error}`).replace("{bus}", r.bus).replace("{message}", r.message ?? ""));
+        const count = (key: string, n: number) => this.tr(key).replace("{n}", String(n));
+        const busName = (bus: Bus) => this.tr(bus === "CAN" ? "canDevice" : "uartDevice");
+        const current = (bus: Bus) => (bus === "CAN" ? this.config.canDevice : this.config.uartDevice);
+        return html`
+            <div class="plan">
+                <p><b>${count("will_change", p.changes.length + devices.length)}</b></p>
+                <div class="table">
+                    <table>
+                        <tr><th>${this.tr("value")}</th><th>${this.tr("old")}</th><th>${this.tr("new")}</th></tr>
+                        ${devices.map(([bus, id]) => html`
+                            <tr><td>${busName(bus)}</td><td class="from">${current(bus) ? this.deviceName(current(bus)) : "–"}</td><td>${this.deviceName(id)}</td></tr>`)}
+                        ${p.changes.map(c => html`
+                            <tr><td>${this.valueName(c.id)}</td><td class="from">${c.from ?? "–"}</td><td>${c.to}</td></tr>`)}
+                    </table>
+                </div>
+                ${p.unchanged.length ? html`
+                    <ha-expansion-panel outlined .header=${count("unchanged", p.unchanged.length)}>
+                        <div class="table">
+                            <table>
+                                ${p.unchanged.map(id => html`<tr><td>${this.valueName(id)}</td><td>${this.config.entities?.[id]}</td></tr>`)}
+                            </table>
+                        </div>
+                    </ha-expansion-panel>` : nothing}
+                ${p.missing.length ? html`
+                    <ha-expansion-panel outlined .header=${count("missing_count", p.missing.length)}>
+                        <div class="table">
+                            <table>
+                                ${p.missing.map(id => html`<tr><td>${this.valueName(id)}</td><td class="from">${this.config.entities?.[id] ?? "–"}</td></tr>`)}
+                            </table>
+                        </div>
+                    </ha-expansion-panel>` : nothing}
+                ${errors.map(n => html`<p class="hint">${n}</p>`)}
+                <div class="buttons">
+                    <ha-button @click=${this._applyPlan}>${this.tr("apply")}</ha-button>
+                    <ha-button @click=${() => { this.pending = null; }}>${this.tr("cancel")}</ha-button>
+                </div>
+            </div>
+        `;
+    }
+
+    private async _loadFromDevices(): Promise<void> {
+        const hass = this.hass as unknown as HassLike;
+        this.manifestBusy = true;
+        this.pending = null;
+        this.manifestNotes = [];
+        try {
+            const entries = await hass.callWS<RegistryEntry[]>({ type: "config/entity_registry/list" });
+            const devices: Partial<Record<Bus, string>> = { CAN: this.config.canDevice, UART: this.config.uartDevice };
+            const results: BusResult[] = [];
+            for (const bus of BUSES) {
+                results.push(await resolveBus(hass, bus, devices[bus], entries));
+            }
+            const values = this.allValues().map(e => ({ id: e.value.id, device: e.value.device, key: e.value.key }));
+            const p = plan(values, this.config.entities ?? {}, devices, results);
+            if (p.changes.length || Object.keys(p.devices).length) {
+                this.pending = p;
+            } else {
+                this.manifestNotes = [this.tr("nothing_to_change").replace("{n}", String(p.unchanged.length)), ...this.planNotes(p)];
+            }
+        } catch (err: any) {
+            this.manifestNotes = [this.tr("err_general").replace("{message}", String(err?.message ?? err))];
+        } finally {
+            this.manifestBusy = false;
+        }
+    }
+
+    private _applyPlan(): void {
+        const p = this.pending;
+        if (!p) return;
+        const entities = apply((this.config.entities ?? {}) as Record<string, string>, p);
+        this.svgItemConfig = this.svgItemConfig.map(item => ({
+            ...item,
+            values: item.values.map(v => ({ ...v, entityId: entities[v.id] || null })),
+        }));
+        this.pending = null;
+        this.manifestNotes = [this.tr("applied").replace("{n}", String(p.changes.length)), ...this.planNotes(p)];
+        this._fire({
+            ...this.config,
+            canDevice: p.devices.CAN ?? this.config.canDevice,
+            uartDevice: p.devices.UART ?? this.config.uartDevice,
+            entities: HpsuDashboardCardEditor.sortRecordBySvgOrder(entities, this.svgItemConfig),
+        });
     }
 
     private _devicesChanged(event: CustomEvent): void {
@@ -644,6 +817,53 @@ export class HpsuDashboardCardEditor extends LitElement {
                 color: var(--warning-color, orange);
                 font-size: 12px;
                 padding: 2px 4px;
+            }
+            .manifest {
+                margin-top: 8px;
+            }
+            .plan {
+                border: 1px solid var(--divider-color);
+                border-radius: 8px;
+                padding: 8px 12px;
+                margin-top: 8px;
+            }
+            .plan p {
+                margin: 4px 0;
+            }
+            .table {
+                overflow: auto;
+            }
+            .table table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 13px;
+                text-align: var(--float-start, left);
+            }
+            .table th {
+                font-weight: 500;
+                border-bottom: 1px solid var(--divider-color);
+            }
+            .table th, .table td {
+                padding: 4px 8px 4px 0;
+                vertical-align: top;
+                overflow-wrap: anywhere;
+            }
+            .table tr + tr td {
+                border-top: 1px solid var(--divider-color);
+            }
+            .from {
+                color: var(--secondary-text-color);
+            }
+            .plan ha-expansion-panel {
+                margin-top: 8px;
+            }
+            .plan ha-expansion-panel .table {
+                padding: 0 8px 8px;
+            }
+            .buttons {
+                display: flex;
+                gap: 8px;
+                margin-top: 8px;
             }
             .hint {
                 color: var(--secondary-text-color);
