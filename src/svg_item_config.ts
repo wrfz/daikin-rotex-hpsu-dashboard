@@ -8,9 +8,12 @@ export interface SVGValue {
     id: string;
     entityId?: string;
     device?: "CAN" | "UART";
+    key?: string;  // key of the value in the manifest of the device's component
     domain: string;
     unit?: string | string[];
     optional?: boolean;
+    dash_unknown?: boolean;
+    prefix_label?: boolean;
     value_rect_id?: string;
     valueBox?: any;
     texts: {
@@ -71,6 +74,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "ta",
                 device: "CAN",
+                key: "temperature_outside",
                 domain: "sensor",
 				unit: "°C",
                 value_rect_id: "ta_val",
@@ -109,6 +113,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "ta2",
                 device: "CAN",
+                key: "ta2",
                 domain: "sensor",
                 unit: "°C",
                 optional: true,
@@ -148,6 +153,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "expansion_valve",
                 device: "UART",
+                key: "exv",
                 domain: "sensor",
 				unit: "pls",
                 value_rect_id: "eev_val",
@@ -177,11 +183,24 @@ export const svg_item_config: SVGItem[] = [
         }
     },
     {
+        group_id: "fourway-schema",
+        values: [
+            {
+                id: "four_way_valve",
+                device: "UART",
+                key: "4_way_valve",
+                domain: "sensor",
+                texts: { de: { desc: "4-Wege-Ventil" }, en: { desc: "4-way valve" }, it: { desc: "Valvola a 4 vie" } }
+            }
+        ],
+    },
+    {
         group_id: "eev-schema",
         values: [
             {
                 id: "pressure_equalization",
                 device: "UART",
+                key: "press_eq",
                 domain: "binary_sensor",
                 texts: {
                     de: {
@@ -206,6 +225,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "kondensat",
                 device: "UART",
+                key: "t_liq",
                 domain: "sensor",
 				unit: "°C",
                 value_rect_id: "kondensat_value",
@@ -219,6 +239,22 @@ export const svg_item_config: SVGItem[] = [
                     it: {
                         desc: "Condensato"
                     }
+                }
+            },
+            {
+                id: "subcooling",
+                device: "UART",
+                key: "subcooling",
+                domain: "sensor",
+                unit: "K",
+                value_rect_id: "subcooling_value",
+                optional: true,
+                dash_unknown: true,
+                prefix_label: true,
+                texts: {
+                    de: { desc: "Unterkühlung", suffix: "UK " },
+                    en: { desc: "Subcooling", suffix: "SC " },
+                    it: { desc: "Sottoraffreddamento", suffix: "SR " }
                 }
             }
         ],
@@ -244,6 +280,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "umwaelzpumpe",
                 device: "CAN",
+                key: "circulation_pump",
                 domain: "sensor",
 				unit: "%",
                 value_rect_id: "uwp_value",
@@ -280,6 +317,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "umwaelzpumpe_an_aus",
                 device: "CAN",
+                key: "status_kesselpumpe",
                 domain: "binary_sensor",
                 value_rect_id: "circ_pump_rect",
                 texts: {
@@ -306,6 +344,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "durchfluss",
                 device: "CAN",
+                key: "flow_rate",
                 domain: "sensor",
 				unit: "L/h",
                 value_rect_id: "flow_rate_value",
@@ -343,6 +382,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "ruecklauf",
                 device: "CAN",
+                key: "tr",
                 domain: "sensor",
 				unit: "°C",
                 value_rect_id: "return_flow_can_value",
@@ -361,6 +401,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "ruecklauf_2",
                 device: "UART",
+                key: "tr",
                 domain: "sensor",
                 unit: "°C",
                 value_rect_id: "return_flow_uart_value",
@@ -403,6 +444,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "verdampfer",
                 device: "UART",
+                key: "exch_temp",
                 domain: "sensor",
 				unit: "°C",
                 value_rect_id: "evaporator_value",
@@ -440,6 +482,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "hot_gas",
                 device: "UART",
+                key: "temp_after_compr",
                 domain: "sensor",
 				unit: "°C",
                 value_rect_id: "hot_gas_value",
@@ -454,6 +497,22 @@ export const svg_item_config: SVGItem[] = [
                         desc: "Gas caldo"
                     }
                 }
+            },
+            {
+                id: "discharge_superheat",
+                device: "UART",
+                key: "discharge_superheat",
+                domain: "sensor",
+                unit: "K",
+                value_rect_id: "discharge_superheat_value",
+                optional: true,
+                dash_unknown: true,
+                prefix_label: true,
+                texts: {
+                    de: { desc: "Überhitzung Heißgas", suffix: "ÜH " },
+                    en: { desc: "Discharge superheat", suffix: "SH " },
+                    it: { desc: "Surriscaldamento mandata", suffix: "SR " }
+                }
             }
         ],
         texts: {
@@ -466,6 +525,35 @@ export const svg_item_config: SVGItem[] = [
             it: {
                 label: "Gas caldo"
             }
+        }
+    },
+    {
+        group_id: "Kondensation",
+        parent: "Kondensation",
+        label_rect_id: "condensing_label",
+        visual_container: true,
+        offset: 6,
+        values: [
+            {
+                id: "saturation_temp",
+                device: "UART",
+                key: "saturation_temp",
+                domain: "sensor",
+                unit: "°C",
+                value_rect_id: "saturation_temp_value",
+                optional: true,
+                dash_unknown: true,
+                texts: {
+                    de: { desc: "Sättigungstemperatur (S1NPH)" },
+                    en: { desc: "Saturation temperature (S1NPH)" },
+                    it: { desc: "Temperatura di saturazione (S1NPH)" }
+                }
+            }
+        ],
+        texts: {
+            de: { label: "Kondensation" },
+            en: { label: "Condensing" },
+            it: { label: "Condensazione" }
         }
     },
     {
@@ -492,6 +580,21 @@ export const svg_item_config: SVGItem[] = [
                         desc: "Gas caldo al condensatore"
                     }
                 }
+            },
+            {
+                id: "refrigerant_pressure",
+                device: "UART",
+                key: "refrigerant_pressure",
+                domain: "sensor",
+                unit: "bar",
+                value_rect_id: "refrigerant_pressure_value",
+                optional: true,
+                dash_unknown: true,
+                texts: {
+                    de: { desc: "Kältemitteldruck (S1NPH)" },
+                    en: { desc: "Refrigerant pressure (S1NPH)" },
+                    it: { desc: "Pressione refrigerante (S1NPH)" }
+                }
             }
         ],
         texts: {
@@ -515,6 +618,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "spread",
                 device: "CAN",
+                key: "temperature_spread_raw",
                 domain: "sensor",
 				unit: "°C",
                 value_rect_id: "spread_value",
@@ -552,6 +656,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "vorlauf_1",
                 device: "CAN",
+                key: "tv",
 				domain: "sensor",
 				unit: "°C",
                 value_rect_id: "flow_can_value",
@@ -570,6 +675,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "vorlauf_2",
                 device: "UART",
+                key: "tv",
 				domain: "sensor",
                 unit: "°C",
                 value_rect_id: "flow_uart_value",
@@ -607,6 +713,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "vorlauf_soll",
                 device: "CAN",
+                key: "target_supply_temperature",
 				domain: "sensor",
 				unit: "°C",
                 value_rect_id: "flow_setpoint_value",
@@ -644,6 +751,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "wasserdruck",
                 device: "CAN",
+                key: "water_pressure",
 				domain: "sensor",
 				unit: "bar",
                 value_rect_id: "pressure_value",
@@ -681,6 +789,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "vorlauf_bh_1",
                 device: "CAN",
+                key: "tvbh",
 				domain: "sensor",
 				unit: "°C",
                 value_rect_id: "flow_bh_can_value",
@@ -699,6 +808,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "vorlauf_bh_2",
                 device: "UART",
+                key: "tv_bh",
 				domain: "sensor",
                 unit: "°C",
                 value_rect_id: "flow_bh_uart_value",
@@ -735,6 +845,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "kompressor_an_aus",
                 device: "CAN",
+                key: "status_kompressor",
 				domain: "binary_sensor",
                 value_rect_id: "comp_rect",
                 texts: {
@@ -766,6 +877,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "luefter",
                 device: "UART",
+                key: "fan_speed",
 				domain: "sensor",
 				unit: "RPM",
                 value_rect_id: "fan_value",
@@ -804,6 +916,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "verdichter",
                 device: "UART",
+                key: "inv_freq",
 				domain: "sensor",
 				unit: "RPM",
                 value_rect_id: "compressor_value",
@@ -841,6 +954,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "speicher",
                 device: "CAN",
+                key: "tdhw1",
 				domain: "sensor",
 				unit: "°C",
                 value_rect_id: "storage_value",
@@ -878,6 +992,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "speicher_soll",
                 device: "CAN",
+                key: "target_hot_water_temperature_1",
 				domain: "select",
 				unit: "°C",
                 value_rect_id: "storage_setpoint_value",
@@ -954,6 +1069,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "mischer",
                 device: "CAN",
+                key: "dhw_mixer_position",
 				domain: "sensor",
 				unit: "%",
                 value_rect_id: "dhw_mixer_value",
@@ -980,6 +1096,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "bypass",
                 device: "CAN",
+                key: "bypass_valve",
 				domain: "sensor",
 				unit: "%",
                 value_rect_id: "bypass_value",
@@ -1013,6 +1130,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "fehlercode",
                 device: "CAN",
+                key: "error_code",
 				domain: "sensor",
                 value_rect_id: "fehlercode_value",
                 texts: {
@@ -1033,6 +1151,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "betriebsmodus",
                 device: "CAN",
+                key: "operating_mode",
 				domain: "sensor",
                 value_rect_id: "betriebsmodus_value",
                 texts: {
@@ -1053,6 +1172,7 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "betriebsart",
                 device: "CAN",
+                key: "mode_of_operating",
 				domain: "sensor",
                 value_rect_id: "betriebsart_value",
                 texts: {
@@ -1073,12 +1193,13 @@ export const svg_item_config: SVGItem[] = [
             {
                 id: "thermische_leistung",
                 device: "CAN",
+                key: "thermal_power",
 				domain: "sensor",
 				unit: "kW",
                 value_rect_id: "therm_leistung_value",
                 texts: {
                     de: {
-                        suffix: "Thermische Leistung: ",
+                        suffix: "Therm. Leistung: ",
                         desc: "Thermische Leistung"
                     },
                     en: {
@@ -1099,7 +1220,7 @@ export const svg_item_config: SVGItem[] = [
                 value_rect_id: "el_power_value",
                 texts: {
                     de: {
-                        suffix: "Elektrische Leistung: ",
+                        suffix: "El. Leistung: ",
                         desc: "Elektrische Leistung"
                     },
                     en: {
